@@ -3,7 +3,7 @@ import { compile } from './index.js';
 
 describe('Morph Engine (Query-to-Code)', () => {
   it('should compile and execute a simple transformation', () => {
-    const query = 'from static as json to return as object transform set field1=newfield';
+    const query = 'from static as json to return as object transform set newfield=field1';
     const transform = compile(query);
 
     const source = { field1: 'hello' };
@@ -39,7 +39,7 @@ describe('Morph Engine (Query-to-Code)', () => {
       from static as json to return as object 
       transform 
         section meta(
-          set v=version
+          set version=v
         ) follow info
     `;
     const transform = compile(query);
@@ -60,7 +60,7 @@ describe('Morph Engine (Query-to-Code)', () => {
       from static as json to return as object 
       transform 
         section multiple lines(
-          set id=lineNo
+          set lineNo=id
         )
     `;
     const transform = compile(query);
@@ -81,7 +81,7 @@ describe('Morph Engine (Query-to-Code)', () => {
       from static as json to return as object 
       transform 
         section multiple items(
-          set val=v
+          set v=val
         ) follow rawData
     `;
     const transform = compile(query);
@@ -101,9 +101,9 @@ describe('Morph Engine (Query-to-Code)', () => {
     const query = `
       from static as json to return as object 
       transform 
-        set name=fullName 
+        set fullName=name 
         section multiple lines(
-          set id=lineNo
+          set lineNo=id
         )
     `;
     const transform = compile(query);
@@ -155,7 +155,7 @@ describe('Morph Engine (Query-to-Code)', () => {
       transform 
         section sub(
           clone(x)
-          set y=mappedY
+          set mappedY=y
         )
     `;
     const transform = compile(query);
@@ -177,9 +177,9 @@ describe('Morph Engine (Query-to-Code)', () => {
         section order(
           set orderId=orderId
           section multiple items(
-            set itemSku=sku
+            set sku=itemSku
             section details(
-              set hex=color
+              set color=hex
             ) follow info
           ) follow products
         )
