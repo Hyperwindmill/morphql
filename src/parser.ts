@@ -42,12 +42,19 @@ export class MorphParser extends CstParser {
 
   private sectionRule = this.RULE('sectionRule', () => {
     this.CONSUME(t.Section);
-    this.CONSUME(t.Identifier, { LABEL: 'sectionName' });
+    this.OPTION(() => {
+      this.CONSUME(t.Multiple);
+    });
+    this.SUBRULE(this.anyIdentifier, { LABEL: 'sectionName' });
     this.CONSUME(t.LParen);
     this.MANY(() => {
       this.SUBRULE(this.action);
     });
     this.CONSUME(t.RParen);
+    this.OPTION1(() => {
+      this.CONSUME(t.Follow);
+      this.SUBRULE1(this.anyIdentifier, { LABEL: 'followPath' });
+    });
   });
 }
 

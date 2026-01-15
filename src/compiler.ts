@@ -47,19 +47,34 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
   }
 
   sectionRule(ctx: any) {
-    const sectionName = ctx.sectionName[0].image;
+    const sectionName = this.visit(ctx.sectionName);
+    const followPath = ctx.followPath ? this.visit(ctx.followPath) : sectionName;
+    const isMultiple = !!ctx.Multiple;
     const actions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
 
-    return `
-      if (source.${sectionName} && Array.isArray(source.${sectionName})) {
-        target.${sectionName} = source.${sectionName}.map(item => {
-          const source = item; // Shadow source for nested actions
+    if (isMultiple) {
+      return `
+      if (source.${followPath} && Array.isArray(source.${followPath})) {
+        target.${sectionName} = source.${followPath}.map(item => {
+          const source = item;
           const target = {};
           ${actions.join('\n          ')}
           return target;
         });
       }
-    `;
+      `;
+    } else {
+      return `
+      if (source.${followPath}) {
+        target.${sectionName} = (function(innerSource) {
+          const source = innerSource;
+          const target = {};
+          ${actions.join('\n          ')}
+          return target;
+        })(source.${followPath});
+      }
+      `;
+    }
   }
 }
 

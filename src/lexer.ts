@@ -8,6 +8,8 @@ export const Return = createToken({ name: 'Return', pattern: /return/i });
 export const Transform = createToken({ name: 'Transform', pattern: /transform/i });
 export const Set = createToken({ name: 'Set', pattern: /set/i });
 export const Section = createToken({ name: 'Section', pattern: /section/i });
+export const Multiple = createToken({ name: 'Multiple', pattern: /multiple/i });
+export const Follow = createToken({ name: 'Follow', pattern: /follow/i });
 
 export const Equals = createToken({ name: 'Equals', pattern: /=/ });
 export const LParen = createToken({ name: 'LParen', pattern: /\(/ });
@@ -34,6 +36,8 @@ export const allTokens = [
   Transform,
   Set,
   Section,
+  Multiple,
+  Follow,
   Equals,
   LParen,
   RParen,
