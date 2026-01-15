@@ -120,4 +120,43 @@ describe('Morph Engine (Query-to-Code)', () => {
       lines: [{ lineNo: 1 }, { lineNo: 2 }],
     });
   });
+
+  it('should handle deeply nested sections (mixed objects and arrays)', () => {
+    const query = `
+      from static as json to return as xml 
+      transform 
+        section order(
+          set orderId=orderId
+          section multiple items(
+            set itemSku=sku
+            section details(
+              set hex=color
+            ) follow info
+          ) follow products
+        )
+    `;
+    const transform = compile(query);
+
+    const source = {
+      order: {
+        orderId: 'ORD-1',
+        products: [
+          { itemSku: 'ABC', info: { hex: '#FF0000' } },
+          { itemSku: 'XYZ', info: { hex: '#0000FF' } },
+        ],
+      },
+    };
+
+    const result = transform(source);
+
+    expect(result).toEqual({
+      order: {
+        orderId: 'ORD-1',
+        items: [
+          { sku: 'ABC', details: { color: '#FF0000' } },
+          { sku: 'XYZ', details: { color: '#0000FF' } },
+        ],
+      },
+    });
+  });
 });
