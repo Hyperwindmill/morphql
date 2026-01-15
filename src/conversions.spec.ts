@@ -60,4 +60,21 @@ describe('Morph Engine - Type Conversions', () => {
     expect(result).toContain('<sku>A</sku>');
     expect(result).toContain('<sku>B</sku>');
   });
+
+  it('should convert XML string to JSON', () => {
+    const query = 'from static as xml to return as json transform clone';
+    const transform = compile(query);
+    const input = `
+      <root>
+        <id>123</id>
+        <name>Test</name>
+      </root>
+    `;
+    const result = transform(input) as string;
+    const parsed = JSON.parse(result);
+
+    // fast-xml-parser provides the root object
+    expect(parsed.root.id).toBe(123);
+    expect(parsed.root.name).toBe('Test');
+  });
 });

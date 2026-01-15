@@ -5,6 +5,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { createHash } from 'node:crypto';
 import { create } from 'xmlbuilder2';
+import { XMLParser } from 'fast-xml-parser';
 
 export interface MorphEngine {
   (source: any): any;
@@ -41,11 +42,11 @@ export function compile(queryString: string): MorphEngine {
     if (sourceType.name.toLowerCase() === 'json' && typeof input === 'string') {
       source = JSON.parse(input);
     } else if (sourceType.name.toLowerCase() === 'xml' && typeof input === 'string') {
-      // Basic XML to JS (might need a dedicated parser for complex cases)
-      // For now we assume input is already parsed if it's not a string,
-      // or we just handle serialization primarily as requested.
-      // Simple XML parsing is better handled by a dedicated library if really needed for 'from xml'
-      // But usually 'from static as json' is most common.
+      const xmlParser = new XMLParser({
+        ignoreAttributes: false,
+        removeNSPrefix: true,
+      });
+      source = xmlParser.parse(input);
     }
 
     // Execute Mapping
