@@ -3,7 +3,7 @@ import { compile } from './index.js';
 
 describe('Morph Engine (Query-to-Code)', () => {
   it('should compile and execute a simple transformation', () => {
-    const query = 'from static as json to return as xml transform set field1=newfield';
+    const query = 'from static as json to return as object transform set field1=newfield';
     const transform = compile(query);
 
     const source = { field1: 'hello' };
@@ -14,7 +14,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle default section (object mapping)', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         section header(
           set id=id
@@ -36,7 +36,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle section with follow directive', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         section meta(
           set v=version
@@ -57,7 +57,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle multiple section (arrays)', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         section multiple lines(
           set id=lineNo
@@ -78,7 +78,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle multiple section with follow', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         section multiple items(
           set val=v
@@ -99,7 +99,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle nested sections (arrays)', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         set name=fullName 
         section multiple lines(
@@ -123,7 +123,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle full clone directive', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         clone
     `;
@@ -137,7 +137,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle selective clone directive', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         clone(a, c)
     `;
@@ -151,7 +151,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle clone inside a section', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         section sub(
           clone(x)
@@ -172,7 +172,7 @@ describe('Morph Engine (Query-to-Code)', () => {
 
   it('should handle deeply nested sections (mixed objects and arrays)', () => {
     const query = `
-      from static as json to return as xml 
+      from static as json to return as object 
       transform 
         section order(
           set orderId=orderId

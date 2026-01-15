@@ -43,6 +43,7 @@
     "vitest": "^4.0.17"
   },
   "dependencies": {
-    "chevrotain": "^11.1.0"
+    "chevrotain": "^11.1.0",
+    "xmlbuilder2": "^4.0.3"
   }
 }

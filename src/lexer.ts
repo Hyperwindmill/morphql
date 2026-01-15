@@ -17,6 +17,11 @@ export const LParen = createToken({ name: 'LParen', pattern: /\(/ });
 export const RParen = createToken({ name: 'RParen', pattern: /\)/ });
 export const Comma = createToken({ name: 'Comma', pattern: /,/ });
 
+export const StringLiteral = createToken({
+  name: 'StringLiteral',
+  pattern: /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/,
+});
+
 export const Identifier = createToken({
   name: 'Identifier',
   pattern: /[a-zA-Z_][a-zA-Z0-9_]*/,
@@ -45,6 +50,7 @@ export const allTokens = [
   LParen,
   RParen,
   Comma,
+  StringLiteral,
   Identifier,
 ];
 

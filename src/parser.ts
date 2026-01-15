@@ -11,14 +11,23 @@ export class MorphParser extends CstParser {
     this.CONSUME(t.From);
     this.SUBRULE(this.anyIdentifier, { LABEL: 'sourceName' });
     this.CONSUME(t.As);
-    this.SUBRULE1(this.anyIdentifier, { LABEL: 'sourceType' });
+    this.SUBRULE(this.typeFormat, { LABEL: 'sourceType' });
     this.CONSUME(t.To);
     this.CONSUME(t.Return);
     this.CONSUME1(t.As);
-    this.SUBRULE2(this.anyIdentifier, { LABEL: 'targetType' });
+    this.SUBRULE1(this.typeFormat, { LABEL: 'targetType' });
     this.CONSUME(t.Transform);
     this.MANY(() => {
       this.SUBRULE(this.action);
+    });
+  });
+
+  private typeFormat = this.RULE('typeFormat', () => {
+    this.SUBRULE(this.anyIdentifier, { LABEL: 'name' });
+    this.OPTION(() => {
+      this.CONSUME(t.LParen);
+      this.CONSUME(t.StringLiteral, { LABEL: 'parameter' });
+      this.CONSUME(t.RParen);
     });
   });
 

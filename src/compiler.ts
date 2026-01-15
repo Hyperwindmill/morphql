@@ -10,15 +10,32 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
 
   query(ctx: any) {
     const actions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
+    const sourceType = this.visit(ctx.sourceType);
+    const targetType = this.visit(ctx.targetType);
 
-    // We wrap everything in a function
-    return `
+    const code = `
       return function transform(source) {
         const target = {};
         ${actions.join('\n        ')}
         return target;
       }
     `;
+
+    return {
+      code,
+      sourceType,
+      targetType,
+    };
+  }
+
+  typeFormat(ctx: any) {
+    const name = this.visit(ctx.name);
+    let parameter = undefined;
+    if (ctx.parameter) {
+      // Remove quotes from string literal
+      parameter = ctx.parameter[0].image.slice(1, -1);
+    }
+    return { name, parameter };
   }
 
   anyIdentifier(ctx: any) {
