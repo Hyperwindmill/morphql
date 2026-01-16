@@ -2,6 +2,7 @@ import { MorphLexer } from './lexer.js';
 import { parser } from './parser.js';
 import { compiler } from './compiler.js';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
+import beautify from 'js-beautify';
 
 const isNode = typeof process !== 'undefined' && process.versions && process.versions.node;
 
@@ -24,7 +25,13 @@ export function compile(queryString: string): MorphEngine {
     throw new Error(`Parsing errors: ${parser.errors[0].message}`);
   }
 
-  const { code, sourceType, targetType } = compiler.visit(cst);
+  const { code: rawCode, sourceType, targetType } = compiler.visit(cst);
+
+  const code = beautify.js(rawCode, {
+    indent_size: 2,
+    space_in_empty_paren: true,
+    end_with_newline: true,
+  });
 
   // Cache the generated code for review only in Node environments
   if (isNode) {
