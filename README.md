@@ -1,53 +1,89 @@
 # query-morph
 
-A modern TypeScript library for structural query transformations, serving as an engine for mapping and conversion languages.
+A high-performance, isomorphic Query-to-Code engine. It provides a DSL to transform structural data (JSON, XML, or Objects) by compiling queries into specialized, pure JavaScript functions.
 
-## Project Goal
+## Key Features
 
-The primary objective of `query-morph` is to provide a robust engine for defining and executing structural transformations across different data formats.
+- 🚀 **Performance**: Compiles DSL to native JS for maximum execution speed.
+- 🌐 **Isomorphic**: Runs seamlessly in Node.js and the Browser.
+- 🧩 **Format Agnostic**: Input and output can be JSON, XML, or raw Objects.
+- ➗ **Expressions**: Support for arithmetic, string concatenation, and unary minus.
+- 🛠️ **Modular Functions**: Extensible function registry (e.g., `substring`).
+- 🔄 **Structural Mapping**: Easy handling of nested objects and arrays (`multiple`).
+- 🎨 **Playground**: Real-time editor to test and visualize generated code.
 
-It aims to support a domain-specific language (DSL) for mapping, such as:
-`from static as json to return as xml transform set field1=newfield section lines( set lineNo=nLine )`
-
-## Generic Guidelines
-
-- **Format Agnostic**: Support transformation between various formats (JSON, XML, YAML, etc.).
-- **DSL Driven**: Provide the underlying engine to parse and execute transformation expressions.
-- **Structural Mapping**: Focus on field-level mapping and nested section transformations.
-- **Extensibility**: Allow for custom transformation functions and formatting rules.
-
-## Getting Started
-
-### Installation
+## Installation
 
 ```bash
 npm install query-morph
 ```
 
-### Usage
+## Usage Example
 
 ```typescript
-import { greet } from 'query-morph';
+import { compile } from 'query-morph';
 
-console.log(greet({ name: 'World' }));
+const query = `
+  from source as object
+  to return as json
+  transform
+    set fullName = firstName + " " + lastName
+    set shortSku = substring(sku, 0, 3)
+    set total = (price * amount) - discount
+    section header(
+      set id = orderId
+    )
+`;
+
+const engine = compile(query);
+
+const source = {
+  firstName: 'John',
+  lastName: 'Doe',
+  sku: 'ABC12345',
+  price: 100,
+  amount: 2,
+  discount: 10,
+  orderId: 'ORD-99',
+};
+
+const result = engine(source);
+console.log(result);
+// Output: JSON string with fullName, shortSku, total, and header object
 ```
+
+## DSL Snippets
+
+### Arithmetic & Concatenation
+
+`set total = price + tax`
+`set label = "Item: " + name`
+
+### Functions & Negative Indices
+
+`set lastChars = substring(sku, -5)`
+
+### Array Mapping
+
+`section multiple items( set sku = itemSku )`
 
 ## Development
 
-### Build
+### Playground
+
+Launch the interactive playground to test your queries in real-time:
+
+```bash
+npm run playground
+```
+
+### Build & Test
 
 ```bash
 npm run build
-```
-
-### Test
-
-```bash
 npm run test
 ```
 
-### Lint
+## License
 
-```bash
-npm run lint
-```
+MIT
