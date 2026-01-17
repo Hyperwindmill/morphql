@@ -1,4 +1,5 @@
 import { parser } from './parser.js';
+import { functionRegistry } from './functions.js';
 
 const BaseCstVisitor = parser.getBaseCstVisitorConstructor();
 
@@ -114,12 +115,28 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     if (ctx.literal) {
       return this.visit(ctx.literal);
     }
+    if (ctx.functionCall) {
+      return this.visit(ctx.functionCall);
+    }
     if (ctx.anyIdentifier) {
       return `source.${this.visit(ctx.anyIdentifier)}`;
     }
     if (ctx.expression) {
       return `(${this.visit(ctx.expression)})`;
     }
+  }
+
+  functionCall(ctx: any) {
+    const originalName = ctx.name[0].image;
+    const name = originalName.toLowerCase();
+    const args = ctx.args ? ctx.args.map((a: any) => this.visit(a)) : [];
+
+    const handler = functionRegistry[name];
+    if (handler) {
+      return handler(args);
+    }
+
+    throw new Error(`Unknown function: ${originalName}`);
   }
 
   sectionRule(ctx: any) {

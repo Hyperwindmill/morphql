@@ -100,6 +100,10 @@ export class MorphParser extends CstParser {
   private atomic = this.RULE('atomic', () => {
     this.OR([
       { ALT: () => this.SUBRULE(this.literal) },
+      {
+        GATE: () => this.LA(2).tokenType === t.LParen,
+        ALT: () => this.SUBRULE(this.functionCall),
+      },
       { ALT: () => this.SUBRULE(this.anyIdentifier) },
       {
         ALT: () => {
@@ -109,6 +113,18 @@ export class MorphParser extends CstParser {
         },
       },
     ]);
+  });
+
+  private functionCall = this.RULE('functionCall', () => {
+    this.CONSUME(t.Identifier, { LABEL: 'name' });
+    this.CONSUME(t.LParen);
+    this.MANY_SEP({
+      SEP: t.Comma,
+      DEF: () => {
+        this.SUBRULE(this.expression, { LABEL: 'args' });
+      },
+    });
+    this.CONSUME(t.RParen);
   });
 
   private sectionRule = this.RULE('sectionRule', () => {
