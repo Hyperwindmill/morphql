@@ -67,18 +67,26 @@ console.log(result);
 **Actions (Blocks):**
 
 ```
-if (isPremium) (
-  set discount = amount * 0.2
-  set badge = "VIP"
-) else (
-  set discount = 0
-  set badge = "Standard"
-)
+
 ```
+
+if (isPremium) (
+set discount = amount \* 0.2
+set badge = "VIP"
+) else (
+set discount = 0
+set badge = "Standard"
+)
+
+````
+
+### Deleting Properties
+
+`delete password` - Removes a property from the target object
 
 ### Functions & Negative Indices
 
-`set lastChars = substring(sku, -5)` - Get last 5 characters  
+`set lastChars = substring(sku, -5)` - Get last 5 characters
 `set first3 = substring(sku, 0, 3)` - Get first 3 characters (start, length)
 
 ### Array Mapping
@@ -93,7 +101,7 @@ Launch the interactive playground to test your queries in real-time:
 
 ```bash
 npm run playground
-```
+````
 
 ### Build & Test
 

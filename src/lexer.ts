@@ -30,6 +30,7 @@ export const Multiple = createToken({
   longer_alt: Identifier,
 });
 export const Clone = createToken({ name: 'Clone', pattern: /clone/i, longer_alt: Identifier });
+export const Delete = createToken({ name: 'Delete', pattern: /delete/i, longer_alt: Identifier });
 export const If = createToken({ name: 'If', pattern: /if/i, longer_alt: Identifier });
 export const Else = createToken({ name: 'Else', pattern: /else/i, longer_alt: Identifier });
 
@@ -74,6 +75,7 @@ export const allTokens = [
   Section,
   Multiple,
   Clone,
+  Delete,
   If,
   Else,
   // Multi-character operators

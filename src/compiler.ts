@@ -70,6 +70,14 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     if (ctx.ifAction) {
       return this.visit(ctx.ifAction);
     }
+    if (ctx.deleteRule) {
+      return this.visit(ctx.deleteRule);
+    }
+  }
+
+  deleteRule(ctx: any) {
+    const field = this.visit(ctx.field);
+    return `delete target.${field};`;
   }
 
   ifAction(ctx: any) {
