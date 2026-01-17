@@ -30,4 +30,18 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     // Wrap in parentheses to ensure precedence is correct
     return `((${condition}) ? (${trueValue}) : (${falseValue}))`;
   },
+  text: (args: string[]) => {
+    if (args.length !== 1) {
+      throw new Error('text() requires exactly 1 argument (string or number)');
+    }
+    const [str] = args;
+    return `String(${str})`;
+  },
+  number: (args: string[]) => {
+    if (args.length !== 1) {
+      throw new Error('number() requires exactly 1 argument (string)');
+    }
+    const [str] = args;
+    return `Number(${str})`;
+  },
 };
