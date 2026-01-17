@@ -12,8 +12,8 @@ transform
       set itemSku=sku
       section details(
         set hex=color
-      ) follow info
-    ) follow products
+      ) from info
+    ) from products
   )`;
 
 const DEFAULT_DATA = JSON.stringify(

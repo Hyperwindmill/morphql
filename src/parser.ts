@@ -28,7 +28,7 @@ export class MorphParser extends CstParser {
   });
 
   private anyIdentifier = this.RULE('anyIdentifier', () => {
-    this.OR([{ ALT: () => this.CONSUME(t.Identifier) }, { ALT: () => this.CONSUME(t.Static) }]);
+    this.CONSUME(t.Identifier);
   });
 
   private literal = this.RULE('literal', () => {
@@ -142,7 +142,7 @@ export class MorphParser extends CstParser {
     });
     this.CONSUME(t.RParen);
     this.OPTION1(() => {
-      this.CONSUME(t.Follow);
+      this.CONSUME(t.From);
       this.SUBRULE1(this.anyIdentifier, { LABEL: 'followPath' });
     });
   });

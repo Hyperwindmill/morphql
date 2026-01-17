@@ -12,10 +12,7 @@ export const Identifier = createToken({
 });
 
 export const From = createToken({ name: 'From', pattern: /from/i, longer_alt: Identifier });
-export const Static = createToken({ name: 'Static', pattern: /static/i, longer_alt: Identifier });
-export const As = createToken({ name: 'As', pattern: /as/i, longer_alt: Identifier });
 export const To = createToken({ name: 'To', pattern: /to/i, longer_alt: Identifier });
-export const Return = createToken({ name: 'Return', pattern: /return/i, longer_alt: Identifier });
 export const Transform = createToken({
   name: 'Transform',
   pattern: /transform/i,
@@ -32,7 +29,6 @@ export const Multiple = createToken({
   pattern: /multiple/i,
   longer_alt: Identifier,
 });
-export const Follow = createToken({ name: 'Follow', pattern: /follow/i, longer_alt: Identifier });
 export const Clone = createToken({ name: 'Clone', pattern: /clone/i, longer_alt: Identifier });
 
 export const Equals = createToken({ name: 'Equals', pattern: /=/ });
@@ -57,15 +53,11 @@ export const NumericLiteral = createToken({
 export const allTokens = [
   WhiteSpace,
   From,
-  Static,
-  As,
   To,
-  Return,
   Transform,
   Set,
   Section,
   Multiple,
-  Follow,
   Clone,
   Equals,
   Plus,

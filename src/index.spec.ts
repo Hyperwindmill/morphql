@@ -34,13 +34,13 @@ describe('Morph Engine (Query-to-Code)', () => {
     });
   });
 
-  it('should handle section with follow directive', () => {
+  it('should handle section with from directive', () => {
     const query = `
       from json to object 
       transform 
         section meta(
           set version=v
-        ) follow info
+        ) from info
     `;
     const transform = compile(query);
 
@@ -76,13 +76,13 @@ describe('Morph Engine (Query-to-Code)', () => {
     });
   });
 
-  it('should handle multiple section with follow', () => {
+  it('should handle multiple section with from', () => {
     const query = `
       from json to object 
       transform 
         section multiple items(
           set v=val
-        ) follow rawData
+        ) from rawData
     `;
     const transform = compile(query);
 
@@ -180,8 +180,8 @@ describe('Morph Engine (Query-to-Code)', () => {
             set sku=itemSku
             section details(
               set color=hex
-            ) follow info
-          ) follow products
+            ) from info
+          ) from products
         )
     `;
     const transform = compile(query);
