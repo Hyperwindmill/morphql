@@ -34,7 +34,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         ${actions.join('\n        ')}
 
         // 3. Serialize Output
-        return env.serialize('${targetTypeName}', target, { rootGenerated: ${targetParam} });
+        return env.serialize('${targetTypeName}', target ${targetParam !== 'undefined' ? `, { rootGenerated: ${targetParam} }` : ''} );
       }
     `;
 
