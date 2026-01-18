@@ -104,4 +104,26 @@ describe('Functions in expressions', async () => {
     expect(result.result).toBe(12356.15);
     expect(result.resultInt).toBe(12356);
   });
+  it('should uppercase when using uppercase function', async () => {
+    const query = `
+      from object to object
+      transform
+        set result = uppercase(sku)
+    `;
+    const engine = await compile(query);
+    const source = { sku: 'hello' };
+    const result = engine(source);
+    expect(result.result).toBe('HELLO');
+  });
+  it('should lowercase when using lowercase function', async () => {
+    const query = `
+      from object to object
+      transform
+        set result = lowercase(sku)
+    `;
+    const engine = await compile(query);
+    const source = { sku: 'HELLO' };
+    const result = engine(source);
+    expect(result.result).toBe('hello');
+  });
 });

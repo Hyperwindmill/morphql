@@ -51,4 +51,18 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     const [str] = args;
     return `Number(String(${str}).match(/\\d+(\\.\\d+)?/)[0])`;
   },
+  uppercase: (args: string[]) => {
+    if (args.length !== 1) {
+      throw new Error('uppercase() requires exactly 1 argument (string)');
+    }
+    const [str] = args;
+    return `String(${str}).toUpperCase()`;
+  },
+  lowercase: (args: string[]) => {
+    if (args.length !== 1) {
+      throw new Error('lowercase() requires exactly 1 argument (string)');
+    }
+    const [str] = args;
+    return `String(${str}).toLowerCase()`;
+  },
 };
