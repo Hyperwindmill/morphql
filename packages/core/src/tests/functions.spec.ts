@@ -137,4 +137,15 @@ describe('Functions in expressions', async () => {
     const result = engine(source);
     expect(result).toContain(`<result test="hello">hello</result>`);
   });
+  it('should replace when using replace function', async () => {
+    const query = `
+      from object to object
+      transform
+        set result = replace(sku,'hello','world')
+    `;
+    const engine = await compile(query);
+    const source = { sku: 'hello' };
+    const result = engine(source);
+    expect(result.result).toBe('world');
+  });
 });
