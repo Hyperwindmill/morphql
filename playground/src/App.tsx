@@ -2,122 +2,33 @@ import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Play, Code, Database, FileCode, Copy, Check, Info } from 'lucide-react';
 import { compile } from '../../src/index';
+import { EXAMPLES } from './examples';
 
-const DEFAULT_QUERY = `from json 
-to xml("UserProfile") 
-transform 
-  section profile(
-    set customerId = id
-    set fullName = uppercase(name)
-    set status = if(isActive, "Active", "Inactive")
-    
-    if (isActive) (
-       set accountTier = "Premium"
-    ) else (
-       set accountTier = "Standard"
-    )
-
-    section contactInfo(
-      set primaryEmail = email
-      set phone = phone
-    ) from contact
-
-    section multiple addressBook(
-      set type = type
-      set fullAddress = street + ", " + city + " " + zip
-      set isPrimary = if(primary, "Yes", "No")
-    ) from addresses
-
-    section multiple orderHistory(
-      set orderRef = id
-      set value = total
-      set state = status
-      
-      section multiple lineItems(
-        set productCode = sku
-        set quantity = qty
-        set unitPrice = price
-        set totalLine = if(qty > 5, price * qty * 0.9, price * qty)
-      ) from items
-    ) from orders
-    
-    section stats(
-       set visitCount = visits
-       set accountType = if(visits > 40, "Frequent", "Casual")
-       set lastSeen = substring(lastLogin, 0, 10)
-    ) from metrics
-  ) from customer`;
-
-const DEFAULT_DATA = JSON.stringify(
-  {
-    customer: {
-      id: 'CUST-001',
-      name: 'Jane Doe',
-      isActive: true,
-      contact: {
-        email: 'jane.doe@example.com',
-        phone: '+1-555-0199',
-      },
-      addresses: [
-        {
-          type: 'billing',
-          street: '123 Main St',
-          city: 'Metropolis',
-          zip: '10001',
-          primary: true,
-        },
-        {
-          type: 'shipping',
-          street: '456 Ocean Dr',
-          city: 'Gotham',
-          zip: '10200',
-          primary: false,
-        },
-      ],
-      orders: [
-        {
-          id: 'ORD-2023-001',
-          date: '2023-10-15',
-          total: 150.5,
-          status: 'shipped',
-          items: [
-            { sku: 'WIDGET-A', qty: 2, price: 50.0 },
-            { sku: 'GADGET-B', qty: 1, price: 50.5 },
-          ],
-        },
-        {
-          id: 'ORD-2023-009',
-          date: '2023-11-01',
-          total: 200.0,
-          status: 'pending',
-          items: [{ sku: 'LUX-ITEM', qty: 1, price: 200.0 }],
-        },
-      ],
-      metrics: {
-        visits: 42,
-        lastLogin: '2023-11-05T10:00:00Z',
-        tags: ['vip', 'early-adopter'],
-      },
-    },
-  },
-  null,
-  2
-);
 interface Result {
   result: string;
   generatedCode: string;
   error: string | null;
 }
+
 export default function App() {
-  const [query, setQuery] = useState(DEFAULT_QUERY);
-  const [sourceData, setSourceData] = useState(DEFAULT_DATA);
+  const [query, setQuery] = useState(() => sessionStorage.getItem('morph_query') || EXAMPLES[0].query);
+  const [sourceData, setSourceData] = useState(() => sessionStorage.getItem('morph_source') || EXAMPLES[0].source);
   const [copied, setCopied] = useState(false);
   const [result, setResult] = useState<Result>({
     result: '',
     generatedCode: '',
     error: null,
   });
-  const sourceType = sourceData.startsWith('<') ? 'xml' : 'json';
+  const sourceType = sourceData.trim().startsWith('<') ? 'xml' : 'json';
+
+  useEffect(() => {
+    sessionStorage.setItem('morph_query', query);
+  }, [query]);
+
+  useEffect(() => {
+    sessionStorage.setItem('morph_source', sourceData);
+  }, [sourceData]);
+
   useEffect(() => {
     async function run() {
       try {
@@ -138,6 +49,14 @@ export default function App() {
     }
     run();
   }, [query, sourceData]);
+
+  const handleExampleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const example = EXAMPLES.find((ex) => ex.name === e.target.value);
+    if (example) {
+      setQuery(example.query);
+      setSourceData(example.source);
+    }
+  };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(result.result);
@@ -163,6 +82,18 @@ export default function App() {
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <select
+            className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700 text-slate-200 outline-none cursor-pointer"
+            onChange={handleExampleChange}
+            defaultValue=""
+          >
+            <option value="" disabled>Load Example...</option>
+            {EXAMPLES.map((ex) => (
+              <option key={ex.name} value={ex.name}>
+                {ex.name}
+              </option>
+            ))}
+          </select>
           <a
             href="https://github.com"
             className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700"
@@ -314,12 +245,6 @@ export default function App() {
       {/* Footer */}
       <footer className="px-6 py-2 border-t border-slate-800 bg-[#1e293b] flex justify-between items-center">
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-              Engine Status: Online
-            </span>
-          </div>
           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
             Version: 0.1.0-alpha
           </div>
