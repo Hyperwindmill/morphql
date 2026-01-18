@@ -98,4 +98,13 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     }
     return `{_:${value}${attributes}}`;
   },
+  split: (args: string[]) => {
+    if (args.length < 1) {
+      throw new Error('split() requires at least 1 argument (string)');
+    }
+    const [str, separator, limit] = args;
+    const sep = separator !== undefined ? separator : '""';
+    const lim = limit !== undefined ? `, ${limit}` : '';
+    return `String(${str}).split(${sep}${lim})`;
+  },
 };

@@ -148,4 +148,36 @@ describe('Functions in expressions', async () => {
     const result = engine(source);
     expect(result.result).toBe('world');
   });
+  it('should split string using split function', async () => {
+    const query = `
+      from object to object
+      transform
+        define parts = split(sku, "-")
+        set part0 = parts[0]
+        set part1 = parts[1]
+        
+        define splitName = split(fullName, " ")
+        set firstName = splitName[0]
+        set lastName = splitName[1]
+
+        define chars = split(code)
+        set char0 = chars[0]
+
+        define limited = split(sku, "-", 1)
+        set lim0 = limited[0]
+    `;
+    const engine = await compile(query);
+    const source = {
+      sku: 'ABC-123',
+      fullName: 'John Doe',
+      code: 'XY',
+    };
+    const result = engine(source);
+    expect(result.part0).toBe('ABC');
+    expect(result.part1).toBe('123');
+    expect(result.firstName).toBe('John');
+    expect(result.lastName).toBe('Doe');
+    expect(result.char0).toBe('X');
+    expect(result.lim0).toBe('ABC');
+  });
 });

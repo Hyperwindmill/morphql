@@ -85,17 +85,18 @@ Actions are the top-level commands used inside the `transform` block or `section
 
 Functions can be used within expressions to calculate values.
 
-| Function                              | Description                                             | Example                           |
-| :------------------------------------ | :------------------------------------------------------ | :-------------------------------- |
-| `substring(str, start, [length])`     | Extracts a part of a string. Supports negative indices. | `substring(sku, 0, 3)`            |
-| `if(cond, trueVal, falseVal)`         | Ternary-like expression.                                | `if(age >= 18, "adult", "minor")` |
-| `text(val)`                           | Converts a value to a string.                           | `text(123)`                       |
-| `replace(str, search, replace)`       | Replaces occurrences in a string.                       | `replace(name, " ", "_")`         |
-| `number(val)`                         | Converts a value to a number.                           | `number("42")`                    |
-| `extractnumber(str)`                  | Extracts the first numeric sequence from a string.      | `extractnumber("Price: 100USD")`  |
-| `uppercase(str)`                      | Converts string to uppercase.                           | `uppercase("hello")`              |
-| `lowercase(str)`                      | Converts string to lowercase.                           | `lowercase("HELLO")`              |
-| `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.  | `xmlnode(content, "id", 1)`       |
+| Function                              | Description                                               | Example                           |
+| :------------------------------------ | :-------------------------------------------------------- | :-------------------------------- |
+| `substring(str, start, [length])`     | Extracts a part of a string. Supports negative indices.   | `substring(sku, 0, 3)`            |
+| `if(cond, trueVal, falseVal)`         | Ternary-like expression.                                  | `if(age >= 18, "adult", "minor")` |
+| `text(val)`                           | Converts a value to a string.                             | `text(123)`                       |
+| `replace(str, search, replace)`       | Replaces occurrences in a string.                         | `replace(name, " ", "_")`         |
+| `split(str, [sep], [limit])`          | Splits a string into an array. Default separator is `""`. | `split(sku, "-")`                 |
+| `number(val)`                         | Converts a value to a number.                             | `number("42")`                    |
+| `extractnumber(str)`                  | Extracts the first numeric sequence from a string.        | `extractnumber("Price: 100USD")`  |
+| `uppercase(str)`                      | Converts string to uppercase.                             | `uppercase("hello")`              |
+| `lowercase(str)`                      | Converts string to lowercase.                             | `lowercase("HELLO")`              |
+| `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.    | `xmlnode(content, "id", 1)`       |
 
 ### Operators
 

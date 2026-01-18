@@ -66,6 +66,7 @@ A high-performance, isomorphic Query-to-Code engine. It provides a DSL to transf
 ### Functions
 
 - `substring(str, start, [len])`: Slice string.
+- `split(str, [sep], [lim])`: Split string to array.
 - `if(cond, true, false)`: Ternary expression.
 - `text(val)`, `number(val)`: Type casting.
 - `replace(str, search, replace)`: String replace.
