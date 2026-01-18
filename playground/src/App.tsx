@@ -11,8 +11,12 @@ interface Result {
 }
 
 export default function App() {
-  const [query, setQuery] = useState(() => sessionStorage.getItem('morph_query') || EXAMPLES[0].query);
-  const [sourceData, setSourceData] = useState(() => sessionStorage.getItem('morph_source') || EXAMPLES[0].source);
+  const [query, setQuery] = useState(
+    () => sessionStorage.getItem('morph_query') || EXAMPLES[0].query
+  );
+  const [sourceData, setSourceData] = useState(
+    () => sessionStorage.getItem('morph_source') || EXAMPLES[0].source
+  );
   const [copied, setCopied] = useState(false);
   const [result, setResult] = useState<Result>({
     result: '',
@@ -87,7 +91,9 @@ export default function App() {
             onChange={handleExampleChange}
             defaultValue=""
           >
-            <option value="" disabled>Load Example...</option>
+            <option value="" disabled>
+              Load Example...
+            </option>
             {EXAMPLES.map((ex) => (
               <option key={ex.name} value={ex.name}>
                 {ex.name}
@@ -95,7 +101,7 @@ export default function App() {
             ))}
           </select>
           <a
-            href="https://github.com"
+            href="https://github.com/Hyperwindmill/query-morph"
             className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700"
           >
             Documentation
