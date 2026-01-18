@@ -1,8 +1,24 @@
 {
   "name": "@query-morph/playground",
-  "private": true,
   "version": "0.1.0",
+  "description": "Interactive playground for query-morph - Test MQL queries in real-time.",
   "type": "module",
+  "author": "Hyperwindmill",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hyperwindmill/query-morph.git",
+    "directory": "packages/playground"
+  },
+  "bugs": {
+    "url": "https://github.com/Hyperwindmill/query-morph/issues"
+  },
+  "homepage": "https://github.com/Hyperwindmill/query-morph/tree/main/packages/playground#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
