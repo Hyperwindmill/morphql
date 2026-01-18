@@ -20,12 +20,6 @@ export function getAdapter(name: string): DataAdapter {
 }
 
 // Default JSON Adapter
-const xmlBuilder = new XMLBuilder({
-  ignoreAttributes: false,
-  attributeNamePrefix: '$',
-  textNodeName: '_',
-  format: true,
-});
 
 registerAdapter('json', {
   parse: (content) => {
