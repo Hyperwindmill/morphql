@@ -119,7 +119,9 @@ export class MorphParser extends CstParser {
     this.OPTION(() => {
       this.OR([
         { ALT: () => this.CONSUME(t.EqualsEquals, { LABEL: 'ops' }) },
+        { ALT: () => this.CONSUME(t.EqualsEqualsEquals, { LABEL: 'ops' }) },
         { ALT: () => this.CONSUME(t.NotEquals, { LABEL: 'ops' }) },
+        { ALT: () => this.CONSUME(t.NotEqualsEquals, { LABEL: 'ops' }) },
         { ALT: () => this.CONSUME(t.LessThanOrEqual, { LABEL: 'ops' }) },
         { ALT: () => this.CONSUME(t.GreaterThanOrEqual, { LABEL: 'ops' }) },
         { ALT: () => this.CONSUME(t.LessThan, { LABEL: 'ops' }) },

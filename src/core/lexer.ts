@@ -36,7 +36,9 @@ export const Else = createToken({ name: 'Else', pattern: /else/i, longer_alt: Id
 
 // Comparison operators (must come before single-char operators)
 export const EqualsEquals = createToken({ name: 'EqualsEquals', pattern: /==/ });
+export const EqualsEqualsEquals = createToken({ name: 'EqualsEqualsEquals', pattern: /===/ });
 export const NotEquals = createToken({ name: 'NotEquals', pattern: /!=/ });
+export const NotEqualsEquals = createToken({ name: 'NotEqualsEquals', pattern: /!==/ });
 export const LessThanOrEqual = createToken({ name: 'LessThanOrEqual', pattern: /<=/ });
 export const GreaterThanOrEqual = createToken({ name: 'GreaterThanOrEqual', pattern: />=/ });
 export const LessThan = createToken({ name: 'LessThan', pattern: /</ });
@@ -79,7 +81,9 @@ export const allTokens = [
   If,
   Else,
   // Multi-character operators
+  EqualsEqualsEquals,
   EqualsEquals,
+  NotEqualsEquals,
   NotEquals,
   LessThanOrEqual,
   GreaterThanOrEqual,
