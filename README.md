@@ -28,17 +28,7 @@ npm install query-morph
 ```typescript
 import { compile } from 'query-morph';
 
-const query = `
-  from object to json
-  transform
-    set fullName = firstName + " " + lastName
-    set shortSku = substring(sku, 0, 3)
-    set total = (price * amount) - discount
-    section header(
-      set id = orderId
-    )
-`;
-
+// 1. Structural Transformation
 const query = `
   from object to json
   transform
@@ -65,6 +55,12 @@ const source = {
 const result = engine(source);
 console.log(result);
 // Output: JSON string with fullName, shortSku, total, and header object
+
+// 2. Pure Format Conversion (No Transform)
+const convertQuery = `from json to xml`;
+const convertEngine = await compile(convertQuery);
+const xmlResult = convertEngine('{"foo":"bar"}');
+// Output: <root><foo>bar</foo></root>
 ```
 
 ## DSL Snippets

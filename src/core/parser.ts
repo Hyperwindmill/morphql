@@ -12,9 +12,11 @@ export class MorphParser extends CstParser {
     this.SUBRULE(this.typeFormat, { LABEL: 'sourceType' });
     this.CONSUME(t.To);
     this.SUBRULE1(this.typeFormat, { LABEL: 'targetType' });
-    this.CONSUME(t.Transform);
-    this.MANY(() => {
-      this.SUBRULE(this.action);
+    this.OPTION(() => {
+      this.CONSUME(t.Transform);
+      this.MANY(() => {
+        this.SUBRULE(this.action);
+      });
     });
   });
 

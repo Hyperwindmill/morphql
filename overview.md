@@ -50,6 +50,7 @@ A high-performance, isomorphic Query-to-Code engine. It provides a DSL to transf
 - ✅ **Negative Indices**: Functions like `substring` support negative offsets from the end.
 - ✅ **Deep Nesting**: Unlimited recursive `section` directives.
 - ✅ **Full/Selective Cloning**: `clone` or `clone(a, b)`.
+- ✅ **Pure Conversions**: Optional `transform` directive for straight format conversion.
 - ✅ **Tests**: 50+ unit tests across multiple spec files.
 - ✅ **Playground**: A Vite + React + Monaco environment (`npm run playground`).
 
@@ -58,8 +59,7 @@ A high-performance, isomorphic Query-to-Code engine. It provides a DSL to transf
 - **Performance**: Benchmark the `fast-xml-parser` vs alternatives.
 - **Error Reporting**: Better CST-to-Code error mapping.
 - **Schema Validation**: Optional schema enforcement for input/output.
-- **Conditional Actions**: Support for `if` statements to control blocks of actions.
 
 ---
 
-_Updated on 2026-01-17 with Conditional Logic support._
+_Updated on 2026-01-18 with Pure Format Conversion support._
