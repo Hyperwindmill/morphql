@@ -79,8 +79,6 @@ console.log(result);
 
 ```
 
-```
-
 if (isPremium) (
 set discount = amount \* 0.2
 set badge = "VIP"
@@ -89,7 +87,7 @@ set discount = 0
 set badge = "Standard"
 )
 
-````
+```
 
 ### Deleting Properties
 
@@ -112,7 +110,7 @@ Launch the interactive playground to test your queries in real-time:
 
 ```bash
 npm run playground
-````
+```
 
 ### Build & Test
 
