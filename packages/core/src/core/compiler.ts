@@ -89,6 +89,9 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     if (ctx.deleteRule) {
       return this.visit(ctx.deleteRule);
     }
+    if (ctx.defineRule) {
+      return this.visit(ctx.defineRule);
+    }
   }
 
   deleteRule(ctx: any) {
@@ -122,6 +125,12 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     const left = this.visit(ctx.left);
     const right = this.visit(ctx.right);
     return `target.${left} = ${right};`;
+  }
+
+  defineRule(ctx: any) {
+    const left = this.visit(ctx.left);
+    const right = this.visit(ctx.right);
+    return `source.${left} = ${right};`;
   }
 
   expression(ctx: any) {

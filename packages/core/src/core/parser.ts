@@ -47,6 +47,7 @@ export class MorphParser extends CstParser {
       { ALT: () => this.SUBRULE(this.cloneRule) },
       { ALT: () => this.SUBRULE(this.deleteRule) },
       { ALT: () => this.SUBRULE(this.ifAction) },
+      { ALT: () => this.SUBRULE(this.defineRule) },
     ]);
   });
 
@@ -213,6 +214,13 @@ export class MorphParser extends CstParser {
       this.CONSUME(t.From);
       this.SUBRULE1(this.anyIdentifier, { LABEL: 'followPath' });
     });
+  });
+
+  private defineRule = this.RULE('defineRule', () => {
+    this.CONSUME(t.Define);
+    this.SUBRULE(this.anyIdentifier, { LABEL: 'left' });
+    this.CONSUME(t.Equals);
+    this.SUBRULE(this.expression, { LABEL: 'right' });
   });
 }
 
