@@ -108,10 +108,21 @@ This repository uses **npm workspaces** to manage multiple packages:
 query-morph/
 ├── packages/
 │   ├── core/        # @query-morph/core - The main library
-│   └── playground/  # @query-morph/playground - Interactive editor
+│   ├── playground/  # @query-morph/playground - Interactive editor
+│   └── cli/         # @query-morph/cli - Command line interface
 ├── package.json     # Workspace configuration
 └── README.md
 ```
+
+## CLI Usage
+
+You can use `query-morph` directly from the command line to transform files:
+
+```bash
+npx @query-morph/cli --from ./input.json --to ./output.xml -q "from json to xml transform ..."
+```
+
+For more details, see the [CLI README](./packages/cli/README.md).
 
 ## Development
 
@@ -151,6 +162,7 @@ Changes to `@query-morph/core` are automatically picked up by Vite's HMR.
 | ------------------------------------------------ | ------------------------- |
 | [@query-morph/core](./packages/core)             | The transformation engine |
 | [@query-morph/playground](./packages/playground) | Interactive web editor    |
+| [@query-morph/cli](./packages/cli)               | Command line interface    |
 
 ## License
 

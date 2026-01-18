@@ -1,0 +1,33 @@
+{
+  "name": "@query-morph/cli",
+  "version": "0.1.0",
+  "description": "CLI tool for query-morph - transform structural data from the command line.",
+  "type": "module",
+  "bin": {
+    "query-morph": "./bin/query-morph.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --clean",
+    "dev": "tsup src/index.ts --format esm --watch",
+    "lint": "eslint src/**/*.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "query-morph",
+    "cli",
+    "transform",
+    "json",
+    "xml"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@query-morph/core": "*",
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}
