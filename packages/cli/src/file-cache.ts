@@ -1,12 +1,12 @@
-import { MQLCache } from './cache.js';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import { createHash } from 'node:crypto';
+import { MQLCache } from "@query-morph/core";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { createHash } from "node:crypto";
 
 export class MQLFileCache implements MQLCache {
   private cacheDir: string;
 
-  constructor(cacheDir: string = '.compiled') {
+  constructor(cacheDir: string = ".compiled") {
     this.cacheDir = path.resolve(process.cwd(), cacheDir);
   }
 
@@ -16,7 +16,7 @@ export class MQLFileCache implements MQLCache {
       const filePath = path.join(this.cacheDir, `morph_${hash}.js`);
 
       if (fs.existsSync(filePath)) {
-        return fs.promises.readFile(filePath, 'utf8');
+        return fs.promises.readFile(filePath, "utf8");
       }
     } catch (err) {
       // Ignore errors (e.g., file permissions, directory missing)
@@ -40,13 +40,13 @@ ${query}
 
 ${code}`;
 
-      await fs.promises.writeFile(filePath, content, 'utf8');
+      await fs.promises.writeFile(filePath, content, "utf8");
     } catch (err) {
       // Ignore save errors
     }
   }
 
   private getHash(content: string): string {
-    return createHash('sha256').update(content).digest('hex').substring(0, 12);
+    return createHash("sha256").update(content).digest("hex").substring(0, 12);
   }
 }

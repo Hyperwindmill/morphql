@@ -1,5 +1,6 @@
+import { compile } from "@query-morph/core";
+import { MQLFileCache } from "./file-cache.js";
 import { Command } from "commander";
-import { compile, MQLFileCache } from "@query-morph/core";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { existsSync } from "node:fs";

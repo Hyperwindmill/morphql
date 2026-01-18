@@ -3,9 +3,8 @@ import { parser } from './core/parser.js';
 import { compiler } from './core/compiler.js';
 import { getAdapter } from './runtime/adapters.js';
 import { MQLCache } from './runtime/cache.js';
-import { MQLFileCache } from './runtime/file-cache.js';
 
-export { MQLCache, MQLFileCache };
+export { MQLCache };
 import beautify from 'js-beautify';
 
 export interface MorphEngine {
