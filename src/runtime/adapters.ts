@@ -20,6 +20,13 @@ export function getAdapter(name: string): DataAdapter {
 }
 
 // Default JSON Adapter
+const xmlBuilder = new XMLBuilder({
+  ignoreAttributes: false,
+  attributeNamePrefix: '$',
+  textNodeName: '_',
+  format: true,
+});
+
 registerAdapter('json', {
   parse: (content) => {
     if (typeof content !== 'string') return content;
@@ -29,6 +36,13 @@ registerAdapter('json', {
 });
 
 // Default XML Adapter
+const xmlBuilder = new XMLBuilder({
+  ignoreAttributes: false,
+  attributeNamePrefix: '$',
+  textNodeName: '_',
+  format: true,
+});
+
 registerAdapter('xml', {
   parse: (content) => {
     if (typeof content !== 'string') return content;
@@ -40,13 +54,7 @@ registerAdapter('xml', {
   },
   serialize: (data, options) => {
     const rootTag = options?.rootGenerated ?? 'root';
-    const builder = new XMLBuilder({
-      ignoreAttributes: false,
-      attributeNamePrefix: '$',
-      textNodeName: '_',
-      format: true,
-    });
-    return builder.build({ [rootTag]: data });
+    return xmlBuilder.build({ [rootTag]: data });
   },
 });
 
