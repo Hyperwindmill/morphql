@@ -1,6 +1,6 @@
 {
   "name": "@query-morph/playground",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Interactive playground for query-morph - Test MQL queries in real-time.",
   "type": "module",
   "author": "Hyperwindmill",

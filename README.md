@@ -116,10 +116,14 @@ query-morph/
 
 ## CLI Usage
 
-You can use `query-morph` directly from the command line to transform files:
+You can use `query-morph` directly from the command line:
 
 ```bash
-npx @query-morph/cli --from ./input.json --to ./output.xml -q "from json to xml transform ..."
+# Transform a file
+npx @query-morph/cli --from ./data.json --to ./output.xml -q "from json to xml"
+
+# Transform raw input to stdout
+npx @query-morph/cli -i '{"a":1}' -q "from json to xml"
 ```
 
 For more details, see the [CLI README](./packages/cli/README.md).

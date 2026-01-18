@@ -11,21 +11,35 @@ program
   .description(
     "CLI tool for query-morph - transform structural data from the command line.",
   )
-  .version("0.1.0")
-  .requiredOption("-f, --from <path>", "Path to the source file")
-  .requiredOption("-t, --to <path>", "Path to the destination file")
+  .version("0.1.2")
+  .option("-f, --from <path>", "Path to the source file")
+  .option("-i, --input <string>", "Raw source content as string")
+  .option(
+    "-t, --to <path>",
+    "Path to the destination file (if omitted, result is printed to stdout)",
+  )
   .requiredOption("-q, --query <string>", "MQL query string")
   .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
   .action(async (options) => {
     try {
-      const { from, to, query, cacheDir } = options;
+      const { from, input, to, query, cacheDir } = options;
 
-      // 1. Read source file
-      if (!existsSync(from)) {
-        console.error(`Error: Source file not found: ${from}`);
+      // 1. Resolve source content
+      let sourceContent: string;
+      if (input) {
+        sourceContent = input;
+      } else if (from) {
+        if (!existsSync(from)) {
+          console.error(`Error: Source file not found: ${from}`);
+          process.exit(1);
+        }
+        sourceContent = await fs.readFile(from, "utf8");
+      } else {
+        console.error(
+          "Error: Either --from <path> or --input <string> must be provided.",
+        );
         process.exit(1);
       }
-      const sourceContent = await fs.readFile(from, "utf8");
 
       // 2. Initialize Cache
       const cache = new MQLFileCache(cacheDir);
@@ -36,14 +50,18 @@ program
       // 4. Transform
       const result = await engine(sourceContent);
 
-      // 5. Write to destination
-      const destDir = path.dirname(to);
-      if (!existsSync(destDir)) {
-        await fs.mkdir(destDir, { recursive: true });
+      // 5. Handle output
+      if (to) {
+        const destDir = path.dirname(to);
+        if (!existsSync(destDir)) {
+          await fs.mkdir(destDir, { recursive: true });
+        }
+        await fs.writeFile(to, result, "utf8");
+        // Only log success if writing to file, otherwise we'd pollute stdout
+        console.error(`Successfully transformed to ${to}`);
+      } else {
+        console.log(result);
       }
-      await fs.writeFile(to, result, "utf8");
-
-      console.log(`Successfully transformed ${from} to ${to}`);
     } catch (error: any) {
       console.error(`Error during transformation: ${error.message}`);
       process.exit(1);

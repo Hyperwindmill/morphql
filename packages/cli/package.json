@@ -1,6 +1,6 @@
 {
   "name": "@query-morph/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CLI tool for query-morph - transform structural data from the command line.",
   "type": "module",
   "bin": {

@@ -1,6 +1,6 @@
 {
   "name": "query-morph-monorepo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Query-Morph Monorepo - A high-performance Query-to-Code engine",
   "workspaces": [
