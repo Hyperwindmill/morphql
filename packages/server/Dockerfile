@@ -24,15 +24,16 @@ FROM node:24-alpine AS production
 
 WORKDIR /app
 
-# Copy root package files and production dependencies
+# Copy root package files
 COPY package*.json ./
 COPY packages/server/package.json ./packages/server/
 COPY packages/core/package.json ./packages/core/
 
-# Install production dependencies only from root for correct workspace resolution
+# Install production dependencies
+# This creates the linked structure in node_modules
 RUN npm ci --omit=dev -w server
 
-# Copy built artifacts
+# Copy built artifacts from builder
 COPY --from=builder /app/packages/server/dist ./packages/server/dist
 COPY --from=builder /app/packages/core/dist ./packages/core/dist
 
@@ -45,5 +46,5 @@ USER nestjs
 ENV NODE_ENV=production
 EXPOSE 3000
 
-# Start from server dist
-CMD ["node", "packages/server/dist/main.js"]
+# Run using the workspace script to ensure correct CWD and resolution
+CMD ["npm", "run", "start:prod", "-w", "server"]
