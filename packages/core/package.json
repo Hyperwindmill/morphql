@@ -11,6 +11,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./cache-services": {
+      "types": "./dist/cache-services/index.d.ts",
+      "import": "./dist/cache-services/index.js",
+      "require": "./dist/cache-services/index.cjs"
     }
   },
   "files": [
@@ -19,8 +24,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "dev": "tsup src/index.ts --watch --format cjs,esm",
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts src/cache-services/index.ts --watch --format cjs,esm",
+    "build": "tsup src/index.ts src/cache-services/index.ts --format cjs,esm --dts --clean",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src/**/*.ts",
@@ -65,5 +70,13 @@
     "chevrotain": "^11.1.0",
     "fast-xml-parser": "^5.3.3",
     "js-beautify": "^1.15.4"
+  },
+  "peerDependencies": {
+    "ioredis": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ioredis": {
+      "optional": true
+    }
   }
 }
