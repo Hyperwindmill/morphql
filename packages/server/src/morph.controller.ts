@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Controller,
   Post,
+  Get,
   Body,
   UseGuards,
   BadRequestException,
   InternalServerErrorException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { ApiKeyGuard } from './auth.guard.js';
 import { compile } from '@query-morph/core';
@@ -98,6 +102,7 @@ export class MorphController {
         executionTime: end - start,
       };
     } catch (e: unknown) {
+      console.error('Execute Error:', e);
       const message =
         e instanceof Error ? e.message : 'Unknown compilation error';
       throw new InternalServerErrorException(message);
@@ -123,5 +128,26 @@ export class MorphController {
         e instanceof Error ? e.message : 'Unknown compilation error';
       throw new InternalServerErrorException(message);
     }
+  }
+
+  @Get('health')
+  @ApiOperation({ summary: 'Liveness check' })
+  @ApiResponse({ status: 200, description: 'Service is alive' })
+  health() {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  }
+
+  @Get('health/ready')
+  @ApiOperation({ summary: 'Readiness check' })
+  @ApiResponse({ status: 200, description: 'Service is ready' })
+  @ApiResponse({ status: 503, description: 'Service is not ready' })
+  async ready() {
+    if (cache && redisHost) {
+      const isRedisOk = await cache.ping();
+      if (!isRedisOk) {
+        throw new ServiceUnavailableException('Redis cache is unavailable');
+      }
+    }
+    return { status: 'ready', timestamp: new Date().toISOString() };
   }
 }

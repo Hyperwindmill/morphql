@@ -80,6 +80,18 @@ export class RedisCache implements MQLCache {
   }
 
   /**
+   * Check if the Redis connection is alive.
+   */
+  async ping(): Promise<boolean> {
+    try {
+      const res = await this.client.ping();
+      return res === 'PONG';
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Close the Redis connection.
    */
   async disconnect(): Promise<void> {
