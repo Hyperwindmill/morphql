@@ -122,7 +122,8 @@ query-morph/
 ├── packages/
 │   ├── core/        # @query-morph/core - The main library
 │   ├── playground/  # @query-morph/playground - Interactive editor
-│   └── cli/         # @query-morph/cli - Command line interface
+│   ├── cli/         # @query-morph/cli - Command line interface
+│   └── server/      # NestJS REST API server
 ├── package.json     # Workspace configuration
 └── README.md
 ```
@@ -141,6 +142,39 @@ npx @query-morph/cli -i '{"a":1}' -q "from json to xml"
 
 For more details, see the [CLI README](./packages/cli/README.md).
 
+## Server API
+
+Deploy `query-morph` as a stateless REST API for server-side transformations:
+
+```bash
+# Quick start with Docker Compose
+cd packages/server
+docker compose up -d
+```
+
+The server exposes HTTP endpoints for executing transformations:
+
+```bash
+# Execute a transformation
+curl -X POST http://localhost:3000/v1/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "from json to json transform set firstName = split(fullName, \" \")[0]",
+    "data": { "fullName": "John Doe" }
+  }'
+
+# Response: {"success":true,"result":{"firstName":"John"},"executionTime":2.5}
+```
+
+**Features**:
+
+- 🚀 Stateless & horizontally scalable
+- ⚡ Redis caching for compiled queries
+- 🔐 Optional API key authentication
+- 📊 Swagger docs at `/api`
+
+For more details, see the [Server README](./packages/server/README.md).
+
 ## Development
 
 ### Prerequisites
@@ -157,6 +191,7 @@ npm run build  # Builds @query-morph/core
 | `npm run build`      | Build the core library          |
 | `npm run test`       | Run tests for core library      |
 | `npm run playground` | Start the playground dev server |
+| `npm run server`     | Start the API server (dev mode) |
 | `npm run dev`        | Watch mode for core library     |
 | `npm run build:all`  | Build all packages              |
 | `npm run test:all`   | Run tests for all packages      |
@@ -180,6 +215,7 @@ Changes to `@query-morph/core` are automatically picked up by Vite's HMR.
 | [@query-morph/core](./packages/core)             | The transformation engine |
 | [@query-morph/playground](./packages/playground) | Interactive web editor    |
 | [@query-morph/cli](./packages/cli)               | Command line interface    |
+| [server](./packages/server)                      | NestJS REST API server    |
 
 ## License
 

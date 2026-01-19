@@ -88,17 +88,50 @@ A high-performance, isomorphic Query-to-Code engine. It provides a DSL to transf
 ```
 query-morph/
 ├── packages/
-│   ├── core/        # @query-morph/core - Main library
-│   └── playground/  # @query-morph/playground - Interactive editor
+│   ├── core/        # @query-morph/core - Main transformation library
+│   ├── playground/  # @query-morph/playground - Interactive web editor
+│   ├── cli/         # @query-morph/cli - Command-line interface
+│   └── server/      # NestJS REST API server
 └── package.json     # npm workspaces root
 ```
+
+### Server Package (`packages/server/`)
+
+A production-ready NestJS microservice that exposes the query-morph engine via REST API.
+
+**Key Features**:
+
+- 🚀 **Stateless Architecture**: Horizontally scalable for high-throughput scenarios
+- ⚡ **Redis Caching**: Optional compiled query caching for performance
+- 🐳 **Docker Ready**: Multi-stage Dockerfile with production optimizations
+- 🔐 **API Key Auth**: Optional `X-API-KEY` header authentication
+- 📊 **Swagger Docs**: Auto-generated API documentation at `/api`
+- 🏥 **Health Checks**: Kubernetes/Docker-ready liveness and readiness endpoints
+
+**API Endpoints**:
+
+- `POST /v1/execute` - Compile and execute a transformation
+- `POST /v1/compile` - Get generated JavaScript code
+- `GET /v1/health` - Liveness check
+- `GET /v1/health/ready` - Readiness check (includes Redis ping)
+
+**Deployment**:
+
+```bash
+# Quick start with Docker Compose
+cd packages/server
+docker compose up -d
+```
+
+See [`packages/server/README.md`](./packages/server/README.md) for detailed documentation.
 
 ## Next Development Steps
 
 - **Performance**: Benchmark the `fast-xml-parser` vs alternatives.
 - **Error Reporting**: Better CST-to-Code error mapping.
 - **Schema Validation**: Optional schema enforcement for input/output.
+- **Server Scaling**: Kubernetes deployment examples and load testing.
 
 ---
 
-_Updated on 2026-01-18 with Monorepo structure._
+_Updated on 2026-01-20 with Server package documentation._
