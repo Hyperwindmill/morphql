@@ -13,7 +13,8 @@
     "test": "npm run test -w @query-morph/core",
     "test:all": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
-    "playground": "npm run dev -w @query-morph/playground"
+    "playground": "npm run dev -w @query-morph/playground",
+    "server": "npm run start:dev -w server"
   },
   "keywords": [],
   "author": "",
