@@ -1,14 +1,17 @@
 {
   "name": "mql-vscode",
   "displayName": "MQL (Morph Query Language)",
-  "description": "Syntax highlighting and language support for Morph Query Language",
+  "description": "Syntax highlighting, diagnostics, hover documentation, and execution for Morph Query Language",
   "version": "0.1.0",
   "publisher": "query-morph",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.75.0"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Formatters",
+    "Other"
   ],
   "keywords": [
     "mql",
@@ -16,8 +19,14 @@
     "query",
     "transformation",
     "json",
-    "xml"
+    "xml",
+    "data transformation",
+    "query language"
   ],
+  "galleryBanner": {
+    "color": "#1e293b",
+    "theme": "dark"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "languages": [
