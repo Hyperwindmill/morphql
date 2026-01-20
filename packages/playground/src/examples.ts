@@ -1,3 +1,4 @@
+import { mql } from "@query-morph/core";
 
 export interface Example {
   name: string;
@@ -8,7 +9,7 @@ export interface Example {
 export const EXAMPLES: Example[] = [
   {
     name: 'Customer Profile (JSON to XML)',
-    query: `from json
+    query: mql`from json
 to xml("UserProfile")
 transform
   section profile(
@@ -110,7 +111,7 @@ transform
   },
   {
     name: 'Simple Math (JSON to JSON)',
-    query: `from json
+    query: mql`from json
 to json
 transform
   set sum = a + b
@@ -129,7 +130,7 @@ transform
   },
   {
     name: 'Books (XML to JSON)',
-    query: `from xml
+    query: mql`from xml
 to json
 transform
   section library(
