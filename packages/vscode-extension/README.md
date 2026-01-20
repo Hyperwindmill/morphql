@@ -37,6 +37,47 @@ Run `.mql` files directly in VSCode with two convenient commands:
 - Copy and paste the content from `examples/sample-input.json`
 - See the transformation result!
 
+3. **Execute Selection** (For embedded queries in JS/TS)
+   - Select MQL query text in a `.ts` or `.js` file
+   - Right-click and choose "MQL: Execute Selection"
+   - Enter input data and see results
+
+**Example:**
+
+- Open `examples/test-selection.ts`
+- Select a query (the text between backticks)
+- Right-click → "MQL: Execute Selection"
+- Enter test data and see the result!
+
+### 💬 Comments Support
+
+MQL now supports both line and block comments:
+
+```mql
+// Line comment
+from json to xml
+transform
+  /* Block comment
+     spanning multiple lines */
+  set name = firstName  // inline comment
+```
+
+### 🔍 Real-time Diagnostics
+
+Errors are highlighted as you type with a 500ms debounce:
+
+- Syntax errors show up immediately
+- Error messages appear on hover
+- Works only in `.mql` files
+
+### 📖 Hover Documentation
+
+Hover over keywords and functions to see documentation:
+
+- **Keywords**: `from`, `to`, `transform`, `set`, `section`, etc.
+- **Functions**: `substring`, `split`, `replace`, `if`, etc.
+- Includes parameter descriptions and examples
+
 ### 📝 Two Ways to Use MQL in JS/TS
 
 #### 1. Tagged Templates (Recommended)

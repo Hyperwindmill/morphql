@@ -100,7 +100,50 @@ function activate(context) {
         }
         await executeQuery(query, clipboardData);
     });
-    context.subscriptions.push(executeWithInput, executeFromClipboard, outputChannel);
+    // Register command: Execute selection (for embedded queries)
+    const executeSelection = vscode.commands.registerCommand("mql.executeSelection", async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showErrorMessage("No active editor");
+            return;
+        }
+        // Get selected text or try to extract from tagged template
+        let query = "";
+        const selection = editor.selection;
+        if (!selection.isEmpty) {
+            // User has selected text
+            query = editor.document.getText(selection);
+        }
+        else {
+            vscode.window.showErrorMessage("Please select the MQL query text to execute");
+            return;
+        }
+        // Ask for input data
+        const inputData = await vscode.window.showInputBox({
+            prompt: "Enter input data (JSON, XML, or leave empty for empty object)",
+            placeHolder: '{"firstName": "John", "lastName": "Doe"}',
+            ignoreFocusOut: true,
+            validateInput: (value) => {
+                if (!value)
+                    return null;
+                try {
+                    JSON.parse(value);
+                    return null;
+                }
+                catch {
+                    if (value.trim().startsWith("<")) {
+                        return null;
+                    }
+                    return "Invalid input: must be valid JSON or XML";
+                }
+            },
+        });
+        if (inputData === undefined) {
+            return;
+        }
+        await executeQuery(query, inputData || "{}");
+    });
+    context.subscriptions.push(executeWithInput, executeFromClipboard, executeSelection, outputChannel);
 }
 async function executeQuery(query, inputData) {
     try {

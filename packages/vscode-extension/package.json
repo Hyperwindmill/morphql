@@ -73,6 +73,10 @@
       {
         "command": "mql.executeFromClipboard",
         "title": "MQL: Execute with Clipboard Data"
+      },
+      {
+        "command": "mql.executeSelection",
+        "title": "MQL: Execute Selection"
       }
     ],
     "menus": {
@@ -93,6 +97,11 @@
           "when": "resourceLangId == mql",
           "command": "mql.executeFromClipboard",
           "group": "mql@2"
+        },
+        {
+          "when": "editorHasSelection && (resourceLangId == typescript || resourceLangId == javascript || resourceLangId == typescriptreact || resourceLangId == javascriptreact)",
+          "command": "mql.executeSelection",
+          "group": "mql@3"
         }
       ]
     }
