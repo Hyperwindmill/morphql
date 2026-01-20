@@ -6,6 +6,19 @@ export const WhiteSpace = createToken({
   group: Lexer.SKIPPED,
 });
 
+// Comments
+export const LineComment = createToken({
+  name: 'LineComment',
+  pattern: /\/\/[^\n\r]*/,
+  group: Lexer.SKIPPED,
+});
+
+export const BlockComment = createToken({
+  name: 'BlockComment',
+  pattern: /\/\*[\s\S]*?\*\//,
+  group: Lexer.SKIPPED,
+});
+
 export const Identifier = createToken({
   name: 'Identifier',
   pattern: /[a-zA-Z_$][a-zA-Z0-9_.\[\]]*/,
@@ -71,6 +84,8 @@ export const NumericLiteral = createToken({
 
 export const allTokens = [
   WhiteSpace,
+  LineComment,
+  BlockComment,
   From,
   To,
   Transform,

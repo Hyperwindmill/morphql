@@ -37,11 +37,19 @@ exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
 const core_1 = require("@query-morph/core");
+const diagnosticProvider_1 = require("./diagnosticProvider");
+const hoverProvider_1 = require("./hoverProvider");
 let outputChannel;
 function activate(context) {
     console.log("MQL extension is now active");
     // Create output channel for results
     outputChannel = vscode.window.createOutputChannel("MQL Output");
+    // Register diagnostic provider
+    const diagnosticProvider = new diagnosticProvider_1.MQLDiagnosticProvider();
+    diagnosticProvider.activate(context);
+    // Register hover provider
+    const hoverProvider = new hoverProvider_1.MQLHoverProvider();
+    context.subscriptions.push(vscode.languages.registerHoverProvider("mql", hoverProvider));
     // Register command: Execute with input data
     const executeWithInput = vscode.commands.registerCommand("mql.executeWithInput", async () => {
         const editor = vscode.window.activeTextEditor;

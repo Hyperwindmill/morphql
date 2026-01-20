@@ -36,5 +36,3 @@ transform
   set totalWithTax = total * (1 + taxRate)
   
   // Array index access
-  set firstItem = items[0]
-  set secondItemName = items[1].name

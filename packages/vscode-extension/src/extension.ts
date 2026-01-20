@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
 import { compile } from "@query-morph/core";
+import { MQLDiagnosticProvider } from "./diagnosticProvider";
+import { MQLHoverProvider } from "./hoverProvider";
 
 let outputChannel: vscode.OutputChannel;
 
@@ -8,6 +10,16 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Create output channel for results
   outputChannel = vscode.window.createOutputChannel("MQL Output");
+
+  // Register diagnostic provider
+  const diagnosticProvider = new MQLDiagnosticProvider();
+  diagnosticProvider.activate(context);
+
+  // Register hover provider
+  const hoverProvider = new MQLHoverProvider();
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider("mql", hoverProvider),
+  );
 
   // Register command: Execute with input data
   const executeWithInput = vscode.commands.registerCommand(

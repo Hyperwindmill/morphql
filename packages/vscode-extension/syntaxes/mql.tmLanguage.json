@@ -3,6 +3,7 @@
   "name": "MQL",
   "scopeName": "source.mql",
   "patterns": [
+    { "include": "#comments" },
     { "include": "#keywords" },
     { "include": "#functions" },
     { "include": "#operators" },
@@ -20,6 +21,19 @@
         {
           "name": "keyword.other.mql",
           "match": "\\b(set|section|multiple|clone|delete|define)\\b"
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.mql",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.mql",
+          "begin": "/\\*",
+          "end": "\\*/"
         }
       ]
     },

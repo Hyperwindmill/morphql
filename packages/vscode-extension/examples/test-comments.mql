@@ -1,0 +1,18 @@
+// Test file for comment support
+from json to json
+transform
+  // This is a line comment
+  set name = firstName + " " + lastName
+  
+  /* This is a block comment
+     that spans multiple lines */
+  set age = number(ageString)
+  
+  set email = lowercase(email) // inline comment
+  
+  /* Nested section with comments */
+  section address(
+    // Set street address
+    set street = addressLine1
+    set city = cityName /* inline block comment */
+  )
