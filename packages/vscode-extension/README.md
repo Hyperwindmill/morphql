@@ -217,7 +217,7 @@ transform
 
 ## Contributing
 
-See the main [query-morph repository](https://github.com/yourusername/query-morph) for contribution guidelines.
+See the main [query-morph repository](../../README.md) for contribution guidelines.
 
 ## License
 
