@@ -11,8 +11,8 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { ApiKeyGuard } from './auth.guard.js';
-import { compile } from '@query-morph/core';
-import { RedisCache } from '@query-morph/core/cache-services';
+import { compile } from '@morphql/core';
+import { RedisCache } from '@morphql/core/cache-services';
 import {
   ApiTags,
   ApiOperation,

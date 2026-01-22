@@ -1,4 +1,4 @@
-import { MQLCache } from "@query-morph/core";
+import { MQLCache } from "@morphql/core";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { createHash } from "node:crypto";

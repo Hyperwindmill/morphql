@@ -25,7 +25,7 @@ COPY packages/server/src ./packages/server/src
 COPY packages/server/test ./packages/server/test
 
 # Build core first (server depends on it)
-RUN npm run build --workspace=@query-morph/core
+RUN npm run build --workspace=@morphql/core
 
 # Build server
 RUN npm run build --workspace=server

@@ -1,8 +1,8 @@
-import { generateMonacoLanguageConfig } from "@query-morph/language-definitions";
+import { generateMonacoLanguageConfig } from "@morphql/language-definitions";
 
 /**
  * MorphQL Language configuration for Monaco Editor
- * Auto-generated from @query-morph/language-definitions
+ * Auto-generated from @morphql/language-definitions
  */
 export const morphqlLanguageConfig = generateMonacoLanguageConfig();
 

@@ -1,4 +1,4 @@
-# @query-morph/core
+# @morphql/core
 
 A high-performance, isomorphic Query-to-Code engine. It provides the **Morph Query Language** (MQL) to transform structural data (JSON, XML, or Objects) by compiling queries into specialized, pure JavaScript functions.
 
@@ -14,13 +14,13 @@ A high-performance, isomorphic Query-to-Code engine. It provides the **Morph Que
 ## Installation
 
 ```bash
-npm install @query-morph/core
+npm install @morphql/core
 ```
 
 ## Usage
 
 ```typescript
-import { compile } from '@query-morph/core';
+import { compile } from '@morphql/core';
 
 const query = `
   from json to xml

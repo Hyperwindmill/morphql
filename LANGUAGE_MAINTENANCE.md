@@ -1,8 +1,8 @@
 # MorphQL Language Maintenance Guide (Updated)
 
-## 🎯 Single Source of Truth: @query-morph/language-definitions
+## 🎯 Single Source of Truth: @morphql/language-definitions
 
-**NEW:** All language definitions are now centralized in the `@query-morph/language-definitions` package!
+**NEW:** All language definitions are now centralized in the `@morphql/language-definitions` package!
 
 ### Package Location
 
@@ -162,12 +162,12 @@ Add keyword → Update lexer → Rebuild language-definitions → Done!
 ### Consumers
 
 1. **VSCode Extension**
-   - Imports `@query-morph/language-definitions`
+   - Imports `@morphql/language-definitions`
    - Uses `generateHoverDocs()` for hover provider
    - Uses keyword/function lists for TextMate grammar generation
 
 2. **Monaco Playground**
-   - Imports `@query-morph/language-definitions`
+   - Imports `@morphql/language-definitions`
    - Uses `generateMonacoLanguageConfig()` for syntax highlighting
    - Uses hover docs for Monaco hover provider
 
@@ -241,4 +241,4 @@ The language-definitions package is the **single source of truth**!
 
 **Last Updated:** 2026-01-21  
 **Maintainer:** AI Assistant  
-**Package:** @query-morph/language-definitions v0.1.0
+**Package:** @morphql/language-definitions v0.1.0

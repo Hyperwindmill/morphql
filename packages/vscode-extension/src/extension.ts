@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { compile } from "@query-morph/core";
+import { compile } from "@morphql/core";
 import { MQLDiagnosticProvider } from "./diagnosticProvider";
 import { MQLHoverProvider } from "./hoverProvider";
 

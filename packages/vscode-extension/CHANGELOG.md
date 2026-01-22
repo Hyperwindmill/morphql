@@ -41,7 +41,7 @@ All notable changes to the MQL VSCode extension will be documented in this file.
 - Supports MQL keywords: `from`, `to`, `transform`, `set`, `section`, `multiple`, `clone`, `delete`, `define`, `if`, `else`
 - Supports built-in functions: `substring`, `split`, `replace`, `text`, `number`, `uppercase`, `lowercase`, `extractnumber`, `xmlnode`, `if`
 - Supports operators: arithmetic (`+`, `-`, `*`, `/`), comparison (`==`, `===`, `!=`, `!==`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`, `!`)
-- Centralized language definitions using `@query-morph/language-definitions` package
+- Centralized language definitions using `@morphql/language-definitions` package
 
 ### Documentation
 

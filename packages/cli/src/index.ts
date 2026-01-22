@@ -1,4 +1,4 @@
-import { compile } from "@query-morph/core";
+import { compile } from "@morphql/core";
 import { MQLFileCache } from "./file-cache.js";
 import { Command } from "commander";
 import * as fs from "node:fs/promises";

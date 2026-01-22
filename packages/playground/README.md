@@ -1,4 +1,4 @@
-# @query-morph/playground
+# @morphql/playground
 
 An interactive, real-time web editor to test and visualize **Morph Query Language** (MQL) transformations.
 
@@ -17,7 +17,7 @@ To start the playground locally during development:
 npm run playground
 ```
 
-Wait for changes to propagate from `@query-morph/core` automatically.
+Wait for changes to propagate from `@morphql/core` automatically.
 
 ## Structure
 

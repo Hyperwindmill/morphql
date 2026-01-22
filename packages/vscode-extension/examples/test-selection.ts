@@ -1,4 +1,4 @@
-import { compile, mql } from "@query-morph/core";
+import { compile, mql } from "@morphql/core";
 
 // Example 1: Tagged template - select the query inside the backticks
 const transformQuery = mql`

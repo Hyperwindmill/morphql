@@ -20,8 +20,8 @@ export interface RedisCacheOptions {
  *
  * @example
  * ```typescript
- * import { compile } from '@query-morph/core';
- * import { RedisCache } from '@query-morph/core/cache-services';
+ * import { compile } from '@morphql/core';
+ * import { RedisCache } from '@morphql/core/cache-services';
  *
  * const cache = new RedisCache({ host: 'localhost', port: 6379 });
  * const engine = await compile(query, { cache });

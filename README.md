@@ -21,13 +21,13 @@ Packages are NOT published to npm yet.
 ## Installation
 
 ```bash
-npm install @query-morph/core
+npm install @morphql/core
 ```
 
 ## Usage Example
 
 ```typescript
-import { compile, morphQL } from "@query-morph/core";
+import { compile, morphQL } from "@morphql/core";
 
 // 1. Structural Transformation with Tagged Template
 const query = morphQL`
@@ -154,9 +154,9 @@ This repository uses **npm workspaces** to manage multiple packages:
 ```
 query-morph/
 ├── packages/
-│   ├── core/        # @query-morph/core - The main library
-│   ├── playground/  # @query-morph/playground - Interactive editor
-│   ├── cli/         # @query-morph/cli - Command line interface
+│   ├── core/        # @morphql/core - The main library
+│   ├── playground/  # @morphql/playground - Interactive editor
+│   ├── cli/         # @morphql/cli - Command line interface
 │   └── server/      # NestJS REST API server
 ├── package.json     # Workspace configuration
 └── README.md
@@ -168,10 +168,10 @@ You can use `query-morph` directly from the command line:
 
 ```bash
 # Transform a file
-npx @query-morph/cli --from ./data.json --to ./output.xml -q "from json to xml"
+npx @morphql/cli --from ./data.json --to ./output.xml -q "from json to xml"
 
 # Transform raw input to stdout
-npx @query-morph/cli -i '{"a":1}' -q "from json to xml"
+npx @morphql/cli -i '{"a":1}' -q "from json to xml"
 ```
 
 For more details, see the [CLI README](./packages/cli/README.md).
@@ -215,7 +215,7 @@ For more details, see the [Server README](./packages/server/README.md).
 
 ```bash
 npm install    # Installs all workspace dependencies
-npm run build  # Builds @query-morph/core
+npm run build  # Builds @morphql/core
 ```
 
 ### Available Scripts (from root)
@@ -240,15 +240,15 @@ npm run dev
 npm run playground
 ```
 
-Changes to `@query-morph/core` are automatically picked up by Vite's HMR.
+Changes to `@morphql/core` are automatically picked up by Vite's HMR.
 
 ## Packages
 
 | Package                                          | Description               |
 | ------------------------------------------------ | ------------------------- |
-| [@query-morph/core](./packages/core)             | The transformation engine |
-| [@query-morph/playground](./packages/playground) | Interactive web editor    |
-| [@query-morph/cli](./packages/cli)               | Command line interface    |
+| [@morphql/core](./packages/core)             | The transformation engine |
+| [@morphql/playground](./packages/playground) | Interactive web editor    |
+| [@morphql/cli](./packages/cli)               | Command line interface    |
 | [server](./packages/server)                      | NestJS REST API server    |
 
 ## License

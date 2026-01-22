@@ -1,4 +1,4 @@
-# @query-morph/language-definitions
+# @morphql/language-definitions
 
 **Single source of truth** for MQL language definitions across all platforms.
 
@@ -13,7 +13,7 @@ This package centralizes all MQL language definitions (keywords, functions, oper
 ## Installation
 
 ```bash
-npm install @query-morph/language-definitions
+npm install @morphql/language-definitions
 ```
 
 ## Usage
@@ -28,7 +28,7 @@ import {
   getKeywordNames,
   getFunctionNames,
   getOperatorSymbols,
-} from "@query-morph/language-definitions";
+} from "@morphql/language-definitions";
 
 // Get all keyword names
 const keywords = getKeywordNames();
@@ -39,7 +39,7 @@ const functions = getFunctionNames();
 // ['substring', 'split', 'replace', ...]
 
 // Get documentation for a keyword
-import { getKeywordDoc } from "@query-morph/language-definitions";
+import { getKeywordDoc } from "@morphql/language-definitions";
 const doc = getKeywordDoc("set");
 // { signature: 'set <target> = <expression>', description: '...', ... }
 ```
@@ -47,7 +47,7 @@ const doc = getKeywordDoc("set");
 ### Generate VSCode TextMate Grammar
 
 ```typescript
-import { generateTextMateKeywordsPattern } from "@query-morph/language-definitions";
+import { generateTextMateKeywordsPattern } from "@morphql/language-definitions";
 
 const keywordsPattern = generateTextMateKeywordsPattern();
 // Use in mql.tmLanguage.json
@@ -56,7 +56,7 @@ const keywordsPattern = generateTextMateKeywordsPattern();
 ### Generate Monaco Language Config
 
 ```typescript
-import { generateMonacoLanguageConfig } from "@query-morph/language-definitions";
+import { generateMonacoLanguageConfig } from "@morphql/language-definitions";
 
 const monacoConfig = generateMonacoLanguageConfig();
 monaco.languages.register({ id: "mql" });
@@ -66,7 +66,7 @@ monaco.languages.setMonarchTokensProvider("mql", monacoConfig);
 ### Generate Hover Documentation
 
 ```typescript
-import { generateHoverDocs } from "@query-morph/language-definitions";
+import { generateHoverDocs } from "@morphql/language-definitions";
 
 const { keywordDocs, functionDocs } = generateHoverDocs();
 // Use in VSCode HoverProvider or Monaco HoverProvider
@@ -84,7 +84,7 @@ Edit the appropriate file:
 
 ### 2. Update the Lexer
 
-Update `@query-morph/core/src/core/lexer.ts` with the new token.
+Update `@morphql/core/src/core/lexer.ts` with the new token.
 
 ### 3. Rebuild
 
@@ -136,7 +136,7 @@ export const KEYWORDS: KeywordDef[] = [
   },
 ];
 
-// 2. Update lexer in @query-morph/core
+// 2. Update lexer in @morphql/core
 // 3. Rebuild this package: npm run build
 // 4. VSCode and Monaco will pick it up automatically!
 ```

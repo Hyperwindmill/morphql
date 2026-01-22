@@ -1,5 +1,5 @@
 {
-  "name": "@query-morph/language-definitions",
+  "name": "@morphql/language-definitions",
   "version": "0.1.0",
   "description": "Shared language definitions for MQL across VSCode, Monaco, and documentation",
   "type": "module",

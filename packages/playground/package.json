@@ -1,5 +1,5 @@
 {
-  "name": "@query-morph/playground",
+  "name": "@morphql/playground",
   "version": "0.1.3",
   "description": "Interactive playground for query-morph - Test MQL queries in real-time.",
   "type": "module",
@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
-    "@query-morph/core": "*",
-    "@query-morph/language-definitions": "*",
+    "@morphql/core": "*",
+    "@morphql/language-definitions": "*",
     "@tailwindcss/postcss": "^4.1.18",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",

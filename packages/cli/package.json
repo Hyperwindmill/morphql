@@ -1,5 +1,5 @@
 {
-  "name": "@query-morph/cli",
+  "name": "@morphql/cli",
   "version": "0.1.3",
   "description": "CLI tool for query-morph - transform structural data from the command line.",
   "type": "module",
@@ -37,7 +37,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@query-morph/core": "*",
+    "@morphql/core": "*",
     "commander": "^13.1.0"
   },
   "devDependencies": {

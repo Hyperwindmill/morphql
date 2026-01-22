@@ -5,7 +5,7 @@ import { OperatorDef } from "./types";
  *
  * When adding a new operator:
  * 1. Add it here
- * 2. Update the lexer in @query-morph/core (MIND THE ORDER!)
+ * 2. Update the lexer in @morphql/core (MIND THE ORDER!)
  * 3. Run build to regenerate VSCode/Monaco configs
  */
 export const OPERATORS: OperatorDef[] = [

@@ -1,4 +1,4 @@
-import { morphQL } from "@query-morph/core";
+import { morphQL } from "@morphql/core";
 
 export interface Example {
   name: string;

@@ -5,7 +5,7 @@ import { KeywordDef } from "./types";
  *
  * When adding a new keyword:
  * 1. Add it here
- * 2. Update the lexer in @query-morph/core
+ * 2. Update the lexer in @morphql/core
  * 3. Run build to regenerate VSCode/Monaco configs
  */
 export const KEYWORDS: KeywordDef[] = [

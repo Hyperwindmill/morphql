@@ -1,4 +1,4 @@
-import { compile, morphQL } from "@query-morph/core";
+import { compile, morphQL } from "@morphql/core";
 
 // Example 1: Using tagged template (recommended)
 const transformQuery = morphQL`

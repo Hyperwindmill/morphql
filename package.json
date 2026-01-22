@@ -1,5 +1,5 @@
 {
-  "name": "query-morph-monorepo",
+  "name": "morphql-monorepo",
   "version": "0.1.3",
   "private": true,
   "description": "Query-Morph Monorepo - A high-performance Query-to-Code engine",
@@ -7,13 +7,13 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w @query-morph/core",
+    "build": "npm run build -w @morphql/core",
     "build:all": "npm run build --workspaces --if-present",
-    "dev": "npm run dev -w @query-morph/core",
-    "test": "npm run test -w @query-morph/core",
+    "dev": "npm run dev -w @morphql/core",
+    "test": "npm run test -w @morphql/core",
     "test:all": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
-    "playground": "npm run dev -w @query-morph/playground",
+    "playground": "npm run dev -w @morphql/playground",
     "server": "npm run start:dev -w server"
   },
   "keywords": [],

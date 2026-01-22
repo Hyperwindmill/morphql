@@ -1,11 +1,11 @@
-# @query-morph/cli
+# @morphql/cli
 
 CLI tool for **query-morph** - structural data transformation powered by the Morph Query Language (MQL).
 
 ## Installation
 
 ```bash
-npm install -g @query-morph/cli
+npm install -g @morphql/cli
 ```
 
 ## Usage

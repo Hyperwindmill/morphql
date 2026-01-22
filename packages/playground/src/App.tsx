@@ -9,7 +9,7 @@ import {
   Check,
   Info,
 } from "lucide-react";
-import { compile } from "@query-morph/core";
+import { compile } from "@morphql/core";
 import { EXAMPLES } from "./examples";
 
 interface Result {

@@ -123,8 +123,8 @@
     "package": "vsce package --no-dependencies"
   },
   "dependencies": {
-    "@query-morph/core": "file:../core",
-    "@query-morph/language-definitions": "file:../language-definitions"
+    "@morphql/core": "file:../core",
+    "@morphql/language-definitions": "file:../language-definitions"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.0",

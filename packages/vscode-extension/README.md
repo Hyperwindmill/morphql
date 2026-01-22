@@ -83,7 +83,7 @@ Hover over keywords and functions to see documentation:
 #### 1. Tagged Templates (Recommended)
 
 ```typescript
-import { compile, mql } from "@query-morph/core";
+import { compile, mql } from "@morphql/core";
 
 const query = mql`
   from json to xml
@@ -102,7 +102,7 @@ const result = engine(sourceData);
 #### 2. Comment Hints
 
 ```typescript
-import { compile } from "@query-morph/core";
+import { compile } from "@morphql/core";
 
 // @mql
 const query = `
@@ -177,7 +177,7 @@ Search for "MQL" in the VSCode Extensions marketplace.
 ## Requirements
 
 - VSCode 1.75.0 or higher
-- For using MQL: `@query-morph/core` package
+- For using MQL: `@morphql/core` package
 
 ## Example Files
 

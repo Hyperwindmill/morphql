@@ -1,5 +1,5 @@
 {
-  "name": "@query-morph/core",
+  "name": "@morphql/core",
   "version": "0.1.3",
   "description": "A high-performance, isomorphic Query-to-Code engine for structural data transformations.",
   "type": "module",

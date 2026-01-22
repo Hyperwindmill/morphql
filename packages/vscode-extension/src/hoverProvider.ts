@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import {
   generateHoverDocs,
   type DocEntry,
-} from "@query-morph/language-definitions";
+} from "@morphql/language-definitions";
 
 const { keywordDocs, functionDocs } = generateHoverDocs();
 

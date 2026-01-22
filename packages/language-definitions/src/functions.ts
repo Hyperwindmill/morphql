@@ -5,7 +5,7 @@ import { FunctionDef } from "./types";
  *
  * When adding a new function:
  * 1. Add it here
- * 2. Implement in @query-morph/core/src/functions.ts
+ * 2. Implement in @morphql/core/src/functions.ts
  * 3. Run build to regenerate VSCode/Monaco configs
  */
 export const FUNCTIONS: FunctionDef[] = [
