@@ -1,4 +1,4 @@
-![MorphQL](./qm_square.png)
+![MorphQL](./morphql.png)
 
 A high-performance, isomorphic Query-to-Code engine. It provides the **Morph Query Language** (MorphQL) to transform structural data (JSON, XML, or Objects) by compiling queries into specialized, pure JavaScript functions.
 

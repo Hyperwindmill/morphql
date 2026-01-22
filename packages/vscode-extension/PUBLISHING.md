@@ -42,10 +42,10 @@ npm install -g @vscode/vsce
 
 ### 1. Add Icon
 
-Copy your `qm_square.png` to the extension folder:
+Copy your `morphql.png` to the extension folder:
 
 ```bash
-cp /path/to/qm_square.png packages/vscode-extension/icon.png
+cp /path/to/morphql.png packages/vscode-extension/icon.png
 ```
 
 Update `package.json`:
