@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Escaped Identifiers', async () => {
   it('should support reserved keywords as identifiers using backticks', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set \`multiple\` = 1
@@ -19,7 +19,7 @@ describe('Escaped Identifiers', async () => {
   });
 
   it('should support special characters in identifiers using backticks', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set \`my-field\` = 10
@@ -35,7 +35,7 @@ describe('Escaped Identifiers', async () => {
   });
 
   it('should support quoted identifiers in define', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define \`var-one\` = 100
@@ -48,7 +48,7 @@ describe('Escaped Identifiers', async () => {
   });
 
   it('should support quoted identifiers in source access', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = \`source-field\` * 2
@@ -60,7 +60,7 @@ describe('Escaped Identifiers', async () => {
   });
 
   it('should support quoted identifiers in delete', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         clone
@@ -74,7 +74,7 @@ describe('Escaped Identifiers', async () => {
   });
 
   it('should support quoted identifiers in sections', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         section multiple \`my-section\`(

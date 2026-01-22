@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Define action', async () => {
   it('should define a simple variable', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define fullName = firstName + " " + lastName
@@ -16,7 +16,7 @@ describe('Define action', async () => {
   });
 
   it('should define a variable with arithmetic', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define total = price * quantity
@@ -29,7 +29,7 @@ describe('Define action', async () => {
   });
 
   it('should define a variable with function call', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define shortSku = substring(sku, 0, 3)
@@ -42,7 +42,7 @@ describe('Define action', async () => {
   });
 
   it('should define a variable with conditional expression', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define discountRate = if(isPremium, 0.2, 0.1)
@@ -59,7 +59,7 @@ describe('Define action', async () => {
   });
 
   it('should support multiple define statements', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define firstName = "John"
@@ -74,7 +74,7 @@ describe('Define action', async () => {
   });
 
   it('should combine define with clone action', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define category = "Electronics"
@@ -91,7 +91,7 @@ describe('Define action', async () => {
   });
 
   it('should combine define with delete action', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define temp = password + "-backup"
@@ -108,7 +108,7 @@ describe('Define action', async () => {
   });
 
   it('should use defined variables in if action blocks', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define threshold = 100
@@ -129,7 +129,7 @@ describe('Define action', async () => {
   });
 
   it('should define variables using other defined variables', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define a = 10
@@ -145,7 +145,7 @@ describe('Define action', async () => {
   });
 
   it('should support complex expressions in define', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define isEligible = age >= 18 && hasLicense == true

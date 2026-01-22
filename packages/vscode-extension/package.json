@@ -1,6 +1,6 @@
 {
-  "name": "mql-vscode",
-  "displayName": "MQL (Morph Query Language)",
+  "name": "morphql-vscode",
+  "displayName": "MorphQL",
   "description": "Syntax highlighting, diagnostics, hover documentation, and execution for Morph Query Language",
   "version": "0.1.3",
   "publisher": "query-morph",
@@ -31,26 +31,26 @@
   "contributes": {
     "languages": [
       {
-        "id": "mql",
+        "id": "morphql",
         "aliases": [
-          "MQL",
+          "MorphQL",
           "Morph Query Language"
         ],
         "extensions": [
-          ".mql"
+          ".morphql"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "mql",
-        "scopeName": "source.mql",
-        "path": "./syntaxes/mql.tmLanguage.json"
+        "language": "morphql",
+        "scopeName": "source.morphql",
+        "path": "./syntaxes/morphql.tmLanguage.json"
       },
       {
-        "scopeName": "mql.injection",
-        "path": "./syntaxes/mql.injection.json",
+        "scopeName": "morphql.injection",
+        "path": "./syntaxes/morphql.injection.json",
         "injectTo": [
           "source.js",
           "source.ts",
@@ -61,56 +61,56 @@
     ],
     "snippets": [
       {
-        "language": "mql",
-        "path": "./snippets/mql.json"
+        "language": "morphql",
+        "path": "./snippets/morphql.json"
       },
       {
         "language": "typescript",
-        "path": "./snippets/mql-embedded.json"
+        "path": "./snippets/morphql-embedded.json"
       },
       {
         "language": "javascript",
-        "path": "./snippets/mql-embedded.json"
+        "path": "./snippets/morphql-embedded.json"
       }
     ],
     "commands": [
       {
-        "command": "mql.executeWithInput",
-        "title": "MQL: Execute with Input Data",
+        "command": "morphql.executeWithInput",
+        "title": "MorphQL: Execute with Input Data",
         "icon": "$(play)"
       },
       {
-        "command": "mql.executeFromClipboard",
-        "title": "MQL: Execute with Clipboard Data"
+        "command": "morphql.executeFromClipboard",
+        "title": "MorphQL: Execute with Clipboard Data"
       },
       {
-        "command": "mql.executeSelection",
-        "title": "MQL: Execute Selection"
+        "command": "morphql.executeSelection",
+        "title": "MorphQL: Execute Selection"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "when": "resourceLangId == mql",
-          "command": "mql.executeWithInput",
+          "when": "resourceLangId == morphql",
+          "command": "morphql.executeWithInput",
           "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "when": "resourceLangId == mql",
-          "command": "mql.executeWithInput",
-          "group": "mql@1"
+          "when": "resourceLangId == morphql",
+          "command": "morphql.executeWithInput",
+          "group": "morphql@1"
         },
         {
-          "when": "resourceLangId == mql",
-          "command": "mql.executeFromClipboard",
-          "group": "mql@2"
+          "when": "resourceLangId == morphql",
+          "command": "morphql.executeFromClipboard",
+          "group": "morphql@2"
         },
         {
           "when": "editorHasSelection && (resourceLangId == typescript || resourceLangId == javascript || resourceLangId == typescriptreact || resourceLangId == javascriptreact)",
-          "command": "mql.executeSelection",
-          "group": "mql@3"
+          "command": "morphql.executeSelection",
+          "group": "morphql@3"
         }
       ]
     }

@@ -2,9 +2,9 @@ import { MorphLexer } from './core/lexer.js';
 import { parser } from './core/parser.js';
 import { compiler } from './core/compiler.js';
 import { getAdapter } from './runtime/adapters.js';
-import { MQLCache } from './runtime/cache.js';
+import { MorphQLCache } from './runtime/cache.js';
 
-export { MQLCache };
+export { MorphQLCache };
 import beautify from 'js-beautify';
 
 export interface MorphEngine {
@@ -13,7 +13,7 @@ export interface MorphEngine {
 }
 
 export interface CompileOptions {
-  cache?: MQLCache;
+  cache?: MorphQLCache;
 }
 
 export async function compile(queryString: string, options?: CompileOptions): Promise<MorphEngine> {
@@ -80,12 +80,12 @@ function createEngine(code: string): MorphEngine {
 }
 
 /**
- * Tagged template helper for MQL queries.
+ * Tagged template helper for MorphQL queries.
  * Enables syntax highlighting in VSCode and provides a cleaner API.
  *
  * @example
  * ```typescript
- * const query = mql`
+ * const query = morphQL`
  *   from json to xml
  *   transform
  *     set fullName = firstName + " " + lastName
@@ -93,7 +93,7 @@ function createEngine(code: string): MorphEngine {
  * const engine = await compile(query);
  * ```
  */
-export function mql(strings: TemplateStringsArray, ...values: any[]): string {
+export function morphQL(strings: TemplateStringsArray, ...values: any[]): string {
   return strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');
 }
 

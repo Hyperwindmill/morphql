@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Clone Repro', async () => {
   it('should not modify the source object when using clone', async () => {
-    const query = mql`from object to object transform set extra="val" clone`;
+    const query = morphQL`from object to object transform set extra="val" clone`;
     const transform = await compile(query);
     const source = { a: 1 };
     const sourceClone = JSON.parse(JSON.stringify(source));
@@ -18,7 +18,7 @@ describe('Clone Repro', async () => {
 
   it('should verify behavior of set then clone', async () => {
     // If we set 'b' then clone, and source already had 'a'
-    const query = mql`from object to object transform set b=a clone`;
+    const query = morphQL`from object to object transform set b=a clone`;
     const transform = await compile(query);
     const source = { a: 1 };
 
@@ -30,7 +30,7 @@ describe('Clone Repro', async () => {
   });
 
   it('should verify behavior of clone then set', async () => {
-    const query = mql`from object to object transform clone set b=a`;
+    const query = morphQL`from object to object transform clone set b=a`;
     const transform = await compile(query);
     const source = { a: 1 };
 

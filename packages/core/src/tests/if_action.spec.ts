@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Conditional Action Blocks (Statements)', async () => {
   it('should support if block (no else)', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set base = 100
@@ -19,7 +19,7 @@ describe('Conditional Action Blocks (Statements)', async () => {
   });
 
   it('should support if-else block', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         if (age >= 18) (
@@ -42,7 +42,7 @@ describe('Conditional Action Blocks (Statements)', async () => {
   });
 
   it('should support nested if blocks', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         if (active) (
@@ -73,7 +73,7 @@ describe('Conditional Action Blocks (Statements)', async () => {
   });
 
   it('should work inside sections', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         section meta (
@@ -90,7 +90,7 @@ describe('Conditional Action Blocks (Statements)', async () => {
   });
 
   it('should work with complex conditions', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         if (val > 10 && val < 20) (

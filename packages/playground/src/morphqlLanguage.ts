@@ -1,23 +1,23 @@
 import { generateMonacoLanguageConfig } from "@query-morph/language-definitions";
 
 /**
- * MQL Language configuration for Monaco Editor
+ * MorphQL Language configuration for Monaco Editor
  * Auto-generated from @query-morph/language-definitions
  */
-export const mqlLanguageConfig = generateMonacoLanguageConfig();
+export const morphqlLanguageConfig = generateMonacoLanguageConfig();
 
 /**
- * Register MQL language with Monaco Editor
+ * Register MorphQL language with Monaco Editor
  */
-export function registerMQLLanguage(monaco: any) {
+export function registerMorphQLLanguage(monaco: any) {
   // Register the language
-  monaco.languages.register({ id: "mql" });
+  monaco.languages.register({ id: "morphql" });
 
   // Set the tokens provider
-  monaco.languages.setMonarchTokensProvider("mql", mqlLanguageConfig);
+  monaco.languages.setMonarchTokensProvider("morphql", morphqlLanguageConfig);
 
   // Set language configuration
-  monaco.languages.setLanguageConfiguration("mql", {
+  monaco.languages.setLanguageConfiguration("morphql", {
     comments: {
       lineComment: "//",
       blockComment: ["/*", "*/"],

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('If Function and Conditional Logic', async () => {
   it('should support basic if-then-else values', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set status = if(age >= 18, "adult", "minor")
@@ -16,7 +16,7 @@ describe('If Function and Conditional Logic', async () => {
 
   describe('Comparison Operators', async () => {
     it('should support less than (<)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set result = if(val < 10, "small", "large")
@@ -28,7 +28,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should support greater than (>)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set result = if(val > 10, "large", "small")
@@ -40,7 +40,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should support less than or equal (<=)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set result = if(val <= 10, "small", "large")
@@ -52,7 +52,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should support greater than or equal (>=)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set result = if(val >= 10, "large", "small")
@@ -64,7 +64,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should support equality (==)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set result = if(type == "admin", "full", "limited")
@@ -75,7 +75,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should support inequality (!=)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set result = if(type != "admin", "limited", "full")
@@ -88,7 +88,7 @@ describe('If Function and Conditional Logic', async () => {
 
   describe('Logical Operators', async () => {
     it('should support logical AND (&&)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set discount = if(member && amount > 100, 20, 0)
@@ -100,7 +100,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should support logical OR (||)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set access = if(admin || moderator, "granted", "denied")
@@ -112,7 +112,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should support logical NOT (!)', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set result = if(!valid, "invalid", "valid")
@@ -125,7 +125,7 @@ describe('If Function and Conditional Logic', async () => {
 
   describe('Complex Scenarios', async () => {
     it('should support nested if expressions', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set grade = if(score >= 90, "A", if(score >= 80, "B", "C"))
@@ -137,7 +137,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should work with arithmetic expressions in branches', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set total = if(hasTax, price * 1.2, price)
@@ -148,7 +148,7 @@ describe('If Function and Conditional Logic', async () => {
     });
 
     it('should work with complex conditions', async () => {
-      const query = mql`
+      const query = morphQL`
         from object to object
         transform
           set status = if((age > 60 || disabled) && income < 20000, "qualified", "ineligible")

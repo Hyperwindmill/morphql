@@ -1,4 +1,4 @@
-export interface MQLCache {
+export interface MorphQLCache {
   /**
    * Retrieve cached code for a given query.
    * @param query The source query string.

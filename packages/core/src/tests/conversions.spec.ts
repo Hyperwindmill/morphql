@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Morph Engine - Type Conversions', async () => {
   it('should convert JS object to JSON string', async () => {
-    const query = mql`from object to json transform set foo=a`;
+    const query = morphQL`from object to json transform set foo=a`;
     const transform = await compile(query);
     const result = transform({ a: 'bar' });
 
@@ -12,7 +12,7 @@ describe('Morph Engine - Type Conversions', async () => {
   });
 
   it('should convert JSON string to object and back to JSON', async () => {
-    const query = mql`from json to json transform set value=val`;
+    const query = morphQL`from json to json transform set value=val`;
     const transform = await compile(query);
     const input = JSON.stringify({ val: 123 });
     const result = transform(input);
@@ -21,7 +21,7 @@ describe('Morph Engine - Type Conversions', async () => {
   });
 
   it('should convert object to XML with default root tag', async () => {
-    const query = mql`from object to xml transform set userName=name`;
+    const query = morphQL`from object to xml transform set userName=name`;
     const transform = await compile(query);
     const result = transform({ name: 'Alice' }) as string;
 
@@ -30,7 +30,7 @@ describe('Morph Engine - Type Conversions', async () => {
   });
 
   it('should convert object to XML with custom root tag', async () => {
-    const query = mql`from object to xml("UserResponse") transform set userId=id`;
+    const query = morphQL`from object to xml("UserResponse") transform set userId=id`;
     const transform = await compile(query);
     const result = transform({ id: 1 }) as string;
 
@@ -39,7 +39,7 @@ describe('Morph Engine - Type Conversions', async () => {
   });
 
   it('should handle complex object to XML conversion', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to xml("Order") 
       transform 
         set orderId=id
@@ -62,7 +62,7 @@ describe('Morph Engine - Type Conversions', async () => {
   });
 
   it('should convert XML string to JSON', async () => {
-    const query = mql`from xml to json transform clone`;
+    const query = morphQL`from xml to json transform clone`;
     const transform = await compile(query);
     const input = `
       <root>

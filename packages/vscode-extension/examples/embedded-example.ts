@@ -1,7 +1,7 @@
-import { compile, mql } from "@query-morph/core";
+import { compile, morphQL } from "@query-morph/core";
 
 // Example 1: Using tagged template (recommended)
-const transformQuery = mql`
+const transformQuery = morphQL`
   from json to xml
   transform
     set fullName = firstName + " " + lastName
@@ -14,7 +14,7 @@ const transformQuery = mql`
 `;
 
 // Example 2: Using comment hint
-// @mql
+// @morphQL
 const convertQuery = `
   from xml to json
   transform
@@ -23,7 +23,7 @@ const convertQuery = `
 `;
 
 // Example 3: Complex transformation with all features
-const complexQuery = mql`
+const complexQuery = morphQL`
   from json to json
   transform
     // Define reusable values

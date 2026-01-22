@@ -21,9 +21,9 @@ import type {
 } from "./types";
 
 /**
- * Complete MQL language definition
+ * Complete MorphQL language definition
  */
-export const MQL_LANGUAGE: LanguageDefinition = {
+export const MORPHQL_LANGUAGE: LanguageDefinition = {
   keywords: KEYWORDS,
   functions: FUNCTIONS,
   operators: OPERATORS,
@@ -75,11 +75,11 @@ export function generateTextMateKeywordsPattern(): string {
     {
       patterns: [
         {
-          name: "keyword.control.mql",
+          name: "keyword.control.morphql",
           match: `\\b(${controlKeywords.join("|")})\\b`,
         },
         {
-          name: "keyword.other.mql",
+          name: "keyword.other.morphql",
           match: `\\b(${actionKeywords.join("|")})\\b`,
         },
       ],
@@ -99,7 +99,7 @@ export function generateTextMateFunctionsPattern(): string {
     {
       patterns: [
         {
-          name: "entity.name.function.mql",
+          name: "entity.name.function.morphql",
           match: `\\b(${functionNames.join("|")})(?=\\s*\\()`,
         },
       ],

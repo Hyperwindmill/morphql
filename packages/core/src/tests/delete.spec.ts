@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Delete Action', async () => {
   it('should delete a property from the target', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set a = 1
@@ -17,7 +17,7 @@ describe('Delete Action', async () => {
   });
 
   it('should delete a property after clone', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         clone
@@ -31,7 +31,7 @@ describe('Delete Action', async () => {
   });
 
   it('should work inside sections', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         section meta (
@@ -47,7 +47,7 @@ describe('Delete Action', async () => {
   });
 
   it('should work inside if blocks', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set sensitive = "secret"

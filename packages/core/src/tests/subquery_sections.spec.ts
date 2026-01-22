@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Subquery Sections', () => {
   it('should parse XML to object in a section', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object
       transform
         section metadata(
@@ -30,7 +30,7 @@ describe('Subquery Sections', () => {
   });
 
   it('should serialize object to XML in a section', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object
       transform
         section xmlData(
@@ -56,7 +56,7 @@ describe('Subquery Sections', () => {
   });
 
   it('should serialize object to XML with custom root name', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object
       transform
         section xmlOutput(
@@ -83,7 +83,7 @@ describe('Subquery Sections', () => {
   });
 
   it('should handle pure format conversion (no transform)', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object
       transform
         section xmlOutput(
@@ -106,7 +106,7 @@ describe('Subquery Sections', () => {
   });
 
   it('should handle multiple (array) subquery sections', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object
       transform
         section multiple items(
@@ -133,7 +133,7 @@ describe('Subquery Sections', () => {
   });
 
   it('should parse JSON string to object in a section', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object
       transform
         section userData(
@@ -160,7 +160,7 @@ describe('Subquery Sections', () => {
   });
 
   it('should work with nested sections', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object
       transform
         section order(
@@ -194,7 +194,7 @@ describe('Subquery Sections', () => {
   });
 
   it('should serialize object to JSON string in a section', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object
       transform
         section jsonOutput(

@@ -1,4 +1,4 @@
-import type { MQLCache } from '../runtime/cache.js';
+import type { MorphQLCache } from '../runtime/cache.js';
 
 /**
  * Configuration options for the Redis cache.
@@ -15,7 +15,7 @@ export interface RedisCacheOptions {
 }
 
 /**
- * Redis-backed implementation of MQLCache.
+ * Redis-backed implementation of MorphQLCache.
  * Requires `ioredis` as a peer dependency.
  *
  * @example
@@ -27,7 +27,7 @@ export interface RedisCacheOptions {
  * const engine = await compile(query, { cache });
  * ```
  */
-export class RedisCache implements MQLCache {
+export class RedisCache implements MorphQLCache {
   private client: any;
   private prefix: string;
   private ttl?: number;

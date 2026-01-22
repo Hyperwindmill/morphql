@@ -1,6 +1,6 @@
 ![Query Morph](./qm_square.png)
 
-A high-performance, isomorphic Query-to-Code engine. It provides the **Morph Query Language** (MQL) to transform structural data (JSON, XML, or Objects) by compiling queries into specialized, pure JavaScript functions.
+A high-performance, isomorphic Query-to-Code engine. It provides the **Morph Query Language** (MorphQL) to transform structural data (JSON, XML, or Objects) by compiling queries into specialized, pure JavaScript functions.
 
 ## Current status
 
@@ -27,10 +27,10 @@ npm install @query-morph/core
 ## Usage Example
 
 ```typescript
-import { compile, mql } from "@query-morph/core";
+import { compile, morphQL } from "@query-morph/core";
 
 // 1. Structural Transformation with Tagged Template
-const query = mql`
+const query = morphQL`
   from object to json
   transform
     set fullName = firstName + " " + lastName
@@ -58,13 +58,13 @@ console.log(result);
 // Output: JSON string with fullName, shortSku, total, and header object
 
 // 2. Pure Format Conversion (No Transform)
-const convertQuery = mql`from json to xml`;
+const convertQuery = morphQL`from json to xml`;
 const convertEngine = await compile(convertQuery);
 const xmlResult = convertEngine('{"foo":"bar"}');
 // Output: <root><foo>bar</foo></root>
 
 // 3. Subquery Sections (Format Conversion in Sections)
-const subqueryEngine = mql`
+const subqueryEngine = morphQL`
   from json to object
   transform
     set orderId = id
@@ -79,11 +79,11 @@ const subqueryResult = await compile(subqueryEngine);
 // Parses XML field and transforms it within the section
 ```
 
-> **💡 Tip**: Use the `mql` tagged template for better syntax highlighting in VSCode! Install the [MQL VSCode extension](./packages/vscode-extension) for the best development experience.
+> **💡 Tip**: Use the `morphQL` tagged template for better syntax highlighting in VSCode! Install the [MorphQL VSCode extension](./packages/vscode-extension) for the best development experience.
 
-## MQL Reference
+## MorphQL Reference
 
-Morph Query Language (MQL) is a declarative DSL for structural data transformation.
+Morph Query Language (MorphQL) is a declarative DSL for structural data transformation.
 
 ### Actions (Statements)
 
@@ -104,7 +104,7 @@ Actions are the top-level commands used inside the `transform` block or `section
 
 Use backticks (`` `fieldname` ``) to use reserved keywords or special characters (dashes, spaces, etc.) as identifiers:
 
-```mql
+```morphQL
 transform
   set `multiple` = true
   set `order-id` = root.`external-id`
@@ -134,7 +134,7 @@ Functions can be used within expressions to calculate values.
 
 ### Operators
 
-MQL supports standard operators for expressions:
+MorphQL supports standard operators for expressions:
 
 - **Arithmetic**: `+`, `-`, `*`, `/`
 - **Comparison**: `==`, `===`, `!=`, `!==`, `<`, `>`, `<=`, `>=`

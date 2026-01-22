@@ -1,43 +1,43 @@
 {
   "Basic Transformation": {
-    "prefix": "mql-transform",
+    "prefix": "morphql-transform",
     "body": [
       "from ${1|json,xml,object|} to ${2|json,xml,object|}",
       "transform",
       "  set ${3:field} = ${4:value}",
       "  $0"
     ],
-    "description": "Basic MQL transformation template"
+    "description": "Basic MorphQL transformation template"
   },
   "Section": {
-    "prefix": "mql-section",
+    "prefix": "morphql-section",
     "body": [
       "section ${1:name}(",
       "  ${2:set field = value}",
       ") ${3:from path}",
       "$0"
     ],
-    "description": "MQL section block"
+    "description": "MorphQL section block"
   },
   "Section Multiple": {
-    "prefix": "mql-section-multiple",
+    "prefix": "morphql-section-multiple",
     "body": [
       "section multiple ${1:items}(",
       "  ${2:set field = value}",
       ") from ${3:sourcePath}",
       "$0"
     ],
-    "description": "MQL section with multiple items (array mapping)"
+    "description": "MorphQL section with multiple items (array mapping)"
   },
   "If Expression": {
-    "prefix": "mql-if-expr",
+    "prefix": "morphql-if-expr",
     "body": [
       "if(${1:condition}, ${2:trueValue}, ${3:falseValue})"
     ],
-    "description": "MQL if expression (ternary)"
+    "description": "MorphQL if expression (ternary)"
   },
   "If Statement": {
-    "prefix": "mql-if-stmt",
+    "prefix": "morphql-if-stmt",
     "body": [
       "if (${1:condition}) (",
       "  ${2:set field = value}",
@@ -46,17 +46,17 @@
       ")",
       "$0"
     ],
-    "description": "MQL if/else statement block"
+    "description": "MorphQL if/else statement block"
   },
   "Clone": {
-    "prefix": "mql-clone",
+    "prefix": "morphql-clone",
     "body": [
       "clone(${1:field1, field2})"
     ],
     "description": "Clone fields from source"
   },
   "Define": {
-    "prefix": "mql-define",
+    "prefix": "morphql-define",
     "body": [
       "define ${1:alias} = ${2:expression}",
       "$0"
@@ -64,14 +64,14 @@
     "description": "Define a local variable"
   },
   "Substring": {
-    "prefix": "mql-substring",
+    "prefix": "morphql-substring",
     "body": [
       "substring(${1:string}, ${2:start}, ${3:length})"
     ],
     "description": "Extract substring"
   },
   "Split": {
-    "prefix": "mql-split",
+    "prefix": "morphql-split",
     "body": [
       "split(${1:string}, ${2:separator})"
     ],

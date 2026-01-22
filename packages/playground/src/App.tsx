@@ -136,13 +136,13 @@ export default function App() {
             <div className="flex-1 overflow-hidden pt-2">
               <Editor
                 theme="vs-dark"
-                defaultLanguage="mql"
+                defaultLanguage="morphql"
                 value={query}
                 onChange={(v) => setQuery(v || "")}
                 beforeMount={(monaco) => {
                   // Register MQL language
-                  import("./mqlLanguage").then(({ registerMQLLanguage }) => {
-                    registerMQLLanguage(monaco);
+                  import("./morphqlLanguage").then(({ registerMorphQLLanguage }) => {
+                    registerMorphQLLanguage(monaco);
                   });
                 }}
                 options={{

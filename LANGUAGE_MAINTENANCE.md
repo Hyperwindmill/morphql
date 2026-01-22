@@ -1,4 +1,4 @@
-# MQL Language Maintenance Guide (Updated)
+# MorphQL Language Maintenance Guide (Updated)
 
 ## 🎯 Single Source of Truth: @query-morph/language-definitions
 

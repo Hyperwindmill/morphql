@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Optional Transform Directive', async () => {
   it('should clone object when transform is omitted (Object -> Object)', async () => {
-    const query = mql`from object to object`;
+    const query = morphQL`from object to object`;
     const transform = await compile(query);
     const source = { foo: 'bar', num: 123 };
     const result = transform(source);
@@ -14,7 +14,7 @@ describe('Optional Transform Directive', async () => {
   });
 
   it('should clone format when transform is omitted (JSON -> Object)', async () => {
-    const query = mql`from json to object`;
+    const query = morphQL`from json to object`;
     const transform = await compile(query);
     const input = JSON.stringify({ a: 1, b: 2 });
     const result = transform(input);
@@ -23,7 +23,7 @@ describe('Optional Transform Directive', async () => {
   });
 
   it('should clone format when transform is omitted (Object -> JSON)', async () => {
-    const query = mql`from object to json`;
+    const query = morphQL`from object to json`;
     const transform = await compile(query);
     const result = transform({ foo: 'bar' });
 
@@ -31,7 +31,7 @@ describe('Optional Transform Directive', async () => {
   });
 
   it('should clone format when transform is omitted (JSON -> XML)', async () => {
-    const query = mql`from json to xml`;
+    const query = morphQL`from json to xml`;
     const transform = await compile(query);
     const input = JSON.stringify({ root: { foo: 'bar' } });
     const result = transform(input) as string;

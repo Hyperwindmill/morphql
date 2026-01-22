@@ -1,15 +1,15 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "scopeName": "mql.injection",
+  "scopeName": "morphql.injection",
   "injectionSelector": "L:source.ts -comment -string, L:source.js -comment -string, L:source.tsx -comment -string, L:source.jsx -comment -string",
   "patterns": [
     {
-      "comment": "MQL in tagged template strings with mql tag",
-      "name": "meta.embedded.block.mql",
-      "begin": "(mql)\\s*(`)",
+      "comment": "MorphQL in tagged template strings with morphql tag",
+      "name": "meta.embedded.block.morphql",
+      "begin": "(morphql)\\s*(`)",
       "beginCaptures": {
         "1": {
-          "name": "entity.name.function.tagged-template.mql"
+          "name": "entity.name.function.tagged-template.morphql"
         },
         "2": {
           "name": "punctuation.definition.string.template.begin.ts"
@@ -23,14 +23,14 @@
       },
       "patterns": [
         {
-          "include": "source.mql"
+          "include": "source.morphql"
         }
       ]
     },
     {
-      "comment": "MQL in template strings after // @mql comment",
-      "name": "meta.embedded.block.mql",
-      "begin": "(?<=//\\s*@mql\\s*\\n)\\s*(?:const|let|var)\\s+\\w+\\s*=\\s*(`)",
+      "comment": "MorphQL in template strings after // @morphql comment",
+      "name": "meta.embedded.block.morphql",
+      "begin": "(?<=//\\s*@morphql\\s*\\n)\\s*(?:const|let|var)\\s+\\w+\\s*=\\s*(`)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.string.template.begin.ts"
@@ -44,7 +44,7 @@
       },
       "patterns": [
         {
-          "include": "source.mql"
+          "include": "source.morphql"
         }
       ]
     }

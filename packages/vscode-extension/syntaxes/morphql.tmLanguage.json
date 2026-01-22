@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "MQL",
-  "scopeName": "source.mql",
+  "name": "MorphQL",
+  "scopeName": "source.morphql",
   "patterns": [
     { "include": "#comments" },
     { "include": "#keywords" },
@@ -16,11 +16,11 @@
     "keywords": {
       "patterns": [
         {
-          "name": "keyword.control.mql",
+          "name": "keyword.control.morphql",
           "match": "\\b(from|to|transform|if|else)\\b"
         },
         {
-          "name": "keyword.other.mql",
+          "name": "keyword.other.morphql",
           "match": "\\b(set|section|multiple|clone|delete|define)\\b"
         }
       ]
@@ -28,11 +28,11 @@
     "comments": {
       "patterns": [
         {
-          "name": "comment.line.double-slash.mql",
+          "name": "comment.line.double-slash.morphql",
           "match": "//.*$"
         },
         {
-          "name": "comment.block.mql",
+          "name": "comment.block.morphql",
           "begin": "/\\*",
           "end": "\\*/"
         }
@@ -41,7 +41,7 @@
     "functions": {
       "patterns": [
         {
-          "name": "entity.name.function.mql",
+          "name": "entity.name.function.morphql",
           "match": "\\b(substring|split|replace|text|number|uppercase|lowercase|xmlnode|extractnumber|if)(?=\\s*\\()"
         }
       ]
@@ -49,19 +49,19 @@
     "operators": {
       "patterns": [
         {
-          "name": "keyword.operator.comparison.mql",
+          "name": "keyword.operator.comparison.morphql",
           "match": "(===|!==|==|!=|<=|>=|<|>)"
         },
         {
-          "name": "keyword.operator.logical.mql",
+          "name": "keyword.operator.logical.morphql",
           "match": "(&&|\\|\\||!)"
         },
         {
-          "name": "keyword.operator.arithmetic.mql",
+          "name": "keyword.operator.arithmetic.morphql",
           "match": "(\\+|-|\\*|/)"
         },
         {
-          "name": "keyword.operator.assignment.mql",
+          "name": "keyword.operator.assignment.morphql",
           "match": "="
         }
       ]
@@ -69,23 +69,23 @@
     "strings": {
       "patterns": [
         {
-          "name": "string.quoted.double.mql",
+          "name": "string.quoted.double.morphql",
           "begin": "\"",
           "end": "\"",
           "patterns": [
             {
-              "name": "constant.character.escape.mql",
+              "name": "constant.character.escape.morphql",
               "match": "\\\\."
             }
           ]
         },
         {
-          "name": "string.quoted.single.mql",
+          "name": "string.quoted.single.morphql",
           "begin": "'",
           "end": "'",
           "patterns": [
             {
-              "name": "constant.character.escape.mql",
+              "name": "constant.character.escape.morphql",
               "match": "\\\\."
             }
           ]
@@ -95,7 +95,7 @@
     "numbers": {
       "patterns": [
         {
-          "name": "constant.numeric.mql",
+          "name": "constant.numeric.morphql",
           "match": "-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"
         }
       ]
@@ -103,7 +103,7 @@
     "identifiers": {
       "patterns": [
         {
-          "name": "variable.other.mql",
+          "name": "variable.other.morphql",
           "match": "[a-zA-Z_$][a-zA-Z0-9_$]*(?:\\.[a-zA-Z_$][a-zA-Z0-9_$]*)*(?:\\[\\d+\\]|\\[[a-zA-Z_$][a-zA-Z0-9_$]*\\])*"
         }
       ]
@@ -111,31 +111,31 @@
     "quoted-identifiers": {
       "patterns": [
         {
-          "comment": "JS-escaped quoted identifier (for embedded MQL)",
-          "name": "variable.other.quoted.mql",
+          "comment": "JS-escaped quoted identifier (for embedded MorphQL)",
+          "name": "variable.other.quoted.morphql",
           "begin": "(\\\\)`",
           "beginCaptures": {
-            "1": { "name": "punctuation.definition.variable.escape.mql" }
+            "1": { "name": "punctuation.definition.variable.escape.morphql" }
           },
           "end": "(?<!\\\\)\\1`",
           "endCaptures": {
-            "1": { "name": "punctuation.definition.variable.escape.mql" }
+            "1": { "name": "punctuation.definition.variable.escape.morphql" }
           },
           "patterns": [
             {
-              "name": "constant.character.escape.mql",
+              "name": "constant.character.escape.morphql",
               "match": "\\\\."
             }
           ]
         },
         {
-          "comment": "Standard quoted identifier (for raw MQL files)",
-          "name": "variable.other.quoted.mql",
+          "comment": "Standard quoted identifier (for raw MorphQL files)",
+          "name": "variable.other.quoted.morphql",
           "begin": "`",
           "end": "(?<!\\\\)`",
           "patterns": [
             {
-              "name": "constant.character.escape.mql",
+              "name": "constant.character.escape.morphql",
               "match": "\\\\."
             }
           ]

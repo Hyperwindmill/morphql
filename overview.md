@@ -53,7 +53,7 @@ A high-performance, isomorphic Query-to-Code engine. It provides a DSL to transf
 - ✅ **Full/Selective Cloning**: `clone` or `clone(a, b)`.
 - ✅ **Pure Conversions**: Optional `transform` directive for straight format conversion.
 
-## MQL Quick Reference (for LLMs)
+## MorphQL Quick Reference (for LLMs)
 
 ### Actions
 

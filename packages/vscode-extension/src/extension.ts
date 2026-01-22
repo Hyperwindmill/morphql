@@ -18,15 +18,15 @@ export function activate(context: vscode.ExtensionContext) {
   // Register hover provider
   const hoverProvider = new MQLHoverProvider();
   context.subscriptions.push(
-    vscode.languages.registerHoverProvider("mql", hoverProvider),
+    vscode.languages.registerHoverProvider("morphQL", hoverProvider),
   );
 
   // Register command: Execute with input data
   const executeWithInput = vscode.commands.registerCommand(
-    "mql.executeWithInput",
+    "morphQL.executeWithInput",
     async () => {
       const editor = vscode.window.activeTextEditor;
-      if (!editor || editor.document.languageId !== "mql") {
+      if (!editor || editor.document.languageId !== "morphQL") {
         vscode.window.showErrorMessage("Please open an MQL file first");
         return;
       }
@@ -64,10 +64,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Register command: Execute with clipboard data
   const executeFromClipboard = vscode.commands.registerCommand(
-    "mql.executeFromClipboard",
+    "morphQL.executeFromClipboard",
     async () => {
       const editor = vscode.window.activeTextEditor;
-      if (!editor || editor.document.languageId !== "mql") {
+      if (!editor || editor.document.languageId !== "morphQL") {
         vscode.window.showErrorMessage("Please open an MQL file first");
         return;
       }
@@ -86,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Register command: Execute selection (for embedded queries)
   const executeSelection = vscode.commands.registerCommand(
-    "mql.executeSelection",
+    "morphQL.executeSelection",
     async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {

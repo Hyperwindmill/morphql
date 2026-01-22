@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Functions in expressions', async () => {
   it('should support substring with 3 arguments', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set short = substring(sku, 0, 3)
@@ -15,7 +15,7 @@ describe('Functions in expressions', async () => {
   });
 
   it('should support substring with 2 arguments', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set rest = substring(sku, 3)
@@ -27,7 +27,7 @@ describe('Functions in expressions', async () => {
   });
 
   it('should support nested expressions in substring arguments', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = substring(sku, 0, a + b)
@@ -39,7 +39,7 @@ describe('Functions in expressions', async () => {
   });
 
   it('should support expressions as the string argument', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = substring(prefix + sku, 0, 5)
@@ -51,7 +51,7 @@ describe('Functions in expressions', async () => {
   });
 
   it('should throw error for unknown function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = unknownFunc(sku)
@@ -59,7 +59,7 @@ describe('Functions in expressions', async () => {
     await expect(compile(query)).rejects.toThrow('Unknown function: unknownFunc');
   });
   it('should cast as string when using text function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = 11+text(sku)
@@ -70,7 +70,7 @@ describe('Functions in expressions', async () => {
     expect(result.result).toBe('1112345');
   });
   it('should not cast as string when not using text function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = 11+sku
@@ -81,7 +81,7 @@ describe('Functions in expressions', async () => {
     expect(result.result).toBe(12356);
   });
   it('should cast number when using number function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = 11+number(sku)
@@ -92,7 +92,7 @@ describe('Functions in expressions', async () => {
     expect(result.result).toBe(12356);
   });
   it('should extract number when using extractNumber function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = 11+extractNumber(sku)
@@ -105,7 +105,7 @@ describe('Functions in expressions', async () => {
     expect(result.resultInt).toBe(12356);
   });
   it('should uppercase when using uppercase function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = uppercase(sku)
@@ -116,7 +116,7 @@ describe('Functions in expressions', async () => {
     expect(result.result).toBe('HELLO');
   });
   it('should lowercase when using lowercase function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = lowercase(sku)
@@ -127,7 +127,7 @@ describe('Functions in expressions', async () => {
     expect(result.result).toBe('hello');
   });
   it('should create xml node with attributeswhen using xmlnode function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to xml("test")
       transform
         set result = xmlnode(sku,'test',sku)
@@ -138,7 +138,7 @@ describe('Functions in expressions', async () => {
     expect(result).toContain(`<result test="hello">hello</result>`);
   });
   it('should replace when using replace function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = replace(sku,'hello','world')
@@ -149,7 +149,7 @@ describe('Functions in expressions', async () => {
     expect(result.result).toBe('world');
   });
   it('should split string using split function', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         define parts = split(sku, "-")
@@ -182,7 +182,7 @@ describe('Functions in expressions', async () => {
   });
 
   it('should encode string to base64 using to_base64', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set encoded = to_base64(val)
@@ -196,7 +196,7 @@ describe('Functions in expressions', async () => {
   });
 
   it('should decode base64 string using from_base64', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set decoded = from_base64(val)
@@ -210,7 +210,7 @@ describe('Functions in expressions', async () => {
   });
 
   it('should support base64 round-trip', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = from_base64(to_base64(val))
@@ -222,7 +222,7 @@ describe('Functions in expressions', async () => {
   });
 
   it('should normalize value to list using aslist', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set single = aslist(val)

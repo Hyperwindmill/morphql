@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Expressions in set directive', async () => {
   it('should support simple addition', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set total = price + tax
@@ -15,7 +15,7 @@ describe('Expressions in set directive', async () => {
   });
 
   it('should support string concatenation', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set fullName = firstName + " " + lastName
@@ -27,7 +27,7 @@ describe('Expressions in set directive', async () => {
   });
 
   it('should support mixed arithmetic with precedence', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = a + b * c
@@ -40,7 +40,7 @@ describe('Expressions in set directive', async () => {
   });
 
   it('should support parentheses for precedence', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = (a + b) * c
@@ -53,7 +53,7 @@ describe('Expressions in set directive', async () => {
   });
 
   it('should support numeric literals in expressions', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set next = count + 1
@@ -65,7 +65,7 @@ describe('Expressions in set directive', async () => {
   });
 
   it('should support subtraction and division', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set balance = income - expenses

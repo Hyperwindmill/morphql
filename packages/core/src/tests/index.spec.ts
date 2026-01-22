@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Morph Engine (Query-to-Code)', async () => {
   it('should compile and execute a simple transformation', async () => {
-    const query = mql`from json to object transform set newfield=field1`;
+    const query = morphQL`from json to object transform set newfield=field1`;
     const transform = await compile(query);
 
     const source = { field1: 'hello' };
@@ -13,7 +13,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle default section (object mapping)', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         section header(
@@ -35,7 +35,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle section with from directive', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         section meta(
@@ -56,7 +56,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle multiple section (arrays)', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         section multiple lines(
@@ -77,7 +77,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle multiple section with from', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         section multiple items(
@@ -98,7 +98,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle nested sections (arrays)', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         set fullName=name 
@@ -122,7 +122,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle full clone directive', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         clone
@@ -136,7 +136,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle selective clone directive', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         clone(a, c)
@@ -150,7 +150,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle clone inside a section', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         section sub(
@@ -171,7 +171,7 @@ describe('Morph Engine (Query-to-Code)', async () => {
   });
 
   it('should handle deeply nested sections (mixed objects and arrays)', async () => {
-    const query = mql`
+    const query = morphQL`
       from json to object 
       transform 
         section order(

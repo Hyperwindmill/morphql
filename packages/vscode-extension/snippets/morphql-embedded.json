@@ -1,20 +1,20 @@
 {
-  "MQL Tagged Template": {
-    "prefix": "mql-tagged",
+  "MorphQL Tagged Template": {
+    "prefix": "morphql-tagged",
     "body": [
-      "const ${1:query} = mql`",
+      "const ${1:query} = morphql`",
       "  from ${2|json,xml,object|} to ${3|json,xml,object|}",
       "  transform",
       "    set ${4:field} = ${5:value}",
       "    $0",
       "`;"
     ],
-    "description": "MQL query with tagged template"
+    "description": "MorphQL query with tagged template"
   },
-  "MQL Comment Hint": {
-    "prefix": "mql-comment",
+  "MorphQL Comment Hint": {
+    "prefix": "morphql-comment",
     "body": [
-      "// @mql",
+      "// @morphql",
       "const ${1:query} = `",
       "  from ${2|json,xml,object|} to ${3|json,xml,object|}",
       "  transform",
@@ -22,12 +22,12 @@
       "    $0",
       "`;"
     ],
-    "description": "MQL query with comment hint"
+    "description": "MorphQL query with comment hint"
   },
-  "MQL Compile and Execute": {
-    "prefix": "mql-compile",
+  "MorphQL Compile and Execute": {
+    "prefix": "morphql-compile",
     "body": [
-      "const ${1:query} = mql`",
+      "const ${1:query} = morphql`",
       "  from ${2|json,xml,object|} to ${3|json,xml,object|}",
       "  transform",
       "    set ${4:field} = ${5:value}",
@@ -37,6 +37,6 @@
       "const result = engine(${6:sourceData});",
       "$0"
     ],
-    "description": "Complete MQL compile and execute pattern"
+    "description": "Complete MorphQL compile and execute pattern"
   }
 }

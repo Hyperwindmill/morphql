@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { compile, mql } from '../index.js';
+import { compile, morphQL } from '../index.js';
 
 describe('Negative numbers and unary minus', async () => {
   it('should support negative numeric literals in function arguments', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set last5 = substring(sku, -5)
@@ -15,7 +15,7 @@ describe('Negative numbers and unary minus', async () => {
   });
 
   it('should support unary minus with variables', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set invBalance = -balance
@@ -27,7 +27,7 @@ describe('Negative numbers and unary minus', async () => {
   });
 
   it('should support mixed unary and binary operators', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set result = a - -b
@@ -39,7 +39,7 @@ describe('Negative numbers and unary minus', async () => {
   });
 
   it('should support substring with negative start and length', async () => {
-    const query = mql`
+    const query = morphQL`
       from object to object
       transform
         set mid = substring(sku, -5, 3)
