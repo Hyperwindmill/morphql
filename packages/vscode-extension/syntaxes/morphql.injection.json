@@ -26,27 +26,6 @@
           "include": "source.morphql"
         }
       ]
-    },
-    {
-      "comment": "MorphQL in template strings after // @morphql comment",
-      "name": "meta.embedded.block.morphql",
-      "begin": "(?i)(?<=//\\s*@morphql\\s*\\n)\\s*(?:const|let|var)\\s+\\w+\\s*=\\s*(`)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.string.template.begin.ts"
-        }
-      },
-      "end": "(?<!\\\\)`",
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.template.end.ts"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.morphql"
-        }
-      ]
     }
   ]
 }

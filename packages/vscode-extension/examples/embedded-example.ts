@@ -13,16 +13,7 @@ const transformQuery = morphQL`
     ) from products
 `;
 
-// Example 2: Using comment hint
-//@morphQL
-const convertQuery = `
-  from xml to json
-  transform
-    clone(id, name)
-    set status = if(active === true, "active", "inactive")
-`;
-
-// Example 3: Complex transformation with all features
+// Example 2: Complex transformation with all features
 const complexQuery = morphQL`
   from json to json
   transform

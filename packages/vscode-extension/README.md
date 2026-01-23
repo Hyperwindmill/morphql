@@ -78,9 +78,9 @@ Hover over keywords and functions to see documentation:
 - **Functions**: `substring`, `split`, `replace`, `if`, etc.
 - Includes parameter descriptions and examples
 
-### 📝 Two Ways to Use MorphQL in JS/TS
+### 📝 Using MorphQL in JS/TS
 
-#### 1. Tagged Templates (Recommended)
+Use the `morphQL` tagged template for the best development experience with full syntax highlighting:
 
 ```typescript
 import { compile, morphQL } from "@morphql/core";
@@ -99,21 +99,6 @@ const engine = await compile(query);
 const result = engine(sourceData);
 ```
 
-#### 2. Comment Hints
-
-```typescript
-import { compile } from "@morphql/core";
-
-// @morphql
-const query = `
-  from json to xml
-  transform
-    set fullName = firstName + " " + lastName
-`;
-
-const engine = await compile(query);
-```
-
 ### 🚀 Code Snippets
 
 Type these prefixes and press Tab:
@@ -126,7 +111,6 @@ Type these prefixes and press Tab:
 - `morphql-clone` - Clone fields
 - `morphql-define` - Define variable
 - `morphql-tagged` - MorphQL with tagged template (JS/TS)
-- `morphql-comment` - MorphQL with comment hint (JS/TS)
 - `morphql-compile` - Complete compile and execute pattern (JS/TS)
 
 ## Syntax Support
@@ -210,7 +194,7 @@ transform
 
 - Initial release
 - Syntax highlighting for `.morphql` files
-- Embedded MorphQL support in JS/TS (tagged templates and comment hints)
+- Embedded MorphQL support in JS/TS (tagged templates)
 - Code snippets for common patterns
 - **Execute `.morphql` files** with input data or clipboard data
 - Formatted output display with execution timing

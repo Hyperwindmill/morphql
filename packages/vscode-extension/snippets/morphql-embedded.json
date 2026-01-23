@@ -11,19 +11,6 @@
     ],
     "description": "MorphQL query with tagged template"
   },
-  "MorphQL Comment Hint": {
-    "prefix": "morphql-comment",
-    "body": [
-      "// @morphql",
-      "const ${1:query} = `",
-      "  from ${2|json,xml,object|} to ${3|json,xml,object|}",
-      "  transform",
-      "    set ${4:field} = ${5:value}",
-      "    $0",
-      "`;"
-    ],
-    "description": "MorphQL query with comment hint"
-  },
   "MorphQL Compile and Execute": {
     "prefix": "morphql-compile",
     "body": [

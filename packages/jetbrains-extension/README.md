@@ -11,7 +11,6 @@ A dedicated JetBrains extension for **MorphQL**, the high-performance isomorphic
      section users( ... )
   `;
   ```
-  Also supports `// @morphql` comment hints.
 - 📄 **Documentation**: Hover over any keyword or standard function (e.g., `substring`, `clone`) to see its documentation.
 - 🖼️ **File Icons**: Professional icons for `.morphql` files, with automatic dark/light theme adaptation.
 - 🧩 **Multi-IDE Support**: Compatible with IntelliJ IDEA Ultimate, PhpStorm, and WebStorm.

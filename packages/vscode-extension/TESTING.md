@@ -25,9 +25,7 @@ In the Extension Development Host window:
 ### 3. Test Embedded MorphQL in TypeScript
 
 1. Open `examples/embedded-example.ts`
-2. Verify syntax highlighting inside:
-   - Tagged templates: `morphQL\`...\``
-   - Comment hints: `// @morphQL` followed by template string
+2. Verify syntax highlighting inside tagged templates: `morphQL\`...\``
 
 ### 4. Test Code Snippets
 
@@ -81,12 +79,6 @@ const query = morphQL`
   transform
     set name = firstName
 `;
-
-// This should also have MorphQL syntax highlighting:
-// @morphql
-const query2 = `
-  from json to xml
-`;
 ```
 
 ## Troubleshooting
@@ -113,7 +105,7 @@ const query2 = `
 
 - [ ] Syntax highlighting in `.morphql` files
 - [ ] Syntax highlighting in `morphQL\`...\`` tagged templates
-- [ ] Syntax highlighting with `// @morphQL` comment hints
+
 - [ ] Code snippets in `.morphql` files
 - [ ] Code snippets in `.ts`/`.js` files
 - [ ] Bracket matching and auto-closing

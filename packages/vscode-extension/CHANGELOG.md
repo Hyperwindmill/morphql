@@ -9,7 +9,7 @@ All notable changes to the MorphQL VSCode extension will be documented in this f
 - Initial release of MorphQL VSCode extension
 - **Syntax Highlighting**
   - Full syntax highlighting for `.morphql` files
-  - Embedded MorphQL support in JavaScript/TypeScript (tagged templates and comment hints)
+  - Embedded MorphQL support in JavaScript/TypeScript (tagged templates)
   - Support for keywords, functions, operators, strings, numbers, and comments
 - **Comment Support**
   - Line comments (`//`)

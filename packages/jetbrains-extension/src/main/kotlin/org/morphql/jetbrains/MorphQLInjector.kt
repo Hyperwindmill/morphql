@@ -46,15 +46,6 @@ class MorphQLInjector : MultiHostInjector {
             }
         }
         
-        // Alternative: Comment hint // @morphql
-        // Check previous siblings for a comment containing @morphql
-        var prev = host.prevSibling
-        while (prev != null) {
-            if (prev.text.contains("@morphql", ignoreCase = true)) return true
-            if (prev !is com.intellij.psi.PsiWhiteSpace) break
-            prev = prev.prevSibling
-        }
-
         return false
     }
 }
