@@ -14,7 +14,7 @@ const transformQuery = morphQL`
 `;
 
 // Example 2: Using comment hint
-// @morphQL
+//@morphQL
 const convertQuery = `
   from xml to json
   transform

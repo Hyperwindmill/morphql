@@ -90,6 +90,7 @@ A high-performance, isomorphic Query-to-Code engine. It provides a DSL to transf
 - Grouping: `( )`
 - ✅ **Tests**: 67 unit tests across multiple spec files.
 - ✅ **Playground**: `@morphql/playground` - Vite + React + Monaco app (`packages/playground/`).
+- ✅ **IDE Plugin**: Full JetBrains support (IntelliJ, WebStorm, PhpStorm).
 
 ## Monorepo Structure
 
@@ -99,7 +100,8 @@ morphql/
 │   ├── core/        # @morphql/core - Main transformation library
 │   ├── playground/  # @morphql/playground - Interactive web editor
 │   ├── cli/         # @morphql/cli - Command-line interface
-│   └── server/      # NestJS REST API server
+│   ├── server/      # NestJS REST API server
+│   └── jetbrains-extension/ # IntelliJ/WebStorm Plugin
 └── package.json     # npm workspaces root
 ```
 

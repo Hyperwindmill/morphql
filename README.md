@@ -17,6 +17,7 @@ Packages are NOT published to npm yet.
 - 🛠️ **Modular Functions**: Extensible function registry (e.g., `substring`, `xmlnode`, `extractNumber`, `uppercase`, `lowercase`, `text`, `number`).
 - 🔄 **Structural Mapping**: Easy handling of nested objects and arrays (`multiple`).
 - 🎨 **Playground**: Real-time editor to test and visualize generated code.
+- 🖼️ **IDE Support**: JetBrains Extension (highlighting, injection, docs).
 
 ## Installation
 
@@ -109,6 +110,7 @@ transform
   set `multiple` = true
   set `order-id` = root.`external-id`
 ```
+
 Backticks can even be escaped with \ when needed in a field name.\
 Natural template string escape of backticks is also supported in the vscode extension and does not break synthax highlighting.
 
@@ -244,12 +246,13 @@ Changes to `@morphql/core` are automatically picked up by Vite's HMR.
 
 ## Packages
 
-| Package                                          | Description               |
-| ------------------------------------------------ | ------------------------- |
-| [@morphql/core](./packages/core)             | The transformation engine |
-| [@morphql/playground](./packages/playground) | Interactive web editor    |
-| [@morphql/cli](./packages/cli)               | Command line interface    |
-| [server](./packages/server)                      | NestJS REST API server    |
+| Package                                               | Description               |
+| ----------------------------------------------------- | ------------------------- |
+| [@morphql/core](./packages/core)                      | The transformation engine |
+| [@morphql/playground](./packages/playground)          | Interactive web editor    |
+| [@morphql/cli](./packages/cli)                        | Command line interface    |
+| [server](./packages/server)                           | NestJS REST API server    |
+| [jetbrains-extension](./packages/jetbrains-extension) | JetBrains IDE Plugin      |
 
 ## License
 
