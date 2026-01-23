@@ -6,7 +6,7 @@
 
 ### Package Location
 
-[`packages/language-definitions/`](file:///mnt/a341655b-7af5-403e-a435-792e0e283f08/Dev/morphql/packages/language-definitions/)
+[`packages/language-definitions/`](./morphql/packages/language-definitions/)
 
 ---
 
