@@ -4,3 +4,4 @@ dist
 coverage
 .compiled
 node_modules
+.idea
