@@ -4,6 +4,8 @@
     <vendor email="support@morphql.org" url="https://morphql.org">MorphQL Team</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.javascript</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="MorphQL File"
@@ -20,5 +22,7 @@
 
         <lang.documentationProvider language="MorphQL"
                                    implementationClass="org.morphql.jetbrains.MorphQLDocumentationProvider" />
+
+        <multiHostInjector implementationClass="org.morphql.jetbrains.MorphQLInjector" />
     </extensions>
 </idea-plugin>

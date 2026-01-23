@@ -19,9 +19,10 @@ repositories {
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     version.set("2023.2")
-    type.set("IC") // Target IDE Platform
-
-    plugins.set(listOf(/* Plugins Dependencies */))
+    type.set("IU")
+    
+    // Using 'JavaScript' as the dependency for IU/WS/PS compatibility
+    plugins.set(listOf("JavaScript"))
 }
 
 changelog {
@@ -41,7 +42,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("232")
-        untilBuild.set("242.*")
+        untilBuild.set("253.*")
         changeNotes.set(provider { 
             changelog.getUnreleased().toHTML()
         })
