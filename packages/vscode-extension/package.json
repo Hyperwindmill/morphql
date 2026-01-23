@@ -49,7 +49,7 @@
         "path": "./syntaxes/morphql.tmLanguage.json"
       },
       {
-        "scopeName": "morphql.injection",
+        "scopeName": "source.morphql.injection",
         "path": "./syntaxes/morphql.injection.json",
         "injectTo": [
           "source.js",

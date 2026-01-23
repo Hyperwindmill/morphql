@@ -2,7 +2,7 @@
   "MorphQL Tagged Template": {
     "prefix": "morphql-tagged",
     "body": [
-      "const ${1:query} = morphql`",
+      "const ${1:query} = morphQL`",
       "  from ${2|json,xml,object|} to ${3|json,xml,object|}",
       "  transform",
       "    set ${4:field} = ${5:value}",
@@ -27,7 +27,7 @@
   "MorphQL Compile and Execute": {
     "prefix": "morphql-compile",
     "body": [
-      "const ${1:query} = morphql`",
+      "const ${1:query} = morphQL`",
       "  from ${2|json,xml,object|} to ${3|json,xml,object|}",
       "  transform",
       "    set ${4:field} = ${5:value}",
