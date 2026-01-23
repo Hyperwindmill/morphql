@@ -164,6 +164,24 @@ export const KEYWORDS: KeywordDef[] = [
       example: "if (condition) (\n  ...\n) else (\n  ...\n)",
     },
   },
+  {
+    name: "modify",
+    category: "action",
+    doc: {
+      signature: "modify <target> = <expression>",
+      description:
+        "Modifies a field in the output by reading from the target (not source). Useful for post-processing already-mapped values.",
+      parameters: [
+        { name: "target", description: "The field name to modify" },
+        {
+          name: "expression",
+          description:
+            "The expression to assign (reads from target, not source)",
+        },
+      ],
+      example: "set total = price * quantity\nmodify total = total * 1.10",
+    },
+  },
 ];
 
 // Helper to get keywords by category

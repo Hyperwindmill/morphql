@@ -29,12 +29,21 @@ Actions are the commands used inside the `transform` block or `section` blocks.
 
 ### `set`
 
-Sets a property on the target object.
+Sets a property on the target object by reading from the **source** data.
 
 ```morphql
 set fullName = firstName + " " + lastName
 set total = (price * quantity) - discount
 set shortSku = substring(sku, 0, 3)
+```
+
+### `modify`
+
+Modifies a property on the target object by reading from the **target** object itself. This is useful for post-processing values that have already been mapped.
+
+```morphql
+set total = price * quantity
+modify total = total * 1.10   # Apply a 10% markup to the already calculated total
 ```
 
 ### `section`

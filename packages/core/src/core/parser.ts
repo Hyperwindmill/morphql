@@ -46,6 +46,7 @@ export class MorphParser extends CstParser {
   private action = this.RULE('action', () => {
     this.OR([
       { ALT: () => this.SUBRULE(this.setRule) },
+      { ALT: () => this.SUBRULE(this.modifyRule) },
       { ALT: () => this.SUBRULE(this.sectionRule) },
       { ALT: () => this.SUBRULE(this.cloneRule) },
       { ALT: () => this.SUBRULE(this.deleteRule) },
@@ -95,6 +96,13 @@ export class MorphParser extends CstParser {
 
   private setRule = this.RULE('setRule', () => {
     this.CONSUME(t.Set);
+    this.SUBRULE(this.anyIdentifier, { LABEL: 'left' });
+    this.CONSUME(t.Equals);
+    this.SUBRULE(this.expression, { LABEL: 'right' });
+  });
+
+  private modifyRule = this.RULE('modifyRule', () => {
+    this.CONSUME(t.Modify);
     this.SUBRULE(this.anyIdentifier, { LABEL: 'left' });
     this.CONSUME(t.Equals);
     this.SUBRULE(this.expression, { LABEL: 'right' });

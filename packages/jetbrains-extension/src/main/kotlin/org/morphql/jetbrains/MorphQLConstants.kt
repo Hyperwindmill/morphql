@@ -16,7 +16,8 @@ object MorphQLConstants {
         "delete",
         "define",
         "if",
-        "else"
+        "else",
+        "modify"
     )
 
     val FUNCTIONS = setOf(

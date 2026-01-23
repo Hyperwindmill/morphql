@@ -4,9 +4,23 @@ import { functionRegistry } from './functions.js';
 const BaseCstVisitor = parser.getBaseCstVisitorConstructor();
 
 export class MorphCompiler extends (BaseCstVisitor as any) {
+  // Context for modify directive - determines whether to read from 'source' or 'target'
+  private readFrom: 'source' | 'target' = 'source';
+
   constructor() {
     super();
     this.validateVisitor();
+  }
+
+  /**
+   * Visit with a temporary context change
+   */
+  private visitWithContext(node: any, context: { readFrom: 'source' | 'target' }) {
+    const previousReadFrom = this.readFrom;
+    this.readFrom = context.readFrom;
+    const result = this.visit(node);
+    this.readFrom = previousReadFrom;
+    return result;
   }
 
   query(ctx: any) {
@@ -86,6 +100,9 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     if (ctx.setRule) {
       return this.visit(ctx.setRule);
     }
+    if (ctx.modifyRule) {
+      return this.visit(ctx.modifyRule);
+    }
     if (ctx.sectionRule) {
       return this.visit(ctx.sectionRule);
     }
@@ -135,6 +152,12 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
   setRule(ctx: any) {
     const left = this.visit(ctx.left);
     const right = this.visit(ctx.right);
+    return `${this.genAccess('target', left)} = ${right};`;
+  }
+
+  modifyRule(ctx: any) {
+    const left = this.visit(ctx.left);
+    const right = this.visitWithContext(ctx.right, { readFrom: 'target' });
     return `${this.genAccess('target', left)} = ${right};`;
   }
 
@@ -225,7 +248,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       if (['true', 'false', 'null'].includes(id.name) && !id.quoted) {
         return id.name;
       }
-      return this.genAccess('source', id);
+      return this.genAccess(this.readFrom, id);
     }
     if (ctx.expression) {
       return `(${this.visit(ctx.expression)})`;

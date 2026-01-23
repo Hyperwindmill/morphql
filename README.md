@@ -39,6 +39,7 @@ const engine = await compile(morphQL`
     set fullName = firstName + " " + lastName
     set sku = substring(productCode, 0, 6)
     set total = (price * quantity) - discount
+    modify total = total * 1.10   # Apply markup on calculated total
 `);
 
 const result = engine(inputData);

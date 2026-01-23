@@ -89,6 +89,13 @@ set totalWithTax = total * (1 + taxRate)</pre>
   ...
 )</pre>
         """.trimIndent(),
+        "modify" to """
+            <b>modify <target> = <expression></b><br/>
+            Modifies a field in the output by reading from the target (not source). Useful for post-processing already-mapped values.<br/><br/>
+            <b>Parameters:</b><ul><li><b>target:</b> The field name to modify</li><li><b>expression:</b> The expression to assign (reads from target, not source)</li></ul>
+            <b>Example:</b><pre>set total = price * quantity
+modify total = total * 1.10</pre>
+        """.trimIndent(),
         "substring" to """
             <b>substring(str, start, [length])</b><br/>
             Extracts a portion of a string. Supports negative indices.<br/><br/>
