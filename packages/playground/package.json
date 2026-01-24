@@ -19,21 +19,34 @@
     "README.md",
     "LICENSE"
   ],
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./playground.css": "./dist/playground.css"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsc -p tsconfig.lib.json",
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "@monaco-editor/react": "^4.7.0",
+  "peerDependencies": {
     "@morphql/core": "*",
     "@morphql/language-definitions": "*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/postcss": "^4.1.18",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
