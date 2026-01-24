@@ -42,9 +42,11 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       return function(input, env) {
         // 1. Parse Input
         const source = env.parse('${sourceTypeName}', input);
+        const _rootSource = source;
         
         // 2. Transform
         const target = {};
+        const _rootTarget = target;
         ${actions.join('\n        ')}
 
         // 3. Serialize Output
@@ -247,6 +249,14 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       const id = this.visit(ctx.anyIdentifier);
       if (['true', 'false', 'null'].includes(id.name) && !id.quoted) {
         return id.name;
+      }
+      if (!id.quoted) {
+        if (id.name === '_source' || id.name.startsWith('_source.') || id.name.startsWith('_source[')) {
+          return `_rootSource${id.name.substring(7)}`;
+        }
+        if (id.name === '_target' || id.name.startsWith('_target.') || id.name.startsWith('_target[')) {
+          return `_rootTarget${id.name.substring(7)}`;
+        }
       }
       return this.genAccess(this.readFrom, id);
     }
