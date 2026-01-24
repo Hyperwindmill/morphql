@@ -27,6 +27,9 @@ features:
   - title: Fast
     details: Compiles queries to native JavaScript for maximum speed.
     icon: ⚡
+  - title: AI Native
+    details: Concise syntax saves tokens, ideal for LLM data pipelines.
+    icon: 🤖
   - title: Format Agnostic
     details: Transform between JSON, XML, and Objects with ease.
     icon: 🔄
