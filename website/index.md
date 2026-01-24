@@ -14,7 +14,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: Try Playground
-      link: /morphql/playground/
+      link: /playground/
 
 features:
   - title: Isomorphic
