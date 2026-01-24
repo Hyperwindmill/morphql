@@ -21,9 +21,6 @@ features:
   - title: Isomorphic
     details: Runs seamlessly in Node.js and the Browser.
     icon: 🌐
-  - title: Type-Safe
-    details: Built with TypeScript for reliable development.
-    icon: 🛡️
   - title: Fast
     details: Compiles queries to native JavaScript for maximum speed.
     icon: ⚡
