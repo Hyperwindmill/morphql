@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build:deps": "cd .. && npm run build -w @morphql/core && npm run build -w @morphql/language-definitions",
-    "build:playground": "cd .. && npm run build -w @morphql/playground -- --base=/playground/ --outDir ../../website/public/playground --emptyOutDir",
+    "build:playground": "cd .. && npm run build -w @morphql/playground -- --base=/morphql/playground/ --outDir ../../website/public/playground --emptyOutDir",
     "prebuild": "npm run build:deps && npm run build:playground",
     "docs:dev": "npm run prebuild && vitepress dev",
     "docs:build": "npm run prebuild && vitepress build",

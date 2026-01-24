@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
+  base: '/morphql/',
   title: "MorphQL",
   description: "A high-performance engine that compiles transformation queries into optimized JavaScript functions.",
   head: [['link', { rel: 'icon', href: '/favicon.png' }]],
