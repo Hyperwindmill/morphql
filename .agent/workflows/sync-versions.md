@@ -24,3 +24,4 @@ This script will update:
 - `package.json` in all `packages/*`
 - Internal `@morphql/*` dependencies in those files
 - `build.gradle.kts` in `packages/jetbrains-extension`
+- `index.ts` in packages/cli/src
