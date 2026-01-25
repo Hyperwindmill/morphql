@@ -24,9 +24,30 @@ export class MorphParser extends CstParser {
     this.SUBRULE(this.anyIdentifier, { LABEL: 'name' });
     this.OPTION(() => {
       this.CONSUME(t.LParen);
-      this.CONSUME(t.StringLiteral, { LABEL: 'parameter' });
+      this.MANY_SEP({
+        SEP: t.Comma,
+        DEF: () => {
+          this.SUBRULE(this.typeFormatParameter, { LABEL: 'params' });
+        },
+      });
       this.CONSUME(t.RParen);
     });
+  });
+
+  private typeFormatParameter = this.RULE('typeFormatParameter', () => {
+    this.OR([
+      {
+        GATE: () => this.LA(2).tokenType === t.Equals,
+        ALT: () => this.SUBRULE(this.namedParameter),
+      },
+      { ALT: () => this.SUBRULE(this.literal) },
+    ]);
+  });
+
+  private namedParameter = this.RULE('namedParameter', () => {
+    this.SUBRULE(this.anyIdentifier, { LABEL: 'key' });
+    this.CONSUME(t.Equals);
+    this.SUBRULE(this.literal, { LABEL: 'value' });
   });
 
   private anyIdentifier = this.RULE('anyIdentifier', () => {
@@ -40,6 +61,9 @@ export class MorphParser extends CstParser {
     this.OR([
       { ALT: () => this.CONSUME(t.StringLiteral) },
       { ALT: () => this.CONSUME(t.NumericLiteral) },
+      { ALT: () => this.CONSUME(t.True) },
+      { ALT: () => this.CONSUME(t.False) },
+      { ALT: () => this.CONSUME(t.Null) },
     ]);
   });
 

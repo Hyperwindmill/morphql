@@ -36,12 +36,14 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     // Helper to serialize types for generated code
     const sourceTypeName = sourceType.name;
     const targetTypeName = targetType.name;
-    const targetParam = targetType.parameter ? `'${targetType.parameter}'` : 'undefined';
+
+    const sourceOptions = JSON.stringify(sourceType.options);
+    const targetOptions = JSON.stringify(targetType.options);
 
     const code = `
       return function(input, env) {
         // 1. Parse Input
-        const source = env.parse('${sourceTypeName}', input);
+        const source = env.parse('${sourceTypeName}', input, ${sourceOptions});
         const _rootSource = source;
         
         // 2. Transform
@@ -50,7 +52,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         ${actions.join('\n        ')}
 
         // 3. Serialize Output
-        return env.serialize('${targetTypeName}', target ${targetParam !== 'undefined' ? `, { rootGenerated: ${targetParam} }` : ''} );
+        return env.serialize('${targetTypeName}', target, ${targetOptions});
       }
     `;
 
@@ -63,12 +65,53 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
 
   typeFormat(ctx: any) {
     const id = this.visit(ctx.name);
-    let parameter = undefined;
-    if (ctx.parameter) {
-      // Remove quotes from string literal
-      parameter = ctx.parameter[0].image.slice(1, -1);
+    const options: any = {};
+    if (ctx.params) {
+      ctx.params.forEach((p: any) => {
+        const val = this.visit(p);
+        if (typeof val === 'object' && 'key' in val) {
+          options[val.key] = this.parseLiteral(val.value);
+        } else {
+          // Positional parameter - map first to rootGenerated for compatibility
+          if (options.rootGenerated === undefined) {
+            options.rootGenerated = this.parseLiteral(val);
+          }
+        }
+      });
     }
-    return { name: id.name, parameter };
+    return { name: id.name, options };
+  }
+
+  typeFormatParameter(ctx: any) {
+    if (ctx.namedParameter) {
+      return this.visit(ctx.namedParameter);
+    }
+    if (ctx.literal) {
+      return this.visit(ctx.literal);
+    }
+  }
+
+  namedParameter(ctx: any) {
+    const key = this.visit(ctx.key).name;
+    const value = this.visit(ctx.value);
+    return { key, value };
+  }
+
+  private parseLiteral(image: string) {
+    if (image === 'true') return true;
+    if (image === 'false') return false;
+    if (image === 'null') return null;
+    if (
+      (image.startsWith('"') && image.endsWith('"')) ||
+      (image.startsWith("'") && image.endsWith("'"))
+    ) {
+      return image.slice(1, -1);
+    }
+    const num = Number(image);
+    if (!isNaN(num)) {
+      return num;
+    }
+    return image;
   }
 
   private genAccess(base: string, id: { name: string; quoted: boolean }) {
@@ -96,6 +139,9 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     if (ctx.NumericLiteral) {
       return ctx.NumericLiteral[0].image;
     }
+    if (ctx.True) return 'true';
+    if (ctx.False) return 'false';
+    if (ctx.Null) return 'null';
   }
 
   action(ctx: any) {
@@ -251,10 +297,18 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         return id.name;
       }
       if (!id.quoted) {
-        if (id.name === '_source' || id.name.startsWith('_source.') || id.name.startsWith('_source[')) {
+        if (
+          id.name === '_source' ||
+          id.name.startsWith('_source.') ||
+          id.name.startsWith('_source[')
+        ) {
           return `_rootSource${id.name.substring(7)}`;
         }
-        if (id.name === '_target' || id.name.startsWith('_target.') || id.name.startsWith('_target[')) {
+        if (
+          id.name === '_target' ||
+          id.name.startsWith('_target.') ||
+          id.name.startsWith('_target[')
+        ) {
           return `_rootTarget${id.name.substring(7)}`;
         }
       }
@@ -310,19 +364,18 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         actions.push('Object.assign(target, source);');
       }
 
-      const subTargetParam = subTargetType.parameter
-        ? `, { rootGenerated: "${subTargetType.parameter}" }`
-        : '';
+      const subSourceOptions = JSON.stringify(subSourceType.options);
+      const subTargetOptions = JSON.stringify(subTargetType.options);
 
       if (isMultiple) {
         return `
         if (${sourceAccess} && Array.isArray(${sourceAccess})) {
           ${sectionAccess} = ${sourceAccess}.map(item => {
-            const subSource = env.parse('${subSourceType.name}', item);
+            const subSource = env.parse('${subSourceType.name}', item, ${subSourceOptions});
             const source = subSource;
             const target = {};
             ${actions.join('\n            ')}
-            return env.serialize('${subTargetType.name}', target${subTargetParam});
+            return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
           });
         }
         `;
@@ -330,11 +383,11 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         return `
         if (${sourceAccess}) {
           ${sectionAccess} = (function(innerSource) {
-            const subSource = env.parse('${subSourceType.name}', innerSource);
+            const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
             const source = subSource;
             const target = {};
             ${actions.join('\n            ')}
-            return env.serialize('${subTargetType.name}', target${subTargetParam});
+            return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
           })(${sourceAccess});
         }
         `;

@@ -38,17 +38,27 @@ const xmlBuilder = new XMLBuilder({
 });
 
 registerAdapter('xml', {
-  parse: (content) => {
+  parse: (content, options) => {
     if (typeof content !== 'string') return content;
     const parser = new XMLParser({
       ignoreAttributes: false,
       removeNSPrefix: true,
+      ...options,
     });
     return parser.parse(content);
   },
   serialize: (data, options) => {
     const rootTag = options?.rootGenerated ?? 'root';
-    return xmlBuilder.build({ [rootTag]: data });
+    const builder = options
+      ? new XMLBuilder({
+          ignoreAttributes: false,
+          attributeNamePrefix: '$',
+          textNodeName: '_',
+          format: true,
+          ...options,
+        })
+      : xmlBuilder;
+    return builder.build({ [rootTag]: data });
   },
 });
 

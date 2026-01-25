@@ -65,8 +65,8 @@ function createEngine<Source, Target>(code: string): MorphEngine<Source, Target>
 
   // Environment with adapter lookups
   const env = {
-    parse: (format: string, content: string) => {
-      return getAdapter(format).parse(content);
+    parse: (format: string, content: string, options?: any) => {
+      return getAdapter(format).parse(content, options);
     },
     serialize: (format: string, data: any, options?: any) => {
       return getAdapter(format).serialize(data, options);
