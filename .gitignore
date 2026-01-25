@@ -5,3 +5,5 @@ coverage
 .compiled
 node_modules
 .idea
+.env
+.env.*
