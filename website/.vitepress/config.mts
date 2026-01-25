@@ -29,9 +29,11 @@ export default defineConfig({
         items: [
           { text: "Library (Core)", link: "/guide/library" },
           { text: "Language Reference", link: "/guide/language-reference" },
+          { text: "Adapters", link: "/guide/adapters" },
           { text: "TypeScript Support", link: "/guide/typescript" },
         ],
       },
+
       {
         text: "Tools",
         items: [
