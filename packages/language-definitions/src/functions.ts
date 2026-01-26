@@ -154,7 +154,7 @@ export const FUNCTIONS: FunctionDef[] = [
     doc: {
       signature: "aslist(value)",
       description:
-        "Ensures a value is an array. Useful for XML nodes that might be a single object or an array.",
+        "Ensures a value is an array. Useful for input formats like XML that might return a single object or an array for the same field.",
       parameters: [{ name: "value", description: "The value to normalize" }],
       returns: "array",
       example: "aslist(items)  // Always returns an array",

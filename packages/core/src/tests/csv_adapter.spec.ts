@@ -119,4 +119,25 @@ describe('Morph Engine - CSV Adapter', async () => {
       { first: 'field with "escaped" quote', second: 'another' },
     ]);
   });
+
+  it('should handle TSV (tab separated values)', async () => {
+    const query = morphQL`
+      from csv("\t") to object
+      transform
+        section multiple data (
+          from object to object
+          transform
+            set code = A
+            set name = B
+        ) from rows
+    `;
+    const transform = await compile(query);
+    const input = '101\tProduct A\n102\tProduct B';
+    const result = transform(input);
+
+    expect(result.data).toEqual([
+      { code: '101', name: 'Product A' },
+      { code: '102', name: 'Product B' },
+    ]);
+  });
 });
