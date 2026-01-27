@@ -6,7 +6,7 @@ transform unsafe
   set isAdult = if(age >= 18, "yes", "no")
   return fullName
   // Using functions
-  set shortSku = spreadsheet(sku, 0, 3)
+  set shortSku = xmlnode(sku, 0, 3)
   set nameParts = split(fullName, " ")
   set upperName = uppercase(firstName)
   
