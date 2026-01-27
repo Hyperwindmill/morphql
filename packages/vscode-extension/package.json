@@ -116,11 +116,13 @@
     }
   },
   "scripts": {
+    "prebuild": "npm run regenerate-grammar",
     "vscode:prepublish": "npm run build",
     "build": "rollup -c",
     "compile": "rollup -c",
     "watch": "rollup -c -w",
-    "package": "vsce package --no-dependencies"
+    "package": "vsce package --no-dependencies",
+    "regenerate-grammar": "node regenerate-grammar.mjs"
   },
   "dependencies": {
     "@morphql/core": "file:../core",

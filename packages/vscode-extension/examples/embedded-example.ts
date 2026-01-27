@@ -20,9 +20,9 @@ const complexQuery = morphQL`
     // Define reusable values
     define \`taxRate\` = 0.22
     define discountThreshold = 100
-    
+    return orderId
     // Basic fields
-    set orderId = xmlnode(id)
+    set orderId = spreadsheet(id)
     set customerName = customer.firstName + " " + customer.lastName
     return orderId
     // Conditional logic

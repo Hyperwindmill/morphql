@@ -3,25 +3,41 @@
   "name": "MorphQL",
   "scopeName": "source.morphql",
   "patterns": [
-    { "include": "#comments" },
-    { "include": "#keywords" },
-    { "include": "#functions" },
-    { "include": "#operators" },
-    { "include": "#strings" },
-    { "include": "#numbers" },
-    { "include": "#identifiers" },
-    { "include": "#quoted-identifiers" }
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#identifiers"
+    },
+    {
+      "include": "#quoted-identifiers"
+    }
   ],
   "repository": {
     "keywords": {
       "patterns": [
         {
           "name": "keyword.control.morphql",
-          "match": "\\b(from|to|transform|if|else)\\b"
+          "match": "\\b(from|to|transform|unsafe|if|else)\\b"
         },
         {
           "name": "keyword.other.morphql",
-          "match": "\\b(set|section|multiple|clone|delete|define)\\b"
+          "match": "\\b(set|section|multiple|clone|delete|define|modify|return)\\b"
         }
       ]
     },
@@ -42,7 +58,7 @@
       "patterns": [
         {
           "name": "entity.name.function.morphql",
-          "match": "\\b(substring|split|replace|text|number|uppercase|lowercase|xmlnode|extractnumber|if)(?=\\s*\\()"
+          "match": "\\b(substring|split|replace|text|number|uppercase|lowercase|extractnumber|xmlnode|to_base64|from_base64|aslist|spreadsheet)(?=\\s*\\()"
         }
       ]
     },
@@ -115,11 +131,15 @@
           "name": "variable.other.quoted.morphql",
           "begin": "(\\\\)`",
           "beginCaptures": {
-            "1": { "name": "punctuation.definition.variable.escape.morphql" }
+            "1": {
+              "name": "punctuation.definition.variable.escape.morphql"
+            }
           },
           "end": "(?<!\\\\)\\1`",
           "endCaptures": {
-            "1": { "name": "punctuation.definition.variable.escape.morphql" }
+            "1": {
+              "name": "punctuation.definition.variable.escape.morphql"
+            }
           },
           "patterns": [
             {

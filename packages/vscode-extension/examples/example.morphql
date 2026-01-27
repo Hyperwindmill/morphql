@@ -1,12 +1,12 @@
 from json to xml("XPS")
-transform
+transform unsafe
   // Basic field mapping
   set fullName = firstName + " " + lastName
   set age = number(ageString)
   set isAdult = if(age >= 18, "yes", "no")
-  
+  return fullName
   // Using functions
-  set shortSku = substring(sku, 0, 3)
+  set shortSku = spreadsheet(sku, 0, 3)
   set nameParts = split(fullName, " ")
   set upperName = uppercase(firstName)
   
