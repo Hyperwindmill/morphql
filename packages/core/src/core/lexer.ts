@@ -57,6 +57,7 @@ export const True = createToken({ name: 'True', pattern: /true/i, longer_alt: Id
 export const False = createToken({ name: 'False', pattern: /false/i, longer_alt: Identifier });
 export const Null = createToken({ name: 'Null', pattern: /null/i, longer_alt: Identifier });
 export const Return = createToken({ name: 'Return', pattern: /return/i, longer_alt: Identifier });
+export const Unsafe = createToken({ name: 'Unsafe', pattern: /unsafe/i, longer_alt: Identifier });
 
 // Comparison operators (must come before single-char operators)
 export const EqualsEquals = createToken({ name: 'EqualsEquals', pattern: /==/ });
@@ -112,6 +113,7 @@ export const allTokens = [
   False,
   Null,
   Return,
+  Unsafe,
 
   // Multi-character operators
   EqualsEqualsEquals,

@@ -10,6 +10,9 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
   // Scope stack to track serialization context
   private scopeStack: Array<{ format: string; options: any; isSerializationScope: boolean }> = [];
 
+  // Safe mode - use optional chaining for property access
+  public safeMode: boolean = true;
+
   constructor() {
     super();
     this.validateVisitor();
@@ -29,6 +32,10 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
   query(ctx: any) {
     const sourceType = this.visit(ctx.sourceType);
     const targetType = this.visit(ctx.targetType);
+
+    // Check if unsafe mode is enabled in the query
+    const isUnsafe = !!ctx.Unsafe;
+    this.safeMode = !isUnsafe;
 
     this.scopeStack.push({
       format: targetType.name,
@@ -51,6 +58,11 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     const sourceOptions = JSON.stringify(sourceType.options);
     const targetOptions = JSON.stringify(targetType.options);
 
+    // Check if any action contains a return statement
+    const hasReturn = actions.some(
+      (action: any) => typeof action === 'string' && action.trim().startsWith('return ')
+    );
+
     const code = `
       return function(input, env) {
         // 1. Parse Input
@@ -63,7 +75,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         ${actions.join('\n        ')}
 
         // 3. Serialize Output
-        return env.serialize('${targetTypeName}', target, ${targetOptions});
+        ${hasReturn ? '' : `return env.serialize('${targetTypeName}', target, ${targetOptions});`}
       }
     `;
 
@@ -123,11 +135,13 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     return image;
   }
 
-  private genAccess(base: string, id: { name: string; quoted: boolean }) {
+  private genAccess(base: string, id: { name: string; quoted: boolean }, isLHS: boolean = false) {
+    // Don't use optional chaining on left-hand side of assignments
+    const optionalChain = this.safeMode && !isLHS ? '?.' : '.';
     if (id.quoted || (id.name.includes('-') && !id.name.includes('.') && !id.name.includes('['))) {
-      return `${base}["${id.name}"]`;
+      return `${base}${this.safeMode && !isLHS ? '?.' : ''}["${id.name}"]`;
     }
-    return `${base}.${id.name}`;
+    return `${base}${optionalChain}${id.name}`;
   }
 
   anyIdentifier(ctx: any) {
@@ -182,7 +196,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
 
   deleteRule(ctx: any) {
     const field = this.visit(ctx.field);
-    return `delete ${this.genAccess('target', field)};`;
+    return `delete ${this.genAccess('target', field, true)};`; // LHS = true
   }
 
   ifAction(ctx: any) {
@@ -203,7 +217,9 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     if (ctx.fields) {
       const identifiers = ctx.fields.map((f: any) => this.visit(f));
       return identifiers
-        .map((id: any) => `${this.genAccess('target', id)} = ${this.genAccess('source', id)};`)
+        .map(
+          (id: any) => `${this.genAccess('target', id, true)} = ${this.genAccess('source', id)};`
+        ) // LHS = true for target
         .join('\n        ');
     }
     return `Object.assign(target, source);`;
@@ -212,19 +228,19 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
   setRule(ctx: any) {
     const left = this.visit(ctx.left);
     const right = this.visit(ctx.right);
-    return `${this.genAccess('target', left)} = ${right};`;
+    return `${this.genAccess('target', left, true)} = ${right};`; // LHS = true
   }
 
   modifyRule(ctx: any) {
     const left = this.visit(ctx.left);
     const right = this.visitWithContext(ctx.right, { readFrom: 'target' });
-    return `${this.genAccess('target', left)} = ${right};`;
+    return `${this.genAccess('target', left, true)} = ${right};`; // LHS = true
   }
 
   defineRule(ctx: any) {
     const left = this.visit(ctx.left);
     const right = this.visit(ctx.right);
-    return `${this.genAccess('source', left)} = ${right};`;
+    return `${this.genAccess('source', left, true)} = ${right};`; // LHS = true
   }
 
   returnRule(ctx: any) {
@@ -321,12 +337,25 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         return id.name;
       }
       if (!id.quoted) {
+        // Check for explicit context prefixes (source.field or target.field)
+        if (id.name.startsWith('source.') || id.name.startsWith('source[')) {
+          // User explicitly specified source context - don't prepend
+          return id.name;
+        }
+        if (id.name.startsWith('target.') || id.name.startsWith('target[')) {
+          // User explicitly specified target context - don't prepend
+          return id.name;
+        }
+
+        // Bare 'source' or 'target' keywords
         if (id.name === 'target') {
           return 'target';
         }
         if (id.name === 'source') {
           return 'source';
         }
+
+        // Root source/target access
         if (
           id.name === '_source' ||
           id.name.startsWith('_source.') ||
@@ -342,6 +371,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           return `_rootTarget${id.name.substring(7)}`;
         }
       }
+      // No explicit context - use current readFrom context
       return this.genAccess(this.readFrom, id);
     }
     if (ctx.expression) {
@@ -367,7 +397,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
   sectionRule(ctx: any) {
     const sectionId = this.visit(ctx.sectionName);
     const sectionName = sectionId.name;
-    const sectionAccess = this.genAccess('target', sectionId);
+    const sectionAccess = this.genAccess('target', sectionId, true); // LHS = true (being assigned to)
 
     const followPathId = ctx.followPath ? this.visit(ctx.followPath) : sectionId;
     const followPath = followPathId.name === 'parent' ? '' : '.' + followPathId.name;

@@ -56,7 +56,7 @@ export const functionRegistry: Record<string, FunctionHandler> = {
       throw new Error('extractNumber() requires exactly 1 argument (string)');
     }
     const [str] = args;
-    return `Number(String(${str}).match(/\\d+(\\.\\d+)?/)[0])`;
+    return `(() => { const match = String(${str}).match(/\\d+(\\.\\d+)?/); return match ? Number(match[0]) : null; })()`;
   },
   uppercase: (args: string[]) => {
     if (args.length !== 1) {
@@ -154,5 +154,5 @@ export const functionRegistry: Record<string, FunctionHandler> = {
       }
       return out;
     })(${val})`;
-  }
+  },
 };
