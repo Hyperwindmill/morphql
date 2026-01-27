@@ -8,18 +8,37 @@ A MorphQL query follows this basic structure:
 
 ```morphql
 from <source_format> to <target_format>
-[transform
+[transform [unsafe]
   <actions>
 ]
 ```
 
-**Supported formats:** `json`, `xml`, `object`
+**Supported formats:** `json`, `xml`, `object`, `csv`
 
 The `transform` block is optional—omit it for pure format conversion:
 
 ```morphql
 from json to xml
 ```
+
+### Safe Mode vs Unsafe Mode
+
+By default, MorphQL generates **safe** code that uses optional chaining (`?.`) to prevent crashes when accessing properties on null/undefined values. For performance-critical scenarios with validated data, you can use the `unsafe` keyword:
+
+```morphql
+# Safe mode (default) - uses optional chaining
+from object to object
+transform
+  set result = price / quantity
+
+# Unsafe mode - no optional chaining, maximum performance
+from object to object
+transform unsafe
+  set result = price / quantity
+```
+
+> [!WARNING]
+> Use `unsafe` only with validated/trusted input data. Unsafe mode will crash if it encounters null/undefined values.
 
 ---
 

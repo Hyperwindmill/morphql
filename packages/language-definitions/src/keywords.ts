@@ -44,9 +44,21 @@ export const KEYWORDS: KeywordDef[] = [
     name: "transform",
     category: "control",
     doc: {
-      signature: "transform",
-      description: "Begins the transformation block containing actions.",
-      example: "transform\n  set name = firstName",
+      signature: "transform [unsafe]",
+      description:
+        "Begins the transformation block containing actions. Optional 'unsafe' keyword disables safety features (optional chaining) for maximum performance.",
+      example:
+        "transform\n  set name = firstName\n\ntransform unsafe\n  set result = price / quantity",
+    },
+  },
+  {
+    name: "unsafe",
+    category: "control",
+    doc: {
+      signature: "transform unsafe",
+      description:
+        "Disables safety features (optional chaining) in generated code for maximum performance. Use only with validated/trusted input data.",
+      example: "transform unsafe\n  set result = price / quantity",
     },
   },
   {

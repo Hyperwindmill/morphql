@@ -9,21 +9,31 @@ object MorphQLDocumentation {
         "from" to """
             <b>from <format></b><br/>
             Specifies the input data format.<br/><br/>
-            <b>Parameters:</b><ul><li><b>format:</b> If used as first keyword: The starting format, one of `json`, `xml`, or `object`. When used after a section, defines its source</li></ul>
-            <b>Example:</b><pre>from json to xml</pre>
+            <b>Parameters:</b><ul><li><b>format:</b> If used as first keyword: The starting format name (e.g., `json`, `xml`, `csv`, `object`). When used after a section, defines its source.</li></ul>
+            <b>Example:</b><pre>from json to csv</pre>
         """.trimIndent(),
         "to" to """
             <b>to <format></b><br/>
             Specifies the output data format.<br/><br/>
-            <b>Parameters:</b><ul><li><b>format:</b> One of: `json`, `xml`, or `object`</li></ul>
-            <b>Example:</b><pre>from json to xml</pre>
+            <b>Parameters:</b><ul><li><b>format:</b> The name of one of the available adapters.</li></ul>
+            <b>Example:</b><pre>from csv to json</pre>
         """.trimIndent(),
         "transform" to """
-            <b>transform</b><br/>
-            Begins the transformation block containing actions.<br/><br/>
+            <b>transform [unsafe]</b><br/>
+            Begins the transformation block containing actions. Optional 'unsafe' keyword disables safety features (optional chaining) for maximum performance.<br/><br/>
             
             <b>Example:</b><pre>transform
-  set name = firstName</pre>
+  set name = firstName
+
+transform unsafe
+  set result = price / quantity</pre>
+        """.trimIndent(),
+        "unsafe" to """
+            <b>transform unsafe</b><br/>
+            Disables safety features (optional chaining) in generated code for maximum performance. Use only with validated/trusted input data.<br/><br/>
+            
+            <b>Example:</b><pre>transform unsafe
+  set result = price / quantity</pre>
         """.trimIndent(),
         "set" to """
             <b>set <target> = <expression></b><br/>
@@ -35,11 +45,11 @@ object MorphQLDocumentation {
             <b>section [multiple] <name>( [subquery] <actions> ) [from <path>]</b><br/>
             Creates a nested object or array in the output. Can optionally include a subquery for format conversion.<br/><br/>
             <b>Parameters:</b><ul><li><b>multiple:</b> (Optional) Treat as array mapping</li><li><b>name:</b> The section/field name</li><li><b>subquery:</b> (Optional) Nested query: from <format> to <format> [transform]</li><li><b>actions:</b> Actions to perform within the section</li><li><b>from:</b> (Optional) Source path for the section data</li></ul>
-            <b>Example:</b><pre>section metadata(
-  from xml to object
+            <b>Example:</b><pre>section items(
+  from csv to object
   transform
-    set name = root.productName
-) from xmlString</pre>
+    set name = A
+) from csvString</pre>
         """.trimIndent(),
         "multiple" to """
             <b>section multiple <name>(...)</b><br/>
@@ -165,7 +175,7 @@ substring("Hello World", -5)     // "World"</pre>
         """.trimIndent(),
         "aslist" to """
             <b>aslist(value)</b><br/>
-            Ensures a value is an array. Useful for XML nodes that might be a single object or an array.<br/><br/>
+            Ensures a value is an array. Useful for input formats like XML that might return a single object or an array for the same field.<br/><br/>
             <b>Parameters:</b><ul><li><b>value:</b> The value to normalize</li></ul>
             <b>Example:</b><pre>aslist(items)  // Always returns an array</pre>
         """.trimIndent()

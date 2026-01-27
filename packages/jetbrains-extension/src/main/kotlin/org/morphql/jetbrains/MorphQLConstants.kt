@@ -9,6 +9,7 @@ object MorphQLConstants {
         "from",
         "to",
         "transform",
+        "unsafe",
         "set",
         "section",
         "multiple",
