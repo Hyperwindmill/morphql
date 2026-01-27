@@ -2,8 +2,8 @@
 
 MorphQL provides first-class support for both VSCode and JetBrains IDEs, offering syntax highlighting, code execution, and documentation lookup to enhance your development workflow.
 
-::: info Marketplace Status
-The extensions are currently in **preview** and not yet available on public marketplaces. You can install them manually following the instructions below.
+::: info Download
+Extensions are available for download on [GitHub Releases](https://github.com/Hyperwindmill/morphql/releases). They are not yet published to official marketplaces (VSCode Marketplace, JetBrains Plugin Repository).
 :::
 
 ## VSCode Extension
@@ -22,18 +22,19 @@ Full language support for Visual Studio Code.
 
 ### Installation
 
-1.  Clone the repository.
-2.  Navigate to `packages/vscode-extension`.
-3.  Run `npm install` and `npm run compile`.
-4.  Press `F5` to launch a new VSCode window with the extension loaded (Development Host).
+**Download the latest release:**
 
-Alternatively, you can package it into a `.vsix` file:
+👉 **[Download from GitHub Releases](https://github.com/Hyperwindmill/morphql/releases)**
 
-```bash
-npm install -g @vscode/vsce
-vsce package
-# Then install the .vsix in your main VSCode instance
-```
+1. Download `morphql-vscode-{version}.vsix` from the latest release
+2. Open VSCode
+3. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
+4. Run: **Extensions: Install from VSIX...**
+5. Select the downloaded `.vsix` file
+
+::: tip Development
+To build from source, see the [Extension Distribution Guide](https://github.com/Hyperwindmill/morphql/blob/main/docs/extension-distribution.md).
+:::
 
 ## JetBrains Extension
 
@@ -48,17 +49,17 @@ Native support for IntelliJ IDEA, WebStorm, PhpStorm, and other JetBrains IDEs.
 
 ### Installation
 
-1.  **Build the Plugin**:
+**Download the latest release:**
 
-    ```bash
-    cd packages/jetbrains-extension
-    ./gradlew build
-    ```
+👉 **[Download from GitHub Releases](https://github.com/Hyperwindmill/morphql/releases)**
 
-    The artifact will be created at `build/distributions/morphql-jetbrains-0.X.X.zip`.
+1. Download `morphql-jetbrains-{version}.zip` from the latest release
+2. Open your JetBrains IDE (IntelliJ IDEA, WebStorm, etc.)
+3. Go to **Settings/Preferences** → **Plugins**
+4. Click the ⚙️ gear icon → **Install Plugin from Disk...**
+5. Select the downloaded `.zip` file
+6. Restart your IDE
 
-2.  **Install from Disk**:
-    - Open **Settings/Preferences** > **Plugins**.
-    - Click the ⚙️ gear icon and select **Install Plugin from Disk...**.
-    - Select the generated `.zip` file.
-    - Restart your IDE.
+::: tip Development
+To build from source, see the [Extension Distribution Guide](https://github.com/Hyperwindmill/morphql/blob/main/docs/extension-distribution.md).
+:::

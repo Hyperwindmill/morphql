@@ -133,6 +133,7 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^18.0.0",
     "@types/vscode": "^1.75.0",
+    "@vscode/vsce": "^3.2.1",
     "rollup": "^4.55.2",
     "typescript": "^5.0.0"
   },

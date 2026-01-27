@@ -1,0 +1,136 @@
+name: Build Extensions
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "packages/vscode-extension/**"
+      - "packages/jetbrains-extension/**"
+      - "packages/language-definitions/**"
+      - "packages/core/**"
+
+jobs:
+  build-vscode:
+    name: Build VSCode Extension
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Language Definitions
+        run: npm run build -w @morphql/language-definitions
+
+      - name: Build Core Package
+        run: npm run build -w @morphql/core
+
+      - name: Install VSCE
+        run: npm install -g @vscode/vsce
+
+      - name: Package VSCode Extension
+        run: |
+          cd packages/vscode-extension
+          vsce package --no-dependencies
+
+      - name: Upload VSCode Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension
+          path: packages/vscode-extension/*.vsix
+          retention-days: 90
+
+  build-jetbrains:
+    name: Build JetBrains Extension
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Language Definitions
+        run: npm run build -w @morphql/language-definitions
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build JetBrains Plugin
+        run: |
+          cd packages/jetbrains-extension
+          ./gradlew buildPlugin
+
+      - name: Upload JetBrains Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jetbrains-extension
+          path: packages/jetbrains-extension/build/distributions/*.zip
+          retention-days: 90
+
+  create-release:
+    name: Create Draft Release
+    needs: [build-vscode, build-jetbrains]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download VSCode Extension
+        uses: actions/download-artifact@v4
+        with:
+          name: vscode-extension
+          path: ./artifacts
+
+      - name: Download JetBrains Extension
+        uses: actions/download-artifact@v4
+        with:
+          name: jetbrains-extension
+          path: ./artifacts
+
+      - name: Create Draft Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          generate_release_notes: true
+          files: |
+            ./artifacts/*.vsix
+            ./artifacts/*.zip
+          body: |
+            ## 📦 Extension Downloads
+
+            Download the extensions below for manual installation:
+
+            - **VSCode**: Install the `.vsix` file via "Extensions: Install from VSIX..." command
+            - **JetBrains**: Install the `.zip` file via Settings → Plugins → ⚙️ → Install Plugin from Disk
+
+            ---
+
+            ## 📝 Release Notes
+
+            <!-- Add your release notes here -->
