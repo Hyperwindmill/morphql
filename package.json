@@ -1,6 +1,6 @@
 {
   "name": "morphql-monorepo",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "private": true,
   "description": "MorphQL Monorepo - A high-performance Query-to-Code engine",
   "workspaces": [
