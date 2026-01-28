@@ -42,6 +42,69 @@ transform unsafe
 
 ---
 
+## Context Identifiers
+
+MorphQL provides special identifiers to control which data context you're reading from or writing to.
+
+### Default Contexts
+
+- **`source`** - The input data (implicit when reading in `set`)
+- **`target`** - The output data (implicit when reading in `modify` or `return`)
+
+```morphql
+# These are equivalent - 'source' is implicit in set
+set name = firstName
+set name = source.firstName
+
+# These are equivalent - 'target' is implicit in modify
+modify total = total * 1.1
+modify total = target.total * 1.1
+```
+
+### Explicit Context Access
+
+You can explicitly specify which context to read from:
+
+```morphql
+# Read from source explicitly
+set result = source.price
+
+# Read from target (useful in set to reference previously set fields)
+set first = value
+set second = target.first  # References the field we just set
+
+# Mix contexts
+set total = source.price + target.markup
+```
+
+### Root Context Identifiers
+
+When working inside nested sections, the `source` and `target` identifiers refer to the **current scope**. To access the **root/parent** scope, use `_source` and `_target`:
+
+```morphql
+from json to object
+transform
+  set globalId = id  # Root source.id
+
+  section multiple items(
+    set itemId = id           # Current item's id
+    set parentId = _source.id # Root source.id (parent scope)
+    set globalRef = _target.globalId  # Access root target field
+  ) from list
+```
+
+**Use cases for root identifiers:**
+
+- Access parent data from within nested sections
+- Reference root-level computed fields
+- Cross-scope data relationships
+
+::: tip
+`_source` and `_target` always refer to the **outermost** transformation scope, even when deeply nested in multiple sections or subqueries.
+:::
+
+---
+
 ## Actions
 
 Actions are the commands used inside the `transform` block or `section` blocks.
