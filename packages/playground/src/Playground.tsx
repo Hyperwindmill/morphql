@@ -12,12 +12,14 @@ import {
 import { compile } from "@morphql/core";
 import { EXAMPLES } from "./examples";
 import { registerMorphQLLanguage } from "./morphqlLanguage";
+import { SchemaTreeView } from "./SchemaTreeView";
 import "./index.css";
 
 interface Result {
   result: string;
   generatedCode: string;
   error: string | null;
+  analysis?: any;
 }
 
 export interface PlaygroundProps {
@@ -66,7 +68,7 @@ export function Playground({
   useEffect(() => {
     async function run() {
       try {
-        const morph = await compile(query);
+        const morph = await compile(query, { analyze: true });
         const output = morph(sourceData);
         setResult({
           result:
@@ -75,6 +77,7 @@ export function Playground({
               : JSON.stringify(output, null, 2),
           generatedCode: morph.code,
           error: null,
+          analysis: morph.analysis,
         });
       } catch (err: unknown) {
         setResult({
@@ -338,17 +341,44 @@ export function Playground({
               )}
             </div>
             {rightTab === "structure" && (
-              <div className="h-full p-8 flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-4">
-                  <Database className="w-8 h-8 text-indigo-400/50" />
+              <div className="h-full flex flex-col divide-y divide-slate-800 overflow-hidden">
+                {/* Source Structure */}
+                <div className="flex-1 flex flex-col overflow-hidden">
+                  <div className="px-4 py-1.5 bg-slate-900/50 flex items-center justify-between border-b border-slate-800">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                      Input Structure
+                    </span>
+                    <Database className="w-3 h-3 text-slate-600" />
+                  </div>
+                  <div className="flex-1 overflow-auto p-4 custom-scrollbar">
+                    {result.analysis?.source ? (
+                      <SchemaTreeView node={result.analysis.source} />
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-slate-600 italic text-xs">
+                        No input structure detected
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold text-slate-300 mb-2">
-                  Structure Analysis
-                </h3>
-                <p className="text-sm text-slate-500 max-w-xs transition-opacity">
-                  This section will display the extracted source and target
-                  schemas. Coming soon in Step 2.
-                </p>
+
+                {/* Target Structure */}
+                <div className="flex-1 flex flex-col overflow-hidden">
+                  <div className="px-4 py-1.5 bg-slate-900/50 flex items-center justify-between border-b border-slate-800">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                      Output Structure
+                    </span>
+                    <Play className="w-3 h-3 text-slate-600" />
+                  </div>
+                  <div className="flex-1 overflow-auto p-4 custom-scrollbar">
+                    {result.analysis?.target ? (
+                      <SchemaTreeView node={result.analysis.target} />
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-slate-600 italic text-xs">
+                        No output structure detected
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>
