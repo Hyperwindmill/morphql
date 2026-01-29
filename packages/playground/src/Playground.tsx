@@ -46,7 +46,14 @@ export function Playground({
   const [leftTab, setLeftTab] = useState<"query" | "js" | "source">("query");
   const [rightTab, setRightTab] = useState<"output" | "structure">("output");
 
-  const sourceType = sourceData.trim().startsWith("<") ? "xml" : "json";
+  const getSourceType = (data: string) => {
+    const trimmed = data.trim();
+    if (trimmed.startsWith("<")) return "xml";
+    if (trimmed.startsWith("{") || trimmed.startsWith("[")) return "json";
+    return "plaintext";
+  };
+
+  const sourceType = getSourceType(sourceData);
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -239,7 +246,7 @@ export function Playground({
               }`}>
               <Editor
                 theme="vs-dark"
-                language={sourceType === "json" ? "json" : "xml"}
+                language={sourceType}
                 value={sourceData}
                 onChange={handleSourceDataChange}
                 options={{
@@ -316,9 +323,7 @@ export function Playground({
               ) : (
                 <Editor
                   theme="vs-dark"
-                  language={
-                    result.result.trim().startsWith("<") ? "xml" : "json"
-                  }
+                  language={getSourceType(result.result)}
                   value={result.result}
                   options={{
                     readOnly: true,
