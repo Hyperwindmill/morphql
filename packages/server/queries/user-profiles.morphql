@@ -1,4 +1,4 @@
-from object to object
+from json to xml
 transform
   section multiple profiles(
     set id = userId

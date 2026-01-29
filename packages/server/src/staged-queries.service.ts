@@ -2,12 +2,14 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { compile, MorphEngine, AnalyzeResult } from '@morphql/core';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as yaml from 'js-yaml';
 
 export interface StagedQuery {
   name: string;
   query: string;
   engine: MorphEngine;
   analysis: AnalyzeResult;
+  meta?: Record<string, any>;
 }
 
 @Injectable()
@@ -58,13 +60,27 @@ export class StagedQueriesService implements OnModuleInit {
           continue;
         }
 
+        // Load optional metadata
+        let meta: Record<string, any> | undefined;
+        const yamlPath = path.join(this.queriesDir, `${name}.meta.yaml`);
+        const jsonPath = path.join(this.queriesDir, `${name}.meta.json`);
+
+        if (fs.existsSync(yamlPath)) {
+          meta = yaml.load(fs.readFileSync(yamlPath, 'utf-8')) as any;
+        } else if (fs.existsSync(jsonPath)) {
+          meta = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+        }
+
         this.stagedQueries.set(name, {
           name,
           query: content,
           engine,
           analysis: engine.analysis,
+          meta,
         });
-        this.logger.log(`Loaded staged query: ${name}`);
+        this.logger.log(
+          `Loaded staged query: ${name}${meta ? ' with metadata' : ''}`,
+        );
       } catch (e) {
         this.logger.error(
           `Error compiling staged query ${name}: ${e instanceof Error ? e.message : String(e)}`,

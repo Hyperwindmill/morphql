@@ -36,9 +36,11 @@ export class DocumentationService implements OnModuleInit {
   private generateQuerySpec(query: any) {
     const requestBody = SwaggerHelper.schemaNodeToOpenAPI(
       query.analysis.source,
+      query.meta,
     );
     const responseBody = SwaggerHelper.schemaNodeToOpenAPI(
       query.analysis.target,
+      query.meta,
     );
 
     return {

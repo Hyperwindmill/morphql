@@ -71,7 +71,7 @@ describe('Staged Queries (e2e)', () => {
     });
   });
 
-  it('should generate documentation fragments in staged-docs/', () => {
+  it('should generate documentation fragments in staged-docs/ with metadata overrides', () => {
     const docPath = path.join(
       process.cwd(),
       'staged-docs',
@@ -80,9 +80,25 @@ describe('Staged Queries (e2e)', () => {
     expect(fs.existsSync(docPath)).toBe(true);
 
     const content = JSON.parse(fs.readFileSync(docPath, 'utf-8'));
-    expect(content.paths['/v1/q/user-profiles']).toBeDefined();
-    expect(content.paths['/v1/q/user-profiles'].post.summary).toContain(
-      'user-profiles',
+    const pathSpec = content.paths['/v1/q/user-profiles'].post;
+    expect(pathSpec).toBeDefined();
+
+    // Check for overridden metadata in requestBody
+    const usersSchema =
+      pathSpec.requestBody.content['application/json'].schema.properties.users;
+    expect(usersSchema.description).toBe('List of users to transform');
+    expect(usersSchema.items.properties.userId.example).toBe('user_123');
+    expect(usersSchema.items.properties.rawAge.type).toBe('string');
+
+    // Check for overridden metadata in responses
+    const profilesSchema =
+      pathSpec.responses['200'].content['application/json'].schema.properties
+        .profiles;
+    expect(profilesSchema.items.properties.fullName.description).toBe(
+      'Combined first and last name',
+    );
+    expect(profilesSchema.items.properties.status.description).toBe(
+      'Activation status based on isActive flag',
     );
   });
 
