@@ -43,6 +43,8 @@ export function Playground({
     generatedCode: "",
     error: null,
   });
+  const [leftTab, setLeftTab] = useState<"query" | "js" | "source">("query");
+  const [rightTab, setRightTab] = useState<"output" | "structure">("output");
 
   const sourceType = sourceData.trim().startsWith("<") ? "xml" : "json";
 
@@ -148,17 +150,52 @@ export function Playground({
 
       {/* Main Content */}
       <main className="flex-1 flex overflow-hidden">
-        {/* Left Panel: Query & JS */}
+        {/* Left Panel: Query, JS, Source Tabs */}
         <div className="w-1/2 flex flex-col border-r border-slate-800">
-          {/* Top Half: Query */}
-          <div className="h-1/2 flex flex-col border-b border-slate-800">
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 border-b border-slate-800">
-              <FileCode className="w-4 h-4 text-indigo-400" />
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          <div className="flex items-center gap-1 px-4 py-2 bg-slate-900 border-b border-slate-800">
+            <button
+              onClick={() => setLeftTab("query")}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all ${
+                leftTab === "query"
+                  ? "bg-slate-800 text-indigo-400 shadow-sm"
+                  : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+              }`}>
+              <FileCode className="w-4 h-4" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">
                 Morph Query
               </span>
-            </div>
-            <div className="flex-1 overflow-hidden pt-2">
+            </button>
+            <button
+              onClick={() => setLeftTab("js")}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all ${
+                leftTab === "js"
+                  ? "bg-slate-800 text-amber-400 shadow-sm"
+                  : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+              }`}>
+              <Code className="w-4 h-4" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">
+                Generated JS
+              </span>
+            </button>
+            <button
+              onClick={() => setLeftTab("source")}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all ${
+                leftTab === "source"
+                  ? "bg-slate-800 text-emerald-400 shadow-sm"
+                  : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+              }`}>
+              <Database className="w-4 h-4" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">
+                Source Data
+              </span>
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-hidden">
+            <div
+              className={`h-full flex flex-col pt-2 bg-[#1e1e1e] ${
+                leftTab === "query" ? "block" : "hidden"
+              }`}>
               <Editor
                 theme="vs-dark"
                 defaultLanguage="morphql"
@@ -177,17 +214,10 @@ export function Playground({
                 }}
               />
             </div>
-          </div>
-
-          {/* Bottom Half: Generated JS */}
-          <div className="h-1/2 flex flex-col">
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 border-b border-slate-800">
-              <Code className="w-4 h-4 text-amber-400" />
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Generated JS
-              </span>
-            </div>
-            <div className="flex-1 overflow-hidden pt-2">
+            <div
+              className={`h-full flex flex-col pt-2 bg-[#1e1e1e] ${
+                leftTab === "js" ? "block" : "hidden"
+              }`}>
               <Editor
                 theme="vs-dark"
                 defaultLanguage="javascript"
@@ -203,20 +233,10 @@ export function Playground({
                 }}
               />
             </div>
-          </div>
-        </div>
-
-        {/* Right Panels */}
-        <div className="w-1/2 flex flex-col overflow-hidden">
-          {/* Top Right: Source Data */}
-          <div className="h-1/2 flex flex-col border-b border-slate-800">
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 border-b border-slate-800">
-              <Database className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Source Data ({sourceType.toUpperCase()})
-              </span>
-            </div>
-            <div className="flex-1 overflow-hidden pt-2">
+            <div
+              className={`h-full flex flex-col pt-2 bg-[#1e1e1e] ${
+                leftTab === "source" ? "block" : "hidden"
+              }`}>
               <Editor
                 theme="vs-dark"
                 language={sourceType === "json" ? "json" : "xml"}
@@ -233,16 +253,38 @@ export function Playground({
               />
             </div>
           </div>
+        </div>
 
-          {/* Bottom Right: Result */}
-          <div className="h-1/2 flex flex-col relative">
-            <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <Code className="w-4 h-4 text-amber-400" />
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        {/* Right Panel: Output & Structure Tabs */}
+        <div className="w-1/2 flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setRightTab("output")}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all ${
+                  rightTab === "output"
+                    ? "bg-slate-800 text-amber-400 shadow-sm"
+                    : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+                }`}>
+                <Play className="w-4 h-4" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">
                   Transformation Result
                 </span>
-              </div>
+              </button>
+              <button
+                onClick={() => setRightTab("structure")}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all ${
+                  rightTab === "structure"
+                    ? "bg-slate-800 text-indigo-400 shadow-sm"
+                    : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+                }`}>
+                <Info className="w-4 h-4" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">
+                  Structure
+                </span>
+              </button>
+            </div>
+            {rightTab === "output" && (
               <button
                 onClick={copyToClipboard}
                 className="p-1 hover:bg-slate-800 rounded transition-colors text-slate-400 hover:text-white"
@@ -253,8 +295,14 @@ export function Playground({
                   <Copy className="w-4 h-4" />
                 )}
               </button>
-            </div>
-            <div className="flex-1 overflow-hidden pt-2 bg-[#1e1e1e]">
+            )}
+          </div>
+
+          <div className="flex-1 overflow-hidden bg-[#1e1e1e]">
+            <div
+              className={`h-full flex flex-col pt-2 ${
+                rightTab === "output" ? "block" : "hidden"
+              }`}>
               {result.error ? (
                 <div className="p-4 flex gap-3 text-red-400 bg-red-950/20 m-4 rounded-lg border border-red-900/50">
                   <Info className="w-5 h-5 flex-shrink-0" />
@@ -284,6 +332,20 @@ export function Playground({
                 />
               )}
             </div>
+            {rightTab === "structure" && (
+              <div className="h-full p-8 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-4">
+                  <Database className="w-8 h-8 text-indigo-400/50" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-300 mb-2">
+                  Structure Analysis
+                </h3>
+                <p className="text-sm text-slate-500 max-w-xs transition-opacity">
+                  This section will display the extracted source and target
+                  schemas. Coming soon in Step 2.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </main>
