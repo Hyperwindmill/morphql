@@ -72,6 +72,15 @@ Supports custom caching strategies to avoid recompilation of identical queries.
 - **File System Cache**: Persistent caching for Node.js servers
 - **Redis Cache**: Distributed caching for scaled deployments
 
+### 8. Mapping Tracker (`packages/core/src/core/mapping-tracker.ts`)
+
+A telemetry component that collects structural information during compilation.
+
+- Tracks source field access (detecting expected input structure)
+- Tracks target field assignments (detecting output schema)
+- Handles nested scopes and cumulative branching (if/else)
+- Opt-in via `compile` options
+
 ---
 
 ## Compilation Pipeline
@@ -107,6 +116,7 @@ morphql/
 │   │   │   ├── lexer.ts         # Token definitions
 │   │   │   ├── parser.ts        # Grammar rules
 │   │   │   ├── compiler.ts      # Code generation
+│   │   │   ├── mapping-tracker.ts # Structure analysis
 │   │   │   ├── functions.ts     # Function implementations
 │   │   │   ├── adapters.ts      # Format handlers
 │   │   │   ├── cache.ts         # Caching strategies
@@ -161,7 +171,8 @@ A production-ready NestJS microservice exposing MorphQL via REST API.
 - ✅ **Subquery Sections**: Format conversion within sections
 - ✅ **Cloning**: Full/selective object cloning
 - ✅ **Pure Conversions**: Optional `transform` for straight format conversion
-- ✅ **Tests**: 67+ unit tests across multiple spec files
+- ✅ **Structure Extraction**: Opt-in query analysis for source/target discovery
+- ✅ **Tests**: 70+ unit tests across multiple spec files
 - ✅ **IDE Support**: VSCode and JetBrains extensions
 
 ---
@@ -175,4 +186,4 @@ A production-ready NestJS microservice exposing MorphQL via REST API.
 
 ---
 
-_Last Updated: 2026-01-24_
+_Last Updated: 2026-01-29_
