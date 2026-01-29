@@ -4,13 +4,15 @@ import { compiler } from './core/compiler.js';
 import { getAdapter } from './runtime/adapters.js';
 import { MorphQLCache } from './runtime/cache.js';
 
-export { MorphQLCache };
+import { AnalyzeResult, SchemaNode, MorphType } from './core/mapping-tracker.js';
+
+export { MorphQLCache, AnalyzeResult, SchemaNode, MorphType };
 import beautify from 'js-beautify';
 
 export interface MorphEngine<Source = any, Target = any> {
   (source: Source): Promise<Target> | Target;
   code: string;
-  analysis?: any;
+  analysis?: AnalyzeResult;
 }
 
 export interface CompileOptions {

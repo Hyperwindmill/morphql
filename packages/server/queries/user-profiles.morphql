@@ -1,0 +1,8 @@
+from object to object
+transform
+  section multiple profiles(
+    set id = userId
+    set fullName = firstName + " " + lastName
+    set age = number(rawAge)
+    set status = if (isActive,"active","inactive")
+  ) from users

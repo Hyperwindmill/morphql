@@ -4,6 +4,7 @@ import {
   Post,
   Get,
   Body,
+  Param,
   UseGuards,
   BadRequestException,
   InternalServerErrorException,
@@ -11,6 +12,8 @@ import {
 } from '@nestjs/common';
 import { ApiKeyGuard } from './auth.guard.js';
 import { compile } from '@morphql/core';
+import { StagedQueriesService } from './staged-queries.service.js';
+import { DocumentationService } from './documentation.service.js';
 import { RedisCache } from '@morphql/core/cache-services';
 import {
   ApiTags,
@@ -80,6 +83,11 @@ export class CompileResponseDto {
 @Controller('v1')
 @UseGuards(ApiKeyGuard)
 export class MorphController {
+  constructor(
+    private readonly stagedQueriesService: StagedQueriesService,
+    private readonly documentationService: DocumentationService,
+  ) {}
+
   @Post('execute')
   @ApiOperation({ summary: 'Execute a transformation' })
   @ApiResponse({ status: 200, type: ExecuteResponseDto })
@@ -108,7 +116,49 @@ export class MorphController {
     }
   }
 
+  @Post('q/:name')
+  @ApiOperation({ summary: 'Execute a staged transformation' })
+  @ApiResponse({ status: 200, type: ExecuteResponseDto })
+  async executeStaged(
+    @Param('name') name: string,
+    @Body() data: Record<string, unknown>,
+  ): Promise<ExecuteResponseDto> {
+    const staged = this.stagedQueriesService.getQuery(name);
+    if (!staged) {
+      throw new BadRequestException(`Staged query not found: ${name}`);
+    }
+
+    try {
+      const start = performance.now();
+      const result = await staged.engine(data);
+      const end = performance.now();
+
+      return {
+        success: true,
+        result,
+        executionTime: end - start,
+      };
+    } catch (e: unknown) {
+      console.error('Staged Execute Error:', e);
+      const message =
+        e instanceof Error ? e.message : 'Unknown execution error';
+      throw new InternalServerErrorException(message);
+    }
+  }
+
+  @Post('admin/refresh-docs')
+  @ApiOperation({
+    summary: 'Refresh OpenApi documentation from staged queries',
+  })
+  @ApiResponse({ status: 200, description: 'Documentation refreshed' })
+  async refreshDocs() {
+    await this.stagedQueriesService.loadQueries();
+    await this.documentationService.refresh();
+    return { success: true, timestamp: new Date().toISOString() };
+  }
+
   @Post('compile')
+  // ... rest of the methods
   @ApiOperation({ summary: 'Compile MorphQL to JavaScript' })
   @ApiResponse({ status: 200, type: CompileResponseDto })
   async compile(@Body() body: CompileDto): Promise<CompileResponseDto> {
