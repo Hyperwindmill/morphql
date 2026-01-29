@@ -34,14 +34,17 @@ export class DocumentationService implements OnModuleInit {
   }
 
   private generateQuerySpec(query: any) {
-    const requestBody = SwaggerHelper.schemaNodeToOpenAPI(
+    const requestSchema = SwaggerHelper.schemaNodeToOpenAPI(
       query.analysis.source,
       query.meta,
     );
-    const responseBody = SwaggerHelper.schemaNodeToOpenAPI(
+    const responseSchema = SwaggerHelper.schemaNodeToOpenAPI(
       query.analysis.target,
       query.meta,
     );
+
+    const sourceMime = this.getMimeType(query.analysis.sourceFormat);
+    const targetMime = this.getMimeType(query.analysis.targetFormat);
 
     return {
       paths: {
@@ -53,8 +56,8 @@ export class DocumentationService implements OnModuleInit {
             requestBody: {
               required: true,
               content: {
-                'application/json': {
-                  schema: requestBody,
+                [sourceMime]: {
+                  schema: requestSchema,
                 },
               },
             },
@@ -62,8 +65,8 @@ export class DocumentationService implements OnModuleInit {
               '200': {
                 description: 'Successful transformation',
                 content: {
-                  'application/json': {
-                    schema: responseBody,
+                  [targetMime]: {
+                    schema: responseSchema,
                   },
                 },
               },
@@ -72,6 +75,17 @@ export class DocumentationService implements OnModuleInit {
         },
       },
     };
+  }
+
+  private getMimeType(format?: string): string {
+    switch (format?.toLowerCase()) {
+      case 'json':
+        return 'application/json';
+      case 'xml':
+        return 'application/xml';
+      default:
+        return 'text/plain';
+    }
   }
 
   getDocFragments(): any[] {

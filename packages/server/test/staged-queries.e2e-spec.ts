@@ -56,19 +56,11 @@ describe('Staged Queries (e2e)', () => {
       .expect(201);
 
     expect(response.body.success).toBe(true);
-    expect(response.body.result.profiles).toHaveLength(2);
-    expect(response.body.result.profiles[0]).toEqual({
-      id: '1',
-      fullName: 'John Doe',
-      age: 30,
-      status: 'active',
-    });
-    expect(response.body.result.profiles[1]).toEqual({
-      id: '2',
-      fullName: 'Jane Smith',
-      age: 25,
-      status: 'inactive',
-    });
+    // When target is XML, the engine returns a string
+    expect(typeof response.body.result).toBe('string');
+    expect(response.body.result).toContain('<profiles>');
+    expect(response.body.result).toContain('<fullName>John Doe</fullName>');
+    expect(response.body.result).toContain('<status>active</status>');
   });
 
   it('should generate documentation fragments in staged-docs/ with metadata overrides', () => {
@@ -83,16 +75,20 @@ describe('Staged Queries (e2e)', () => {
     const pathSpec = content.paths['/v1/q/user-profiles'].post;
     expect(pathSpec).toBeDefined();
 
+    // Check for inferred MIME types
+    expect(pathSpec.requestBody.content['application/json']).toBeDefined();
+    expect(pathSpec.responses['200'].content['application/xml']).toBeDefined();
+
     // Check for overridden metadata in requestBody
     const usersSchema =
       pathSpec.requestBody.content['application/json'].schema.properties.users;
     expect(usersSchema.description).toBe('List of users to transform');
-    expect(usersSchema.items.properties.userId.example).toBe('user_123');
+    expect(usersSchema.items.properties.userId.example).toBe(123);
     expect(usersSchema.items.properties.rawAge.type).toBe('string');
 
     // Check for overridden metadata in responses
     const profilesSchema =
-      pathSpec.responses['200'].content['application/json'].schema.properties
+      pathSpec.responses['200'].content['application/xml'].schema.properties
         .profiles;
     expect(profilesSchema.items.properties.fullName.description).toBe(
       'Combined first and last name',

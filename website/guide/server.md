@@ -7,10 +7,11 @@ The MorphQL Server is a high-performance, stateless REST API built with NestJS. 
 The server provides a simple HTTP interface to compile and execute MorphQL transformations. It is designed for horizontal scalability and containerized environments.
 
 **Key Features:**
-*   **Stateless**: Scale simply by adding more instances.
-*   **Redis Caching**: Caches compiled queries for high throughput.
-*   **Docker Ready**: Ships with production-optimized Docker images.
-*   **Swagger Docs**: Built-in interactive API documentation.
+
+- **Stateless**: Scale simply by adding more instances.
+- **Redis Caching**: Caches compiled queries for high throughput.
+- **Docker Ready**: Ships with production-optimized Docker images.
+- **Swagger Docs**: Built-in interactive API documentation.
 
 ## Deployment
 
@@ -19,7 +20,7 @@ The server provides a simple HTTP interface to compile and execute MorphQL trans
 The easiest way to run the server is with Docker Compose. This sets up the API server and a Redis instance for caching.
 
 ```yaml
-version: '3'
+version: "3"
 services:
   morphql-server:
     image: morphql-server
@@ -47,12 +48,13 @@ The server will be available at `http://localhost:3000`.
 
 You can configure the server using environment variables:
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `PORT` | Server port | `3000` |
-| `REDIS_HOST` | Hostname for Redis (optional) | - |
-| `REDIS_PORT` | Redis port | `6379` |
-| `API_KEY` | Secret key for authentication (optional) | - |
+| Variable              | Description                              | Default     |
+| :-------------------- | :--------------------------------------- | :---------- |
+| `PORT`                | Server port                              | `3000`      |
+| `REDIS_HOST`          | Hostname for Redis (optional)            | -           |
+| `REDIS_PORT`          | Redis port                               | `6379`      |
+| `API_KEY`             | Secret key for authentication (optional) | -           |
+| `MORPHQL_QUERIES_DIR` | Directory for staged `.morphql` files    | `./queries` |
 
 > If `REDIS_HOST` is not provided, the server will run in memory-only mode without persistent caching across restarts.
 
@@ -97,19 +99,68 @@ Returns the generated JavaScript code for a query.
 }
 ```
 
+### Execute Staged Query
+
+`POST /v1/q/:name`
+
+Executes a pre-compiled query stored in the queries directory.
+
+**Example:** `POST /v1/q/user-profiles`
+
+The Request Body and Response types are automatically inferred from the query logic and served via Swagger.
+
+### Admin: Refresh Documentation
+
+`POST /v1/admin/refresh-docs`
+
+Triggers a reload of all staged queries and regenerates the OpenAPI documentation fragments.
+
 **Response:**
 
 ```json
 {
   "success": true,
-  "code": "function(source) { ... }"
+  "timestamp": "2026-01-29T22:00:00.000Z"
 }
 ```
 
+## Staged Queries
+
+Staged queries allow you to pre-define and name transformations, which are then exposed as dedicated API endpoints.
+
+1.  Create a `.morphql` file in your queries directory (e.g., `queries/user-profiles.morphql`).
+2.  The server automatically compiles and caches it on startup.
+3.  Access it via `POST /v1/q/user-profiles`.
+
+### Advanced Documentation (Metadata)
+
+You can manually refine the auto-generated Swagger documentation by providing a parallel metadata file (`.meta.yaml` or `.meta.json`).
+
+**Example `queries/user-profiles.meta.yaml`:**
+
+```yaml
+"users.userId":
+  type: "number"
+  description: "Internal user ID"
+  example: 123
+"profiles.fullName":
+  description: "Display name"
+```
+
+The system uses path-based lookups (ignoring array indices) to apply these overrides to the generated schema.
+
+## CLI Tools
+
+### Generate Documentation
+
+`npm run docs:generate`
+
+Generates OpenAPI documentation fragments for all staged queries without starting the full server. Useful for build pipelines.
+
 ### Health Checks
 
-*   `GET /v1/health`: Liveness probe.
-*   `GET /v1/health/ready`: Readiness probe (checks Redis connection).
+- `GET /v1/health`: Liveness probe.
+- `GET /v1/health/ready`: Readiness probe (checks Redis connection).
 
 ## Security
 

@@ -47,7 +47,7 @@ export async function compile<Source = any, Target = any>(
   }
 
   compiler.isAnalyzing = !!options?.analyze;
-  const { code: rawCode, analysis } = compiler.visit(cst);
+  const { code: rawCode, analysis, sourceType, targetType } = compiler.visit(cst);
 
   const code = beautify.js(rawCode, {
     indent_size: 2,
@@ -62,6 +62,8 @@ export async function compile<Source = any, Target = any>(
 
   const engine = createEngine<Source, Target>(code);
   if (analysis) {
+    analysis.sourceFormat = sourceType.name;
+    analysis.targetFormat = targetType.name;
     engine.analysis = analysis;
   }
   return engine;

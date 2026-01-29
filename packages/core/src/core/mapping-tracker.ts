@@ -10,6 +10,8 @@ export interface SchemaNode {
 export interface AnalyzeResult {
   source: SchemaNode;
   target: SchemaNode;
+  sourceFormat?: string;
+  targetFormat?: string;
 }
 
 export class MappingTracker {
