@@ -13,9 +13,14 @@ The core library is framework-agnostic and provides high-level abstractions to m
 
 ### Installation
 
+The server core requires `@morphql/core` as a peer dependency. You must install both:
+
 ```bash
 npm install @morphql/server @morphql/core
 ```
+
+> [!NOTE]
+> Since `@morphql/core` maintains an internal registry of adapters, having it as a peer dependency ensures that only one instance of the engine is used, preventing "Adapter not found" errors when using custom adapters.
 
 ### Basic Usage
 
