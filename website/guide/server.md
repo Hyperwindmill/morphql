@@ -69,6 +69,19 @@ The standalone server is a pre-configured NestJS application that exposes the Mo
 - **Auto-Documentation**: Serves a Swagger UI with endpoints for all staged queries.
 - **API Key Auth**: Built-in simple header-based authentication.
 
+---
+
+### Starter Template
+
+If you are building a custom transformation service from scratch, we recommend using the `packages/server-instance` folder from our monorepo as a **Starter Template**. It provides a production-ready foundation with:
+
+- NestJS structure and dependency injection.
+- Health checks (Liveness/Readiness).
+- Docker and Docker Compose configurations.
+- Pre-configured Swagger / OpenAPI documentation.
+
+Simply copy the folder and customize the controllers or services to fit your specific needs while keeping the `@morphql/server` core for the heavy lifting.
+
 ## Deployment
 
 ### Docker Compose
