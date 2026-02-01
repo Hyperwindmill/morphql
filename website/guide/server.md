@@ -82,6 +82,15 @@ If you are building a custom transformation service from scratch, we recommend u
 
 Simply copy the folder and customize the controllers or services to fit your specific needs while keeping the `@morphql/server` core for the heavy lifting.
 
+> [!TIP]
+> **Standalone Docker Usage**: If you are using this as a template outside the monorepo, use the `Dockerfile.standalone` provided in the folder. It is pre-configured to install all MorphQL dependencies from the npm registry instead of local workspaces.
+>
+> ```bash
+> # Rename it to use it as default
+> mv Dockerfile.standalone Dockerfile
+> docker build -t my-custom-morphql-server .
+> ```
+
 ## Deployment
 
 ### Docker Compose
