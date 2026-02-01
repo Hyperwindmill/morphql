@@ -1,6 +1,6 @@
 {
   "name": "@morphql/server",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Stateless Transformation Engine API for MorphQL",
   "author": "Hyperwindmill",
   "private": false,
@@ -39,7 +39,7 @@
     "docs:generate": "node dist/src/generate-docs.js"
   },
   "dependencies": {
-    "@morphql/core": "^0.1.8",
+    "@morphql/core": "^0.1.9",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
