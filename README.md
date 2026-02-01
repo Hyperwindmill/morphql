@@ -20,6 +20,8 @@
 
 ## The Problem
 
+> _"I was tired of rewriting one-off data consumers for every integration."_
+
 In modern software development, data transformation is everywhere. Whether you're shaping API responses, processing ETL pipelines, or integrating third-party services, you inevitably face:
 
 - **Complex mapping logic** scattered across your codebase.
@@ -55,6 +57,16 @@ This declarative query is then **compiled into a specialized JavaScript function
 | **Centralized Logic**  | Keep transformation logic separate and portable.                                            |
 | **Inspectable Code**   | The generated code is readable JavaScript—debug it if needed.                               |
 | **LLM Efficient**      | Constrained DSL reduces token cost and hallucinations compared to generating imperative JS. |
+
+### What MorphQL is NOT
+
+To set the right expectations:
+
+- **Not an iPaaS** — MorphQL doesn't manage connectors, orchestration, or SaaS integrations. It's a transformation engine, not a platform.
+- **Not low-code** — There's no drag-and-drop UI. You write queries in a DSL designed for developers.
+- **Not for business users** — This is a tool for engineers who need precise control over data shaping.
+
+If you're looking for a point-and-click integration builder, this isn't it. If you need a fast, embeddable transformation engine you can control—keep reading.
 
 ---
 
@@ -131,6 +143,14 @@ Handle complex structures with subqueries that can even parse embedded formats (
 ## Learn More
 
 👉 **[Full Documentation](https://hyperwindmill.github.io/morphql/)** — Language reference, architecture guides, and advanced patterns.
+
+---
+
+## Planned / Missing Features
+
+MorphQL is actively evolving, I have lots of ideas, but I'd be also interested in your feedback on real-world integration scenarios and problems you are trying to solve.
+
+Feel free to open an issue or join the discussion section on GitHub (https://github.com/Hyperwindmill/morphql/discussions)
 
 ---
 
