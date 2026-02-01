@@ -1,0 +1,37 @@
+{
+  "name": "@morphql/server-instance",
+  "version": "0.1.9",
+  "private": true,
+  "scripts": {
+    "build": "nest build",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:prod": "node dist/main.js",
+    "test": "vitest run",
+    "docs:generate": "node dist/src/generate-docs.js"
+  },
+  "dependencies": {
+    "@morphql/server": "^0.1.9",
+    "@morphql/core": "^0.1.9",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.5",
+    "ioredis": "^5.9.2",
+    "js-yaml": "^4.1.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/testing": "^11.0.1",
+    "@swc/core": "^1.10.9",
+    "@types/express": "^5.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.7",
+    "supertest": "^7.0.0",
+    "typescript": "^5.7.3",
+    "unplugin-swc": "^1.5.1",
+    "vitest": "^3.0.3"
+  }
+}

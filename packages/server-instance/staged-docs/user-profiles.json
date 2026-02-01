@@ -1,0 +1,92 @@
+{
+  "paths": {
+    "/v1/q/user-profiles": {
+      "post": {
+        "tags": [
+          "Staged Queries"
+        ],
+        "summary": "Execute staged query: user-profiles",
+        "operationId": "execute_user-profiles",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "users": {
+                    "type": "array",
+                    "description": "List of users to transform",
+                    "items": {
+                      "type": "object",
+                      "description": "List of users to transform",
+                      "properties": {
+                        "userId": {
+                          "type": "number",
+                          "description": "Unique identifier for the user",
+                          "example": 123
+                        },
+                        "firstName": {
+                          "example": "John"
+                        },
+                        "lastName": {
+                          "example": "Doe"
+                        },
+                        "rawAge": {
+                          "type": "string",
+                          "description": "Age as a numeric string from the source system",
+                          "example": "42"
+                        },
+                        "isActive": {
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful transformation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "profiles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {},
+                          "fullName": {
+                            "type": "string",
+                            "description": "Combined first and last name"
+                          },
+                          "age": {
+                            "type": "number"
+                          },
+                          "status": {
+                            "type": "string",
+                            "description": "Activation status based on isActive flag"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": "<User>\n  <profiles>\n    <id>123</id>\n    <fullName>John Doe</fullName>\n    <age>42</age>\n    <status>active</status>\n  </profiles>\n</User>\n",
+                  "xml": {
+                    "name": "root"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

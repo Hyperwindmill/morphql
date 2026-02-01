@@ -54,5 +54,5 @@ MorphQL is available in multiple forms to fit your workflow:
 
 - **[Library (Core)](./library)**: Integrate MorphQL directly into your Node.js or browser application.
 - **[CLI](./cli)**: Use the command-line interface for scripting and file transformations.
-- **[Server](./server)**: Deploy a stateless REST API with **Staged Queries** (the recommended pattern for production API endpoints).
+- **[Server Guide](./server)**: Learn about the **Headless Core** (for embedding staged queries in your app) and the **Standalone Server** (for a dedicated microservice).
 - **[Language Reference](./language-reference)**: Learn the full syntax, functions, and operators.

@@ -13,7 +13,7 @@ npm install @morphql/core
 The primary API is the `compile` function. It is asynchronous because the compilation process might involve loading format adapters.
 
 ```typescript
-import { compile, morphQL } from '@morphql/core';
+import { compile, morphQL } from "@morphql/core";
 
 // Define the query
 const query = morphQL`
@@ -26,7 +26,7 @@ const query = morphQL`
 const engine = await compile(query);
 
 // Execute it
-const result = engine({ firstName: 'John', lastName: 'Doe' });
+const result = engine({ firstName: "John", lastName: "Doe" });
 console.log(result);
 // <root><fullName>John Doe</fullName></root>
 ```
@@ -48,7 +48,7 @@ const q2 = morphQL`from json to json`;
 MorphQL is written in TypeScript and ships with type definitions.
 
 ```typescript
-import { compile } from '@morphql/core';
+import { compile } from "@morphql/core";
 
 interface Input {
   name: string;
@@ -73,7 +73,7 @@ const transformUser = await compile(userQuery);
 const transformProduct = await compile(productQuery);
 
 // Runtime (e.g. per request)
-app.get('/user', (req, res) => {
+app.get("/user", (req, res) => {
   res.send(transformUser(req.dbUser));
 });
 ```
@@ -81,9 +81,15 @@ app.get('/user', (req, res) => {
 **❌ Bad Pattern:**
 
 ```javascript
-app.get('/user', async (req, res) => {
+app.get("/user", async (req, res) => {
   // Re-compiling on every request destroys performance!
   const engine = await compile(userQuery);
   res.send(engine(req.dbUser));
 });
 ```
+
+## Advanced Use: MorphQL Server Core
+
+If you need managed staged queries (loaded from files), auto-generated OpenAPI documentation, or built-in caching strategies while staying inside your application, consider using `@morphql/server` instead of `@morphql/core`.
+
+See the [Server & API Guide](./server.md) for more details.

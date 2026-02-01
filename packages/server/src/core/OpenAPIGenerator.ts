@@ -1,6 +1,7 @@
 import { SchemaNode } from '@morphql/core';
+import { StagedQuery } from './StagedQueryManager.js';
 
-export class SwaggerHelper {
+export class OpenAPIGenerator {
   static schemaNodeToOpenAPI(
     node: SchemaNode,
     meta?: Record<string, any>,
@@ -49,7 +50,6 @@ export class SwaggerHelper {
     }
 
     if (node.type === 'array' && node.items) {
-      // User requested skipping array indexes in path tracking
       schema.items = this.schemaNodeToOpenAPI(node.items, meta, path);
     }
 
@@ -103,6 +103,71 @@ export class SwaggerHelper {
       if (entry.type) schema.type = entry.type;
       if (entry.description) schema.description = entry.description;
       if (entry.example !== undefined) schema.example = entry.example;
+    }
+  }
+
+  static async generatePathSpec(
+    query: StagedQuery,
+    basePath: string,
+  ): Promise<any> {
+    const requestSchema = this.schemaNodeToOpenAPI(
+      query.analysis.source,
+      query.meta,
+    );
+    const responseSchema = this.schemaNodeToOpenAPI(
+      query.analysis.target,
+      query.meta,
+    );
+
+    try {
+      const sampleInput = this.schemaToSample(requestSchema);
+      const responseExample = await query.engine(sampleInput);
+      responseSchema.example = responseExample;
+    } catch (e) {
+      console.warn(`Failed to generate response example for ${query.name}`);
+    }
+
+    const sourceMime = this.getMimeType(query.analysis.sourceFormat);
+    const targetMime = this.getMimeType(query.analysis.targetFormat);
+
+    if (sourceMime === 'application/xml') {
+      requestSchema.xml = { name: 'root' };
+    }
+    if (targetMime === 'application/xml') {
+      responseSchema.xml = { name: 'root' };
+    }
+
+    return {
+      paths: {
+        [`${basePath}/${query.name}`]: {
+          post: {
+            tags: ['Staged Queries'],
+            summary: `Execute staged query: ${query.name}`,
+            operationId: `execute_${query.name}`,
+            requestBody: {
+              required: true,
+              content: { [sourceMime]: { schema: requestSchema } },
+            },
+            responses: {
+              '200': {
+                description: 'Successful transformation',
+                content: { [targetMime]: { schema: responseSchema } },
+              },
+            },
+          },
+        },
+      },
+    };
+  }
+
+  private static getMimeType(format?: string): string {
+    switch (format?.toLowerCase()) {
+      case 'json':
+        return 'application/json';
+      case 'xml':
+        return 'application/xml';
+      default:
+        return 'text/plain';
     }
   }
 }

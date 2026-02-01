@@ -1,0 +1,20 @@
+'users':
+  description: 'List of users to transform'
+'users.userId':
+  type: 'number'
+  description: 'Unique identifier for the user'
+  example: 123
+'users.firstName':
+  example: 'John'
+'users.lastName':
+  example: 'Doe'
+'users.rawAge':
+  type: 'string'
+  description: 'Age as a numeric string from the source system'
+  example: '42'
+'users.isActive':
+  example: true
+'profiles.fullName':
+  description: 'Combined first and last name'
+'profiles.status':
+  description: 'Activation status based on isActive flag'

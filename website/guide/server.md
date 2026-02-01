@@ -1,17 +1,68 @@
-# Server & API
+The MorphQL Server is available in two forms: as a **headless core library** for embedding into existing Node.js applications, and as a **standalone server** (Docker-ready) for direct deployment.
 
-The MorphQL Server is a high-performance, stateless REST API built with NestJS. It allows you to offload transformation logic to a dedicated microservice.
+## Choice of Integration
 
-## Overview
+| Usage                 | Package           | Best For                                                                           |
+| :-------------------- | :---------------- | :--------------------------------------------------------------------------------- |
+| **Headless Core**     | `@morphql/server` | Embedding staged queries and OpenAPI generation into your own Express/NestJS apps. |
+| **Standalone Server** | (Docker Instance) | Deploying a dedicated microservice with REST endpoints for transformations.        |
 
-The server provides a simple HTTP interface to compile and execute MorphQL transformations. It is designed for horizontal scalability and containerized environments.
+## Headless Core (`@morphql/server`)
 
-**Key Features:**
+The core library is framework-agnostic and provides high-level abstractions to manage transformations.
 
-- **Stateless**: Scale simply by adding more instances.
-- **Redis Caching**: Caches compiled queries for high throughput.
-- **Docker Ready**: Ships with production-optimized Docker images.
-- **Swagger Docs**: Built-in interactive API documentation.
+### Installation
+
+```bash
+npm install @morphql/server @morphql/core
+```
+
+### Basic Usage
+
+The `MorphServer` class is the primary entry point.
+
+```typescript
+import { MorphServer } from "@morphql/server";
+
+const morph = new MorphServer({
+  queriesDir: "./queries", // optional: load .morphql files
+  cache: myCache, // optional: Redis or memory cache
+});
+
+// Initialize (loads staged queries)
+await morph.initialize();
+
+// Execute a staged query by name
+const result = await morph.executeStaged("user-transform", { id: 1 });
+
+// Execute a dynamic query
+const dynamicResult = await morph.execute(
+  "from object to json transform set a = 1",
+  data,
+);
+```
+
+### OpenAPI Integration
+
+The server core can generate OpenAPI specification fragments for your staged queries, making it easy to integrate into your existing documentation.
+
+```typescript
+const fragments = await morph.getOpenAPIFragments();
+// Merge these into your Swagger/OpenAPI definition
+```
+
+---
+
+## Standalone Server
+
+The standalone server is a pre-configured NestJS application that exposes the MorphQL engine via REST endpoints. It is ideal for microservice architectures.
+
+### Key Features:
+
+- **Redis Caching**: Caches compiled queries for extreme performance.
+- **Docker Ready**: Production-optimized images for Kubernetes or Swarm.
+- **Auto-Documentation**: Serves a Swagger UI with endpoints for all staged queries.
+- **API Key Auth**: Built-in simple header-based authentication.
 
 ## Deployment
 
