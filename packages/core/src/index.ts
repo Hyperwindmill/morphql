@@ -1,12 +1,20 @@
 import { MorphLexer } from './core/lexer.js';
 import { parser } from './core/parser.js';
 import { compiler } from './core/compiler.js';
-import { getAdapter } from './runtime/adapters.js';
+import { getAdapter, registerAdapter, DataAdapter } from './runtime/adapters.js';
 import { MorphQLCache } from './runtime/cache.js';
 
 import { AnalyzeResult, SchemaNode, MorphType } from './core/mapping-tracker.js';
 
-export { MorphQLCache, AnalyzeResult, SchemaNode, MorphType };
+export {
+  MorphQLCache,
+  AnalyzeResult,
+  SchemaNode,
+  MorphType,
+  registerAdapter,
+  getAdapter,
+  DataAdapter,
+};
 import beautify from 'js-beautify';
 
 export interface MorphEngine<Source = any, Target = any> {
