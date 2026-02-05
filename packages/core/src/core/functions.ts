@@ -156,4 +156,81 @@ export const functionRegistry: Record<string, FunctionHandler> = {
       return out;
     })(${val})`;
   },
+  unpack: (args: string[]) => {
+    if (args.length < 2) {
+      throw new Error(
+        'unpack() requires at least 2 arguments (string, fieldSpec1, [fieldSpec2, ...])'
+      );
+    }
+    const [str, ...specs] = args;
+    const extractions = specs
+      .map((spec) => {
+        const clean = spec.replace(/^["']|["']$/g, '');
+        const parts = clean.split(':');
+        if (parts.length < 3) {
+          throw new Error(
+            `Invalid field spec for unpack(): ${clean}. Expected "name:start:length[:modifier]"`
+          );
+        }
+        const [name, startStr, lengthStr, modifier] = parts;
+        const start = parseInt(startStr, 10);
+        const length = parseInt(lengthStr, 10);
+        if (isNaN(start) || isNaN(length)) {
+          throw new Error(`Invalid character positions in unpack() spec: ${clean}`);
+        }
+
+        let extraction = `String(${str} || "").substring(${start}, ${start} + ${length})`;
+        if (modifier !== 'raw') {
+          extraction = `(${extraction}).trim()`;
+        }
+        return `"${name}": ${extraction}`;
+      })
+      .join(', ');
+
+    return `({ ${extractions} })`;
+  },
+  pack: (args: string[]) => {
+    if (args.length < 2) {
+      throw new Error(
+        'pack() requires at least 2 arguments (object, fieldSpec1, [fieldSpec2, ...])'
+      );
+    }
+    const [obj, ...specs] = args;
+
+    const fields = specs.map((spec) => {
+      const clean = spec.replace(/^["']|["']$/g, '');
+      const parts = clean.split(':');
+      if (parts.length < 3) {
+        throw new Error(
+          `Invalid field spec for pack(): ${clean}. Expected "name:start:length[:modifier]"`
+        );
+      }
+      const [name, startStr, lengthStr, modifier] = parts;
+      const start = parseInt(startStr, 10);
+      const length = parseInt(lengthStr, 10);
+      if (isNaN(start) || isNaN(length)) {
+        throw new Error(`Invalid character positions in pack() spec: ${clean}`);
+      }
+      return { name, start, length, left: modifier === 'left' };
+    });
+
+    const totalWidth = fields.reduce((max, f) => Math.max(max, f.start + f.length), 0);
+
+    return `((val) => {
+      if (!val) return ' '.repeat(${totalWidth});
+      let line = ' '.repeat(${totalWidth});
+      ${fields
+        .map((f) => {
+          const valueExpr = `String(val["${f.name}"] ?? "")`;
+          const padExpr = f.left
+            ? `(${valueExpr}).padStart(${f.length})`
+            : `(${valueExpr}).padEnd(${f.length})`;
+          return `
+      const val_${f.name} = (${padExpr}).substring(0, ${f.length});
+      line = line.substring(0, ${f.start}) + val_${f.name} + line.substring(${f.start} + ${f.length});`;
+        })
+        .join('')}
+      return line;
+    })(${obj})`;
+  },
 };

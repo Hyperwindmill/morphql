@@ -123,3 +123,19 @@ registerAdapter('object', {
   parse: (content) => content, // Assumes input is already an object
   serialize: (data) => data, // Returns object directly
 });
+
+// Plaintext Adapter
+registerAdapter('plaintext', {
+  parse: (content: string, options?: any) => {
+    if (typeof content !== 'string') return content;
+    const separator = options?.separator ?? options?.params?.[0] ?? /\r?\n/;
+    return {
+      rows: content.split(separator).filter((line) => line.length > 0),
+    };
+  },
+  serialize: (data: any, options?: any) => {
+    if (!data || !Array.isArray(data.rows)) return '';
+    const separator = options?.separator ?? options?.params?.[0] ?? '\n';
+    return data.rows.join(separator);
+  },
+});

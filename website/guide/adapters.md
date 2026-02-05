@@ -4,12 +4,13 @@ Adapters are responsible for parsing input data and serializing the transformed 
 
 ## Built-in Adapters
 
-| Adapter    | Name     | Description                                                                                                       |
-| :--------- | :------- | :---------------------------------------------------------------------------------------------------------------- |
-| **JSON**   | `json`   | Native JSON parsing and serialization.                                                                            |
-| **XML**    | `xml`    | Fast XML parsing and serialization via [fast-xml-parser](https://github.com/NaturalIntelligence/fast-xml-parser). |
-| **CSV**    | `csv`    | CSV parsing and serialization via [PapaParse](https://www.papaparse.com/).                                        |
-| **Object** | `object` | Identity adapter for working with in-memory JS objects.                                                           |
+| Adapter       | Name        | Description                                                                                                       |
+| :------------ | :---------- | :---------------------------------------------------------------------------------------------------------------- |
+| **JSON**      | `json`      | Native JSON parsing and serialization.                                                                            |
+| **XML**       | `xml`       | Fast XML parsing and serialization via [fast-xml-parser](https://github.com/NaturalIntelligence/fast-xml-parser). |
+| **CSV**       | `csv`       | CSV parsing and serialization via [PapaParse](https://www.papaparse.com/).                                        |
+| **Plaintext** | `plaintext` | Splits input into raw lines. Useful for fixed-length formats.                                                     |
+| **Object**    | `object`    | Identity adapter for working with in-memory JS objects.                                                           |
 
 ## Passing Parameters
 
@@ -74,6 +75,26 @@ transform
 ```
 
 When serializing, the adapter expects an object with a `rows` array containing objects with these lettered keys. The columns will be ordered alphabetically by their letter index.
+
+### Plaintext Options
+
+The Plaintext adapter splits input into an array of strings and supports:
+
+- `separator` (string | RegExp): The line separator (defaults to `/\r?\n/` for parsing and `\n` for serialization). Can also be passed as the first positional parameter: `plaintext(";")`.
+
+#### Data Structure
+
+When parsing, it produces an object with a `rows` array of raw strings.
+
+```morphql
+from plaintext to object
+transform
+  section multiple records (
+    set rawLine = source
+  ) from rows
+```
+
+When serializing, it expects an object with a `rows` array of strings.
 
 ## Custom Adapters
 
