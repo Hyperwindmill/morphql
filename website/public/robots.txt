@@ -1,0 +1,1 @@
+Sitemap: https://hyperwindmill.github.io/morphql/sitemap.xml
