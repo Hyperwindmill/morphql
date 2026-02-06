@@ -76,28 +76,9 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     if (args.length < 1) {
       throw new Error('xmlnode() requires at least 1 argument (string)');
     }
-    const value = args[0];
-    const attributesList = [...args.slice(1)];
-    let attributes = '';
-    if (attributesList.length > 0) {
-      const chunkSize = 2;
-      let list = [...attributesList];
-      list = [...Array(Math.ceil(list.length / chunkSize))]
-        .map(() => list.splice(0, chunkSize))
-        .map(([key, value]) => {
-          let attrKey = key;
-          if (key.startsWith('"') || key.startsWith("'")) {
-            attrKey = `"$${key.slice(1, -1)}"`;
-          } else {
-            attrKey = `["$"+${key}]`;
-          }
-          return `${attrKey}:${value ? value : 'null'}`;
-        });
-      attributes = ',' + list.join(',');
-    } else {
-      return value;
-    }
-    return `{_:${value}${attributes}}`;
+    const [value, ...attributes] = args;
+    const attrArgs = attributes.join(', ');
+    return `env.functions.xmlnode(${value}${attrArgs ? ', ' + attrArgs : ''})`;
   },
   split: (args: string[]) => {
     if (args.length < 1) {
@@ -113,48 +94,28 @@ export const functionRegistry: Record<string, FunctionHandler> = {
       throw new Error('to_base64() requires exactly 1 argument (string)');
     }
     const [val] = args;
-    return `(typeof btoa === 'function' ? btoa(unescape(encodeURIComponent(String(${val})))) : Buffer.from(String(${val}), 'utf-8').toString('base64'))`;
+    return `env.functions.to_base64(${val})`;
   },
   from_base64: (args: string[]) => {
     if (args.length !== 1) {
       throw new Error('from_base64() requires exactly 1 argument (string)');
     }
     const [val] = args;
-    return `(typeof atob === 'function' ? decodeURIComponent(escape(atob(String(${val})))) : Buffer.from(String(${val}), 'base64').toString('utf-8'))`;
+    return `env.functions.from_base64(${val})`;
   },
   aslist: (args: string[]) => {
     if (args.length !== 1) {
       throw new Error('aslist() requires exactly 1 argument');
     }
     const [val] = args;
-    return `(Array.isArray(${val}) ? ${val} : (${val} == null ? [] : [${val}]))`;
+    return `env.functions.aslist(${val})`;
   },
   spreadsheet: (args: string[]) => {
     if (args.length !== 1) {
       throw new Error('spreadsheet() requires exactly 1 argument');
     }
     const [val] = args;
-    return `((data)=>{
-      const spreadsheet = Array.isArray(data) ? data : (data == null ? [] : [data]);
-      const out = [];
-      const titles = [];
-      let keys = [];
-      for (let i = 0; i < spreadsheet.length; i++) {
-        const line = spreadsheet[i];
-        if (!line || typeof line !== 'object') continue;
-        if (i === 0) {
-          keys = Object.keys(line);
-          for (const k of keys) titles.push(line[k]);
-        } else {
-          const tempLine = {};
-          for (let j = 0; j < keys.length; j++) {
-            tempLine[titles[j]] = line[keys[j]];
-          }
-          out.push(tempLine);
-        }
-      }
-      return out;
-    })(${val})`;
+    return `env.functions.spreadsheet(${val})`;
   },
   unpack: (args: string[]) => {
     if (args.length < 2) {
@@ -163,39 +124,35 @@ export const functionRegistry: Record<string, FunctionHandler> = {
       );
     }
     const [str, ...specs] = args;
-    const extractions = specs
-      .map((spec) => {
-        const clean = spec.replace(/^["']|["']$/g, '');
-        const parts = clean.split(':');
-        if (parts.length < 3) {
-          throw new Error(
-            `Invalid field spec for unpack(): ${clean}. Expected "name:start:length[:modifier]"`
-          );
-        }
-        const [name, startStr, lengthStr, modifier] = parts;
 
-        // Hardened validation for field name
-        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) {
-          throw new Error(
-            `Invalid field name in unpack() spec: "${name}". Must be a valid JavaScript identifier.`
-          );
-        }
+    // Validate specs at compile time
+    specs.forEach((spec) => {
+      const clean = spec.replace(/^["']|["']$/g, '');
+      const parts = clean.split(':');
+      if (parts.length < 3) {
+        throw new Error(
+          `Invalid field spec for unpack(): ${clean}. Expected "name:start:length[:modifier]"`
+        );
+      }
+      const [name, startStr, lengthStr] = parts;
 
-        const start = parseInt(startStr, 10);
-        const length = parseInt(lengthStr, 10);
-        if (isNaN(start) || isNaN(length)) {
-          throw new Error(`Invalid character positions in unpack() spec: ${clean}`);
-        }
+      // Hardened validation for field name
+      if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) {
+        throw new Error(
+          `Invalid field name in unpack() spec: "${name}". Must be a valid JavaScript identifier.`
+        );
+      }
 
-        let extraction = `String(${str} || "").substring(${start}, ${start} + ${length})`;
-        if (modifier !== 'raw') {
-          extraction = `(${extraction}).trim()`;
-        }
-        return `"${name}": ${extraction}`;
-      })
-      .join(', ');
+      const start = parseInt(startStr, 10);
+      const length = parseInt(lengthStr, 10);
+      if (isNaN(start) || isNaN(length)) {
+        throw new Error(`Invalid character positions in unpack() spec: ${clean}`);
+      }
+    });
 
-    return `({ ${extractions} })`;
+    // We pass specs as individual arguments to the helper
+    const specArgs = specs.join(', ');
+    return `env.functions.unpack(${str}, ${specArgs})`;
   },
   pack: (args: string[]) => {
     if (args.length < 2) {
@@ -205,7 +162,8 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     }
     const [obj, ...specs] = args;
 
-    const fields = specs.map((spec) => {
+    // Validate specs at compile time
+    specs.forEach((spec) => {
       const clean = spec.replace(/^["']|["']$/g, '');
       const parts = clean.split(':');
       if (parts.length < 3) {
@@ -213,7 +171,7 @@ export const functionRegistry: Record<string, FunctionHandler> = {
           `Invalid field spec for pack(): ${clean}. Expected "name:start:length[:modifier]"`
         );
       }
-      const [name, startStr, lengthStr, modifier] = parts;
+      const [name, startStr, lengthStr] = parts;
 
       // Hardened validation for field name
       if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) {
@@ -227,26 +185,9 @@ export const functionRegistry: Record<string, FunctionHandler> = {
       if (isNaN(start) || isNaN(length)) {
         throw new Error(`Invalid character positions in pack() spec: ${clean}`);
       }
-      return { name, start, length, left: modifier === 'left' };
     });
 
-    const totalWidth = fields.reduce((max, f) => Math.max(max, f.start + f.length), 0);
-
-    return `((val) => {
-      if (!val) return ' '.repeat(${totalWidth});
-      let line = ' '.repeat(${totalWidth});
-      ${fields
-        .map((f, i) => {
-          const valueExpr = `String(val["${f.name}"] ?? "")`;
-          const padExpr = f.left
-            ? `(${valueExpr}).padStart(${f.length})`
-            : `(${valueExpr}).padEnd(${f.length})`;
-          return `
-      const v${i} = (${padExpr}).substring(0, ${f.length});
-      line = line.substring(0, ${f.start}) + v${i} + line.substring(${f.start} + ${f.length});`;
-        })
-        .join('')}
-      return line;
-    })(${obj})`;
+    const specArgs = specs.join(', ');
+    return `env.functions.pack(${obj}, ${specArgs})`;
   },
 };

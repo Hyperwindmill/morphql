@@ -3,6 +3,7 @@ import { parser } from './core/parser.js';
 import { compiler } from './core/compiler.js';
 import { getAdapter, registerAdapter, DataAdapter } from './runtime/adapters.js';
 import { MorphQLCache } from './runtime/cache.js';
+import { runtimeFunctions } from './runtime/functions.js';
 
 import { AnalyzeResult, SchemaNode, MorphType } from './core/mapping-tracker.js';
 
@@ -90,6 +91,7 @@ function createEngine<Source, Target>(code: string): MorphEngine<Source, Target>
     serialize: (format: string, data: any, options?: any) => {
       return getAdapter(format).serialize(data, options);
     },
+    functions: runtimeFunctions,
   };
 
   // Return the format-aware engine
