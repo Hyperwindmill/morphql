@@ -25,17 +25,31 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
   }
 
   /**
+   * Resets the compiler state for a new compilation run.
+   */
+  private reset() {
+    this.readFrom = 'source';
+    this.scopeStack = [];
+    this.tracker = new MappingTracker();
+    this.lastInferredType = 'any';
+    // safeMode and isAnalyzing are set by the caller or by query parser
+  }
+
+  /**
    * Visit with a temporary context change
    */
   private visitWithContext(node: any, context: { readFrom: 'source' | 'target' }) {
     const previousReadFrom = this.readFrom;
     this.readFrom = context.readFrom;
-    const result = this.visit(node);
-    this.readFrom = previousReadFrom;
-    return result;
+    try {
+      return this.visit(node);
+    } finally {
+      this.readFrom = previousReadFrom;
+    }
   }
 
   query(ctx: any) {
+    this.reset();
     if (this.isAnalyzing) {
       this.tracker = new MappingTracker();
     }
@@ -52,27 +66,26 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       isSerializationScope: true,
     });
 
-    const actions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
+    try {
+      const actions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
 
-    this.scopeStack.pop();
+      if (!ctx.Transform) {
+        actions.push('Object.assign(target, source);');
+      }
 
-    if (!ctx.Transform) {
-      actions.push('Object.assign(target, source);');
-    }
+      // Helper to serialize types for generated code
+      const sourceTypeName = sourceType.name;
+      const targetTypeName = targetType.name;
 
-    // Helper to serialize types for generated code
-    const sourceTypeName = sourceType.name;
-    const targetTypeName = targetType.name;
+      const sourceOptions = JSON.stringify(sourceType.options);
+      const targetOptions = JSON.stringify(targetType.options);
 
-    const sourceOptions = JSON.stringify(sourceType.options);
-    const targetOptions = JSON.stringify(targetType.options);
+      // Check if any action contains a return statement
+      const hasReturn = actions.some(
+        (action: any) => typeof action === 'string' && action.trim().startsWith('return ')
+      );
 
-    // Check if any action contains a return statement
-    const hasReturn = actions.some(
-      (action: any) => typeof action === 'string' && action.trim().startsWith('return ')
-    );
-
-    const code = `
+      const code = `
       return function(input, env) {
         // 1. Parse Input
         const source = env.parse('${sourceTypeName}', input, ${sourceOptions});
@@ -88,12 +101,15 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       }
     `;
 
-    return {
-      code,
-      sourceType,
-      targetType,
-      analysis: this.isAnalyzing ? this.tracker.getResult() : undefined,
-    };
+      return {
+        code,
+        sourceType,
+        targetType,
+        analysis: this.isAnalyzing ? this.tracker.getResult() : undefined,
+      };
+    } finally {
+      this.scopeStack.pop();
+    }
   }
 
   typeFormat(ctx: any) {
@@ -490,7 +506,6 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     const sectionAccess = this.genAccess('target', sectionId, true); // LHS = true (being assigned to)
 
     const followPathId = ctx.followPath ? this.visit(ctx.followPath) : sectionId;
-    // Note: followPathId is used below in sourceAccess and tracker calls.
     const sourceAccess =
       followPathId.name === 'parent' ? 'source' : this.genAccess('source', followPathId);
 
@@ -509,20 +524,20 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         isSerializationScope: true,
       });
 
-      const hasTransform = !!ctx.subqueryTransform;
-      const actions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
+      try {
+        const hasTransform = !!ctx.subqueryTransform;
+        const actions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
 
-      if (!hasTransform) {
-        // Pure format conversion - copy all fields
-        actions.push('Object.assign(target, source);');
-      }
+        if (!hasTransform) {
+          // Pure format conversion - copy all fields
+          actions.push('Object.assign(target, source);');
+        }
 
-      const subSourceOptions = JSON.stringify(subSourceType.options);
-      const subTargetOptions = JSON.stringify(subTargetType.options);
+        const subSourceOptions = JSON.stringify(subSourceType.options);
+        const subTargetOptions = JSON.stringify(subTargetType.options);
 
-      let result = '';
-      if (isMultiple) {
-        result = `
+        if (isMultiple) {
+          return `
         if (${sourceAccess} && Array.isArray(${sourceAccess})) {
           ${sectionAccess} = ${sourceAccess}.map(item => {
             const subSource = env.parse('${subSourceType.name}', item, ${subSourceOptions});
@@ -533,8 +548,8 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           });
         }
         `;
-      } else {
-        result = `
+        } else {
+          return `
         if (${sourceAccess}) {
           ${sectionAccess} = (function(innerSource) {
             const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
@@ -545,10 +560,10 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           })(${sourceAccess});
         }
         `;
+        }
+      } finally {
+        this.scopeStack.pop();
       }
-
-      this.scopeStack.pop();
-      return result;
     }
 
     // Regular section handling
@@ -558,19 +573,16 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       isSerializationScope: false,
     });
 
-    if (this.isAnalyzing) {
-      this.tracker.pushSection(sectionName, followPathId.name, isMultiple);
-    }
+    try {
+      if (this.isAnalyzing) {
+        this.tracker.pushSection(sectionName, followPathId.name, isMultiple);
+      }
 
-    const regularActions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
+      try {
+        const regularActions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
 
-    if (this.isAnalyzing) {
-      this.tracker.popSection(followPathId.name, isMultiple);
-    }
-
-    let regularResult = '';
-    if (isMultiple) {
-      regularResult = `
+        if (isMultiple) {
+          return `
       if (${sourceAccess} && Array.isArray(${sourceAccess})) {
         ${sectionAccess} = ${sourceAccess}.map(item => {
           const source = item;
@@ -580,8 +592,8 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         });
       }
       `;
-    } else {
-      regularResult = `
+        } else {
+          return `
       if (${sourceAccess}) {
         ${sectionAccess} = (function(innerSource) {
           const source = innerSource;
@@ -591,10 +603,15 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         })(${sourceAccess});
       }
       `;
+        }
+      } finally {
+        if (this.isAnalyzing) {
+          this.tracker.popSection(followPathId.name, isMultiple);
+        }
+      }
+    } finally {
+      this.scopeStack.pop();
     }
-
-    this.scopeStack.pop();
-    return regularResult;
   }
 }
 
