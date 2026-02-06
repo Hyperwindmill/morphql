@@ -26,12 +26,12 @@ from json to xml
 By default, MorphQL generates **safe** code that uses optional chaining (`?.`) to prevent crashes when accessing properties on null/undefined values. For performance-critical scenarios with validated data, you can use the `unsafe` keyword:
 
 ```morphql
-# Safe mode (default) - uses optional chaining
+// Safe mode (default) - uses optional chaining
 from object to object
 transform
   set result = price / quantity
 
-# Unsafe mode - no optional chaining, maximum performance
+// Unsafe mode - no optional chaining, maximum performance
 from object to object
 transform unsafe
   set result = price / quantity
@@ -52,11 +52,11 @@ MorphQL provides special identifiers to control which data context you're readin
 - **`target`** - The output data (implicit when reading in `modify` or `return`)
 
 ```morphql
-# These are equivalent - 'source' is implicit in set
+// These are equivalent - 'source' is implicit in set
 set name = firstName
 set name = source.firstName
 
-# These are equivalent - 'target' is implicit in modify
+// These are equivalent - 'target' is implicit in modify
 modify total = total * 1.1
 modify total = target.total * 1.1
 ```
@@ -66,14 +66,14 @@ modify total = target.total * 1.1
 You can explicitly specify which context to read from:
 
 ```morphql
-# Read from source explicitly
+// Read from source explicitly
 set result = source.price
 
-# Read from target (useful in set to reference previously set fields)
+// Read from target (useful in set to reference previously set fields)
 set first = value
-set second = target.first  # References the field we just set
+set second = target.first  // References the field we just set
 
-# Mix contexts
+// Mix contexts
 set total = source.price + target.markup
 ```
 
@@ -145,19 +145,19 @@ section [multiple] <name>( [subquery] <actions> ) [from <path>]
 **Examples:**
 
 ```morphql
-# Simple nested object
+// Simple nested object
 section header(
   set id = orderId
   set date = orderDate
 )
 
-# Array mapping
+// Array mapping
 section multiple items(
   set sku = itemSku
   set qty = quantity
 ) from orderItems
 
-# Subquery with format conversion
+// Subquery with format conversion
 section metadata(
   from xml to object
   transform
@@ -171,10 +171,10 @@ section metadata(
 Clones the entire source object or specific fields into the target.
 
 ```morphql
-# Clone everything
+// Clone everything
 clone()
 
-# Clone specific fields
+// Clone specific fields
 clone(firstName, lastName, email)
 ```
 
@@ -217,11 +217,11 @@ if (status == "active") (
 Overwrites the target object and returns immediately from the current scope. Expressions inside `return` read from the **target** object by default.
 
 ```morphql
-# Top level
+// Top level
 set greeting = "Hello " + name
 return greeting
 
-# Inside section
+// Inside section
 section user(
   set id = userId
   set name = userName
@@ -359,8 +359,8 @@ Useful when working with CSV data where the first row contains values that shoul
 ```morphql
 from csv to json
 transform
-  # spreadsheet() converts an array of objects (like CSV rows)
-  # into a structured array using the first row values as keys.
+  // spreadsheet() converts an array of objects (like CSV rows)
+  // into a structured array using the first row values as keys.
   set data = spreadsheet(rows)
 ```
 

@@ -9,7 +9,7 @@ object MorphQLDocumentation {
         "from" to """
             <b>from <format></b><br/>
             Specifies the input data format.<br/><br/>
-            <b>Parameters:</b><ul><li><b>format:</b> If used as first keyword: The starting format name (e.g., `json`, `xml`, `csv`, `object`). When used after a section, defines its source.</li></ul>
+            <b>Parameters:</b><ul><li><b>format:</b> If used as first keyword: The starting format name (e.g., `json`, `xml`, `csv`, `plaintext`, `object`). When used after a section, defines its source.</li></ul>
             <b>Example:</b><pre>from json to csv</pre>
         """.trimIndent(),
         "to" to """
@@ -191,6 +191,18 @@ substring("Hello World", -5)     // "World"</pre>
             Converts spreadsheet-style data (array of arrays) into an array of objects with named properties. First row is treated as headers.<br/><br/>
             <b>Parameters:</b><ul><li><b>data:</b> Array of arrays (rows)</li></ul>
             <b>Example:</b><pre>spreadsheet(csvData)  // Converts [["name","age"],["John",30]] to [{name:"John",age:30}]</pre>
+        """.trimIndent(),
+        "unpack" to """
+            <b>unpack(str, fieldSpec1, [fieldSpec2, ...])</b><br/>
+            Extracts multiple fields from a fixed-length string into an object. Specs follow the pattern "name:start:length[:modifier]".<br/><br/>
+            <b>Parameters:</b><ul><li><b>str:</b> The fixed-length string to unpack</li><li><b>fieldSpec:</b> Field definition: "name:start:length". Optional ":raw" modifier at the end disables auto-trimming.</li></ul>
+            <b>Example:</b><pre>unpack(source, "id:0:5", "name:5:20", "padding:25:5:raw")</pre>
+        """.trimIndent(),
+        "pack" to """
+            <b>pack(obj, fieldSpec1, [fieldSpec2, ...])</b><br/>
+            Encodes an object into a fixed-length string using field specifications. Specs follow the pattern "name:start:length[:modifier]".<br/><br/>
+            <b>Parameters:</b><ul><li><b>obj:</b> The object containing data to pack</li><li><b>fieldSpec:</b> Field definition: "name:start:length". Optional ":left" modifier at the end uses left-padding (right-alignment).</li></ul>
+            <b>Example:</b><pre>pack(target, "id:0:5:left", "name:5:20")</pre>
         """.trimIndent()
     )
 }

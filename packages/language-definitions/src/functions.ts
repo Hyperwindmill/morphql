@@ -172,6 +172,42 @@ export const FUNCTIONS: FunctionDef[] = [
         'spreadsheet(csvData)  // Converts [["name","age"],["John",30]] to [{name:"John",age:30}]',
     },
   },
+  {
+    name: "unpack",
+    doc: {
+      signature: "unpack(str, fieldSpec1, [fieldSpec2, ...])",
+      description:
+        'Extracts multiple fields from a fixed-length string into an object. Specs follow the pattern "name:start:length[:modifier]".',
+      parameters: [
+        { name: "str", description: "The fixed-length string to unpack" },
+        {
+          name: "fieldSpec",
+          description:
+            'Field definition: "name:start:length". Optional ":raw" modifier at the end disables auto-trimming.',
+        },
+      ],
+      returns: "object",
+      example: 'unpack(source, "id:0:5", "name:5:20", "padding:25:5:raw")',
+    },
+  },
+  {
+    name: "pack",
+    doc: {
+      signature: "pack(obj, fieldSpec1, [fieldSpec2, ...])",
+      description:
+        'Encodes an object into a fixed-length string using field specifications. Specs follow the pattern "name:start:length[:modifier]".',
+      parameters: [
+        { name: "obj", description: "The object containing data to pack" },
+        {
+          name: "fieldSpec",
+          description:
+            'Field definition: "name:start:length". Optional ":left" modifier at the end uses left-padding (right-alignment).',
+        },
+      ],
+      returns: "string",
+      example: 'pack(target, "id:0:5:left", "name:5:20")',
+    },
+  },
 ];
 
 // Helper to get all function names

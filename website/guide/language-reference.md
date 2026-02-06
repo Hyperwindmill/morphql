@@ -13,7 +13,7 @@ from <source_format> to <target_format>
 ]
 ```
 
-**Supported formats:** `json`, `xml`, `object`, `csv`
+**Supported formats:** `json`, `xml`, `object`, `csv`, `plaintext`
 
 The `transform` block is optional—omit it for pure format conversion:
 
@@ -26,12 +26,12 @@ from json to xml
 By default, MorphQL generates **safe** code that uses optional chaining (`?.`) to prevent crashes when accessing properties on null/undefined values. For performance-critical scenarios with validated data, you can use the `unsafe` keyword:
 
 ```morphql
-# Safe mode (default) - uses optional chaining
+// Safe mode (default) - uses optional chaining
 from object to object
 transform
   set result = price / quantity
 
-# Unsafe mode - no optional chaining, maximum performance
+// Unsafe mode - no optional chaining, maximum performance
 from object to object
 transform unsafe
   set result = price / quantity
@@ -52,11 +52,11 @@ MorphQL provides special identifiers to control which data context you're readin
 - **`target`** - The output data (implicit when reading in `modify` or `return`)
 
 ```morphql
-# These are equivalent - 'source' is implicit in set
+// These are equivalent - 'source' is implicit in set
 set name = firstName
 set name = source.firstName
 
-# These are equivalent - 'target' is implicit in modify
+// These are equivalent - 'target' is implicit in modify
 modify total = total * 1.1
 modify total = target.total * 1.1
 ```
@@ -66,14 +66,14 @@ modify total = target.total * 1.1
 You can explicitly specify which context to read from:
 
 ```morphql
-# Read from source explicitly
+// Read from source explicitly
 set result = source.price
 
-# Read from target (useful in set to reference previously set fields)
+// Read from target (useful in set to reference previously set fields)
 set first = value
-set second = target.first  # References the field we just set
+set second = target.first  // References the field we just set
 
-# Mix contexts
+// Mix contexts
 set total = source.price + target.markup
 ```
 
@@ -147,19 +147,19 @@ section [multiple] <name>( [subquery] <actions> ) [from <path>]
 **Examples:**
 
 ```morphql
-# Simple nested object
+// Simple nested object
 section header(
   set id = orderId
   set date = orderDate
 )
 
-# Array mapping
+// Array mapping
 section multiple items(
   set sku = itemSku
   set qty = quantity
 ) from orderItems
 
-# Subquery with format conversion
+// Subquery with format conversion
 section metadata(
   from xml to object
   transform
@@ -173,10 +173,10 @@ section metadata(
 Clones the entire source object or specific fields into the target.
 
 ```morphql
-# Clone everything
+// Clone everything
 clone()
 
-# Clone specific fields
+// Clone specific fields
 clone(firstName, lastName, email)
 ```
 
@@ -219,11 +219,11 @@ if (status == "active") (
 Overwrites the target object and returns immediately from the current scope. Expressions inside `return` read from the **target** object by default.
 
 ```morphql
-# Top level
+// Top level
 set greeting = "Hello " + name
 return greeting
 
-# Inside section
+// Inside section
 section user(
   set id = userId
   set name = userName
@@ -252,22 +252,24 @@ Backticks can be escaped with `\` when needed in a field name.
 
 Functions are used within expressions to calculate or transform values.
 
-| Function                              | Description                                                | Example                           |
-| :------------------------------------ | :--------------------------------------------------------- | :-------------------------------- |
-| `substring(str, start, [length])`     | Extracts a part of a string. Supports negative indices.    | `substring(sku, 0, 3)`            |
-| `if(cond, trueVal, falseVal)`         | Ternary-like expression.                                   | `if(age >= 18, "adult", "minor")` |
-| `text(val)`                           | Converts a value to a string.                              | `text(123)`                       |
-| `number(val)`                         | Converts a value to a number.                              | `number("42")`                    |
-| `replace(str, search, replace)`       | Replaces occurrences in a string.                          | `replace(name, " ", "_")`         |
-| `split(str, [sep], [limit])`          | Splits a string into an array. Default separator is `""`.  | `split(sku, "-")`                 |
-| `extractnumber(str)`                  | Extracts the first numeric sequence from a string.         | `extractnumber("Price: 100USD")`  |
-| `uppercase(str)`                      | Converts string to uppercase.                              | `uppercase("hello")`              |
-| `lowercase(str)`                      | Converts string to lowercase.                              | `lowercase("HELLO")`              |
-| `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.     | `xmlnode(content, "id", 1)`       |
-| `to_base64(val)`                      | Encodes a string to Base64 (isomorphic).                   | `to_base64("hello")`              |
-| `from_base64(val)`                    | Decodes a Base64 string (isomorphic).                      | `from_base64("aGVsbG8=")`         |
-| `aslist(val)`                         | Ensures a value is an array (useful for XML parsing).      | `aslist(items)`                   |
-| `spreadsheet(array)`                  | Transforms an array of objects into a list of row objects. | `spreadsheet(rows)`               |
+| Function                              | Description                                                                     | Example                           |
+| :------------------------------------ | :------------------------------------------------------------------------------ | :-------------------------------- |
+| `substring(str, start, [length])`     | Extracts a part of a string. Supports negative indices.                         | `substring(sku, 0, 3)`            |
+| `if(cond, trueVal, falseVal)`         | Ternary-like expression.                                                        | `if(age >= 18, "adult", "minor")` |
+| `text(val)`                           | Converts a value to a string.                                                   | `text(123)`                       |
+| `number(val)`                         | Converts a value to a number.                                                   | `number("42")`                    |
+| `replace(str, search, replace)`       | Replaces occurrences in a string.                                               | `replace(name, " ", "_")`         |
+| `split(str, [sep], [limit])`          | Splits a string into an array. Default separator is `""`.                       | `split(sku, "-")`                 |
+| `extractnumber(str)`                  | Extracts the first numeric sequence from a string.                              | `extractnumber("Price: 100USD")`  |
+| `uppercase(str)`                      | Converts string to uppercase.                                                   | `uppercase("hello")`              |
+| `lowercase(str)`                      | Converts string to lowercase.                                                   | `lowercase("HELLO")`              |
+| `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.                          | `xmlnode(content, "id", 1)`       |
+| `to_base64(val)`                      | Encodes a string to Base64 (isomorphic).                                        | `to_base64("hello")`              |
+| `from_base64(val)`                    | Decodes a Base64 string (isomorphic).                                           | `from_base64("aGVsbG8=")`         |
+| `aslist(val)`                         | Ensures a value is an array (useful for XML parsing).                           | `aslist(items)`                   |
+| `spreadsheet(array)`                  | Transforms an array of objects into a list of row objects.                      | `spreadsheet(rows)`               |
+| `unpack(str, spec...)`                | Extracts fields from fixed-length string. Spec pattern: `name:start:len[:raw]`. | `unpack(source, "id:0:5")`        |
+| `pack(obj, spec...)`                  | Encodes object to fixed-length string. Spec pattern: `name:start:len[:left]`.   | `pack(target, "id:0:5:left")`     |
 
 ---
 
@@ -359,8 +361,8 @@ Useful when working with CSV data where the first row contains values that shoul
 ```morphql
 from csv to json
 transform
-  # spreadsheet() converts an array of objects (like CSV rows)
-  # into a structured array using the first row values as keys.
+  // spreadsheet() converts an array of objects (like CSV rows)
+  // into a structured array using the first row values as keys.
   set data = spreadsheet(rows)
 ```
 

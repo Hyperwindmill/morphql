@@ -19,7 +19,7 @@ export const KEYWORDS: KeywordDef[] = [
         {
           name: "format",
           description:
-            "If used as first keyword: The starting format name (e.g., `json`, `xml`, `csv`, `object`). When used after a section, defines its source.",
+            "If used as first keyword: The starting format name (e.g., `json`, `xml`, `csv`, `plaintext`, `object`). When used after a section, defines its source.",
         },
       ],
       example: "from json to csv",

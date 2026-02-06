@@ -78,7 +78,7 @@ When serializing, the adapter expects an object with a `rows` array containing o
 
 ### Plaintext Options
 
-The Plaintext adapter splits input into an array of strings and supports:
+The Plaintext adapter splits input into an array of strings. It is primarily used as a foundation for processing fixed-length/positional text.
 
 - `separator` (string | RegExp): The line separator (defaults to `/\r?\n/` for parsing and `\n` for serialization). Can also be passed as the first positional parameter: `plaintext(";")`.
 
@@ -86,15 +86,8 @@ The Plaintext adapter splits input into an array of strings and supports:
 
 When parsing, it produces an object with a `rows` array of raw strings.
 
-```morphql
-from plaintext to object
-transform
-  section multiple records (
-    set rawLine = source
-  ) from rows
-```
-
-When serializing, it expects an object with a `rows` array of strings.
+> [!TIP]
+> For a detailed walkthrough on how to parse and encode fixed-length data using this adapter, see the [Working with Positional Text](/guide/positional-text) guide.
 
 ## Custom Adapters
 

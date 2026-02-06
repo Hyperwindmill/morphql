@@ -36,6 +36,15 @@ export default defineConfig({
           { text: "TypeScript Support", link: "/guide/typescript" },
         ],
       },
+      {
+        text: "Guides",
+        items: [
+          {
+            text: "Working with Positional Text",
+            link: "/guide/positional-text",
+          },
+        ],
+      },
 
       {
         text: "Tools",

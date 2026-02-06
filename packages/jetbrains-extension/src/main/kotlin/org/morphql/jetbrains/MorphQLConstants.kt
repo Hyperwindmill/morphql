@@ -35,7 +35,9 @@ object MorphQLConstants {
         "to_base64",
         "from_base64",
         "aslist",
-        "spreadsheet"
+        "spreadsheet",
+        "unpack",
+        "pack"
     )
 
     val OPERATORS = setOf(
