@@ -173,6 +173,14 @@ export const functionRegistry: Record<string, FunctionHandler> = {
           );
         }
         const [name, startStr, lengthStr, modifier] = parts;
+
+        // Hardened validation for field name
+        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) {
+          throw new Error(
+            `Invalid field name in unpack() spec: "${name}". Must be a valid JavaScript identifier.`
+          );
+        }
+
         const start = parseInt(startStr, 10);
         const length = parseInt(lengthStr, 10);
         if (isNaN(start) || isNaN(length)) {
@@ -206,6 +214,14 @@ export const functionRegistry: Record<string, FunctionHandler> = {
         );
       }
       const [name, startStr, lengthStr, modifier] = parts;
+
+      // Hardened validation for field name
+      if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) {
+        throw new Error(
+          `Invalid field name in pack() spec: "${name}". Must be a valid JavaScript identifier.`
+        );
+      }
+
       const start = parseInt(startStr, 10);
       const length = parseInt(lengthStr, 10);
       if (isNaN(start) || isNaN(length)) {
@@ -220,14 +236,14 @@ export const functionRegistry: Record<string, FunctionHandler> = {
       if (!val) return ' '.repeat(${totalWidth});
       let line = ' '.repeat(${totalWidth});
       ${fields
-        .map((f) => {
+        .map((f, i) => {
           const valueExpr = `String(val["${f.name}"] ?? "")`;
           const padExpr = f.left
             ? `(${valueExpr}).padStart(${f.length})`
             : `(${valueExpr}).padEnd(${f.length})`;
           return `
-      const val_${f.name} = (${padExpr}).substring(0, ${f.length});
-      line = line.substring(0, ${f.start}) + val_${f.name} + line.substring(${f.start} + ${f.length});`;
+      const v${i} = (${padExpr}).substring(0, ${f.length});
+      line = line.substring(0, ${f.start}) + v${i} + line.substring(${f.start} + ${f.length});`;
         })
         .join('')}
       return line;
