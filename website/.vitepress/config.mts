@@ -1,4 +1,5 @@
 import { defineConfig } from "vitepress";
+import morphqlGrammar from "../../packages/vscode-extension/syntaxes/morphql.tmLanguage.json";
 
 export default defineConfig({
   base: "/morphql/",
@@ -8,6 +9,16 @@ export default defineConfig({
   head: [["link", { rel: "icon", href: "/favicon.png" }]],
   sitemap: {
     hostname: "https://hyperwindmill.github.io/morphql/",
+  },
+  markdown: {
+    languages: [
+      {
+        ...morphqlGrammar,
+        id: "MorphQL",
+        name: "MorphQL",
+        aliases: ["morphql"],
+      } as any,
+    ],
   },
   themeConfig: {
     logo: "/logo.png",
