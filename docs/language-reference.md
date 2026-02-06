@@ -87,9 +87,9 @@ transform
   set globalId = id  # Root source.id
 
   section multiple items(
-    set itemId = id           # Current item's id
-    set parentId = _source.id # Root source.id (parent scope)
-    set globalRef = _target.globalId  # Access root target field
+    set itemId = id           // Current item's id
+    set parentId = _source.id // Root source.id (parent scope)
+    set globalRef = _target.globalId // Access root target field
   ) from list
 ```
 
