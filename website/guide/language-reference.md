@@ -135,7 +135,7 @@ Creates a nested object or array. Supports optional format conversion via subque
 **Syntax:**
 
 ```morphql
-section [multiple] <name>( [subquery] <actions> ) [from <path>]
+section [multiple] <name>( [subquery] <actions> ) [from <path>] [where <condition>]
 ```
 
 **Parameters:**
@@ -143,6 +143,7 @@ section [multiple] <name>( [subquery] <actions> ) [from <path>]
 - `multiple`: Treats the source as an array and maps each item
 - `subquery`: Optional nested query for format conversion
 - `from <expression>`: Shifts the context to a specific source data source. Can be a path, the `parent` keyword, or a function call (e.g., `spreadsheet(source)`).
+- `where <condition>`: Filters the source data before transformation. For `multiple` sections, only matching items are included. For single sections, the first matching item is used.
 
 **Examples:**
 
@@ -158,6 +159,18 @@ section multiple items(
   set sku = itemSku
   set qty = quantity
 ) from orderItems
+
+// Filtering with where clause
+section multiple activeUsers(
+  set name = userName
+  set email = userEmail
+) from users where status == "active"
+
+// Single section with where (find first match)
+section primaryContact(
+  set name = contactName
+  set phone = contactPhone
+) from contacts where isPrimary == true
 
 // Subquery with format conversion
 section metadata(

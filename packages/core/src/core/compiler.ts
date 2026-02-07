@@ -530,6 +530,13 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
 
     const isMultiple = !!ctx.Multiple;
 
+    // Handle where clause
+    const hasWhere = !!ctx.whereExpr;
+    let whereCondition = '';
+    if (hasWhere) {
+      whereCondition = this.visit(ctx.whereExpr);
+    }
+
     // Check if this is a subquery section
     const isSubquery = !!ctx.subqueryFrom;
 
@@ -556,9 +563,12 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         const subTargetOptions = JSON.stringify(subTargetType.options);
 
         if (isMultiple) {
+          const filterPart = hasWhere
+            ? `.filter(item => { const source = item; return ${whereCondition}; })`
+            : '';
           return `
         if (${sourceAccess} && Array.isArray(${sourceAccess})) {
-          ${sectionAccess} = ${sourceAccess}.map(item => {
+          ${sectionAccess} = ${sourceAccess}${filterPart}.map(item => {
             const subSource = env.parse('${subSourceType.name}', item, ${subSourceOptions});
             const source = subSource;
             const target = {};
@@ -568,7 +578,24 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         }
         `;
         } else {
-          return `
+          // Single subquery section with where = find first match
+          if (hasWhere) {
+            return `
+        if (${sourceAccess} && Array.isArray(${sourceAccess})) {
+          const _filtered = ${sourceAccess}.find(item => { const source = item; return ${whereCondition}; });
+          if (_filtered) {
+            ${sectionAccess} = (function(innerSource) {
+              const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
+              const source = subSource;
+              const target = {};
+              ${actions.join('\n              ')}
+              return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
+            })(_filtered);
+          }
+        }
+        `;
+          } else {
+            return `
         if (${sourceAccess}) {
           ${sectionAccess} = (function(innerSource) {
             const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
@@ -579,6 +606,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           })(${sourceAccess});
         }
         `;
+          }
         }
       } finally {
         this.scopeStack.pop();
@@ -609,9 +637,12 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         const regularActions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
 
         if (isMultiple) {
+          const filterPart = hasWhere
+            ? `.filter(item => { const source = item; return ${whereCondition}; })`
+            : '';
           return `
       if (${sourceAccess} && Array.isArray(${sourceAccess})) {
-        ${sectionAccess} = ${sourceAccess}.map(item => {
+        ${sectionAccess} = ${sourceAccess}${filterPart}.map(item => {
           const source = item;
           const target = {};
           ${regularActions.join('\n          ')}
@@ -620,7 +651,23 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       }
       `;
         } else {
-          return `
+          // Single section with where = find first match
+          if (hasWhere) {
+            return `
+      if (${sourceAccess} && Array.isArray(${sourceAccess})) {
+        const _filtered = ${sourceAccess}.find(item => { const source = item; return ${whereCondition}; });
+        if (_filtered) {
+          ${sectionAccess} = (function(innerSource) {
+            const source = innerSource;
+            const target = {};
+            ${regularActions.join('\n            ')}
+            return target;
+          })(_filtered);
+        }
+      }
+      `;
+          } else {
+            return `
       if (${sourceAccess}) {
         ${sectionAccess} = (function(innerSource) {
           const source = innerSource;
@@ -630,6 +677,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         })(${sourceAccess});
       }
       `;
+          }
         }
       } finally {
         if (this.isAnalyzing) {

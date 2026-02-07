@@ -272,6 +272,10 @@ export class MorphParser extends CstParser {
       this.CONSUME1(t.From, { LABEL: 'followFrom' });
       this.SUBRULE(this.expression, { LABEL: 'followExpr' });
     });
+    this.OPTION4(() => {
+      this.CONSUME(t.Where, { LABEL: 'whereClause' });
+      this.SUBRULE1(this.expression, { LABEL: 'whereExpr' });
+    });
   });
 
   private defineRule = this.RULE('defineRule', () => {
