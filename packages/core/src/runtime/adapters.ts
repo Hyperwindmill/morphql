@@ -180,9 +180,9 @@ registerAdapter('edifact', {
       return result;
     };
 
-    const segmentsRaw = splitEscaped(data, segmentTerminator, releaseChar).filter(
-      (s) => s.trim().length > 0
-    );
+    const segmentsRaw = splitEscaped(data, segmentTerminator, releaseChar)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
 
     for (const seg of segmentsRaw) {
       const elementsRaw = splitEscaped(seg, elementSeparator, releaseChar);

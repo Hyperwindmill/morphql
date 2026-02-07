@@ -140,5 +140,28 @@ describe('Where Clause', () => {
       expect(result.seller.partyId).toBe('SELLER456');
       expect(result.seller.name).toBe('Seller Inc');
     });
+
+    it('should filter raw arrays using source[index]', async () => {
+      const engine = await compile(morphQL`
+        from object to object
+        transform
+          section multiple rows(
+            set col1 = source[0]
+            set col2 = source[1]
+          ) from data where source[0] !== "header"
+      `);
+
+      const result = engine({
+        data: [
+          ['header', 'value'],
+          ['row1', 'val1'],
+          ['row2', 'val2'],
+        ],
+      });
+
+      expect(result.rows).toHaveLength(2);
+      expect(result.rows[0].col1).toBe('row1');
+      expect(result.rows[1].col1).toBe('row2');
+    });
   });
 });

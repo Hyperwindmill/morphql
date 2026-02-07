@@ -36,24 +36,24 @@ transform
   set invoiceDate = DTM[0][0][1]
 
   section buyer(
-    set id = NAD[0][1][0]
-    set name = NAD[0][4]
-    set address = NAD[0][5] + ", " + NAD[0][6]
-  ) from NAD where NAD[0] == "BY"
+    set id = source[1][0]
+    set name = source[4]
+    set address = source[5] + ", " + source[6]
+  ) from NAD where source[0] == "BY"
 
   section seller(
-    set id = NAD[0][1][0]
-    set name = NAD[0][4]
-    set address = NAD[0][5] + ", " + NAD[0][6]
-  ) from NAD where NAD[0] == "SE"
+    set id = source[1][0]
+    set name = source[4]
+    set address = source[5] + ", " + source[6]
+  ) from NAD where source[0] == "SE"
 
   section multiple items(
-    set lineNo = LIN[0]
-    set productId = LIN[2][0]
-    set quantity = number(QTY[0][1])
-    set unit = QTY[0][2]
-    set amount = number(MOA[0][1])
-    set currency = MOA[0][2]
+    set lineNo = source[0]
+    set productId = source[2][0]
+    set quantity = number(source[3][1])
+    set unit = source[3][2]
+    set amount = number(source[4][1])
+    set currency = source[4][2]
   ) from LIN
 ```
 

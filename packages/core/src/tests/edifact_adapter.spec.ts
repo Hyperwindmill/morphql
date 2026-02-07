@@ -61,4 +61,16 @@ describe('EDIFACT Adapter', () => {
     const serialized = adapter.serialize(data);
     expect(serialized).toBe("MSG+Value with ?+ plus'");
   });
+
+  it('should handle newlines between segments', () => {
+    const input = `UNB+IATB:1+6PPH:ZZ+140509:1358+1'
+UNH+1+PAXLST:D:97B:UN'
+BGM+745+987654321+9'`;
+    const parsed = adapter.parse(input);
+
+    expect(parsed.UNB).toBeDefined();
+    expect(parsed.UNH).toBeDefined();
+    expect(parsed.BGM).toBeDefined();
+    expect(parsed.BGM[0][1]).toBe('987654321');
+  });
 });
