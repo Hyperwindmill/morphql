@@ -178,10 +178,10 @@ transform
   section multiple entries(
     set result = unpack(source,
       "timestamp:0:19",
-      "level:21:5",
-      "message:27:50"
+      "level:20:5",
+      "message:26:50"
     )
-  ) from split(source, "\\n")`,
+  ) from rows`,
     source: `2023-10-27 10:00:01 INFO  Application started successfully
 2023-10-27 10:05:23 WARN  Memory usage reaching 80%
 2023-10-27 10:10:12 ERROR Failed to connect to database`,
