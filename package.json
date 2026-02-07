@@ -16,7 +16,14 @@
     "playground": "npm run dev -w @morphql/playground",
     "server": "npm run start:dev -w @morphql/server-instance"
   },
-  "keywords": [],
+  "keywords": [
+    "morphql",
+    "transform",
+    "json",
+    "xml",
+    "edifact",
+    "edi"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {

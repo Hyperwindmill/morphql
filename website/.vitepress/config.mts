@@ -44,6 +44,7 @@ export default defineConfig({
           { text: "Library (Core)", link: "/guide/library" },
           { text: "Language Reference", link: "/guide/language-reference" },
           { text: "Adapters", link: "/guide/adapters" },
+          { text: "EDIFACT Adapter", link: "/guide/edifact" },
           { text: "TypeScript Support", link: "/guide/typescript" },
         ],
       },
@@ -53,6 +54,10 @@ export default defineConfig({
           {
             text: "Working with Positional Text",
             link: "/guide/positional-text",
+          },
+          {
+            text: "EDIFACT Mapping",
+            link: "/guide/edifact-mapping",
           },
         ],
       },

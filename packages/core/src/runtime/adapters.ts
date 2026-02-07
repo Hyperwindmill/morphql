@@ -118,6 +118,144 @@ registerAdapter('csv', {
   },
 });
 
+// EDIFACT Adapter
+registerAdapter('edifact', {
+  parse: (content: string, options?: any) => {
+    if (typeof content !== 'string') return content;
+
+    let segmentTerminator = "'";
+    let elementSeparator = '+';
+    let componentSeparator = ':';
+    let releaseChar = '?';
+
+    let data = content.trim();
+    if (data.startsWith('UNA')) {
+      const una = data.substring(3, 9);
+      componentSeparator = una[0];
+      elementSeparator = una[1];
+      // una[2] is decimal mark
+      releaseChar = una[3];
+      // una[4] is reserved
+      segmentTerminator = una[5];
+      data = data.substring(9).trim();
+    }
+
+    // Manual override via options
+    if (options) {
+      if (options.segmentTerminator) segmentTerminator = options.segmentTerminator;
+      if (options.elementSeparator) elementSeparator = options.elementSeparator;
+      if (options.componentSeparator) componentSeparator = options.componentSeparator;
+      if (options.releaseChar) releaseChar = options.releaseChar;
+    }
+
+    const result: Record<string, any[]> = {};
+
+    const splitEscaped = (str: string, separator: string, release: string) => {
+      const parts: string[] = [];
+      let current = '';
+      for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (char === release && i + 1 < str.length) {
+          current += release + str[++i];
+        } else if (char === separator) {
+          parts.push(current);
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      parts.push(current);
+      return parts;
+    };
+
+    const unescape = (str: string, release: string) => {
+      let result = '';
+      for (let i = 0; i < str.length; i++) {
+        if (str[i] === release && i + 1 < str.length) {
+          result += str[++i];
+        } else {
+          result += str[i];
+        }
+      }
+      return result;
+    };
+
+    const segmentsRaw = splitEscaped(data, segmentTerminator, releaseChar).filter(
+      (s) => s.trim().length > 0
+    );
+
+    for (const seg of segmentsRaw) {
+      const elementsRaw = splitEscaped(seg, elementSeparator, releaseChar);
+      const tag = unescape(elementsRaw[0], releaseChar);
+      const elements = elementsRaw.slice(1).map((el) => {
+        const componentsRaw = splitEscaped(el, componentSeparator, releaseChar);
+        const components = componentsRaw.map((c) => unescape(c, releaseChar));
+        return components.length > 1 ? components : components[0];
+      });
+
+      if (!result[tag]) {
+        result[tag] = [];
+      }
+      result[tag].push(elements);
+    }
+
+    return result;
+  },
+  serialize: (data: any, options?: any) => {
+    if (!data || typeof data !== 'object') return '';
+
+    const segmentTerminator = options?.segmentTerminator ?? "'";
+    const elementSeparator = options?.elementSeparator ?? '+';
+    const componentSeparator = options?.componentSeparator ?? ':';
+    const releaseChar = options?.releaseChar ?? '?';
+
+    const escape = (val: any) => {
+      if (val === null || val === undefined) return '';
+      const str = String(val);
+      let escaped = '';
+      for (const char of str) {
+        if (
+          char === segmentTerminator ||
+          char === elementSeparator ||
+          char === componentSeparator ||
+          char === releaseChar
+        ) {
+          escaped += releaseChar;
+        }
+        escaped += char;
+      }
+      return escaped;
+    };
+
+    let result = '';
+
+    // If UNA is explicitly requested or delimiters are custom
+    if (options?.includeUNA) {
+      result += `UNA${componentSeparator}${elementSeparator}.${releaseChar} ${segmentTerminator}`;
+    }
+
+    for (const tag in data) {
+      const segments = Array.isArray(data[tag]) ? data[tag] : [data[tag]];
+      for (const seg of segments) {
+        result += tag;
+        if (Array.isArray(seg)) {
+          for (const el of seg) {
+            result += elementSeparator;
+            if (Array.isArray(el)) {
+              result += el.map(escape).join(componentSeparator);
+            } else {
+              result += escape(el);
+            }
+          }
+        }
+        result += segmentTerminator;
+      }
+    }
+
+    return result;
+  },
+});
+
 // Object Adapter (Identity)
 registerAdapter('object', {
   parse: (content) => content, // Assumes input is already an object

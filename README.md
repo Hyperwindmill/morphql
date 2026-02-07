@@ -26,7 +26,7 @@ In modern software development, data transformation is everywhere. Whether you'r
 
 - **Complex mapping logic** scattered across your codebase.
 - **Performance bottlenecks** when processing large datasets.
-- **Format juggling** between JSON, XML, and native Objects.
+- **Format juggling** between JSON, XML, and native Objects.Also supports UN/EDIFACT, CSV,plaintext and more to come.
 - **Inconsistent transformations** across different microservices.
 - **Debugging nightmares** with deeply nested, imperative mapping code.
 

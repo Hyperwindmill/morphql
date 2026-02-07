@@ -40,6 +40,8 @@
     "transform",
     "json",
     "xml",
+    "edifact",
+    "edi",
     "dsl",
     "compiler"
   ],

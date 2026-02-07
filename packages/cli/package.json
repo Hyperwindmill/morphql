@@ -20,7 +20,9 @@
     "cli",
     "transform",
     "json",
-    "xml"
+    "xml",
+    "edifact",
+    "edi"
   ],
   "author": "Hyperwindmill",
   "license": "MIT",
