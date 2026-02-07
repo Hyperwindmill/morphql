@@ -257,14 +257,14 @@ transform
   
   section buyer(
     set id = source[1][0]
-    set name = source[4]
-    set address = source[5] + ", " + source[6]
+    set name = source[3]
+    set address = source[4] + ", " + source[5]
   ) from NAD where source[0] == "BY"
   
   section seller(
     set id = source[1][0]
-    set name = source[4]
-    set address = source[5] + ", " + source[6]
+    set name = source[3]
+    set address = source[4] + ", " + source[5]
   ) from NAD where source[0] == "SE"
   
   section multiple items(
