@@ -584,48 +584,62 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         const subSourceOptions = JSON.stringify(subSourceType.options);
         const subTargetOptions = JSON.stringify(subTargetType.options);
 
+        // Optimization: use a temporary variable for sourceAccess if it's a function call or expression
+        const sourceVar =
+          sourceAccess.includes('(') || sourceAccess.includes('[') || sourceAccess.includes(' ')
+            ? '_sectionSource'
+            : sourceAccess;
+        const sourceInit =
+          sourceVar === '_sectionSource' ? `const _sectionSource = ${sourceAccess};\n` : '';
+
         if (isMultiple) {
           const filterPart = hasWhere
             ? `.filter(item => { const source = item; return ${whereCondition}; })`
             : '';
           return `
-        if (${sourceAccess} && Array.isArray(${sourceAccess})) {
-          ${sectionAccess} = ${sourceAccess}${filterPart}.map(item => {
-            const subSource = env.parse('${subSourceType.name}', item, ${subSourceOptions});
-            const source = subSource;
-            const target = {};
-            ${actions.join('\n            ')}
-            return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
-          });
+        {
+          ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
+            ${sectionAccess} = ${sourceVar}${filterPart}.map(item => {
+              const subSource = env.parse('${subSourceType.name}', item, ${subSourceOptions});
+              const source = subSource;
+              const target = {};
+              ${actions.join('\n              ')}
+              return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
+            });
+          }
         }
         `;
         } else {
           // Single subquery section with where = find first match
           if (hasWhere) {
             return `
-        if (${sourceAccess} && Array.isArray(${sourceAccess})) {
-          const _filtered = ${sourceAccess}.find(item => { const source = item; return ${whereCondition}; });
-          if (_filtered) {
+        {
+          ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
+            const _filtered = ${sourceVar}.find(item => { const source = item; return ${whereCondition}; });
+            if (_filtered) {
+              ${sectionAccess} = (function(innerSource) {
+                const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
+                const source = subSource;
+                const target = {};
+                ${actions.join('\n                ')}
+                return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
+              })(_filtered);
+            }
+          }
+        }
+        `;
+          } else {
+            return `
+        {
+          ${sourceInit}if (${sourceVar}) {
             ${sectionAccess} = (function(innerSource) {
               const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
               const source = subSource;
               const target = {};
               ${actions.join('\n              ')}
               return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
-            })(_filtered);
+            })(${sourceVar});
           }
-        }
-        `;
-          } else {
-            return `
-        if (${sourceAccess}) {
-          ${sectionAccess} = (function(innerSource) {
-            const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
-            const source = subSource;
-            const target = {};
-            ${actions.join('\n            ')}
-            return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
-          })(${sourceAccess});
         }
         `;
           }
@@ -658,45 +672,59 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       try {
         const regularActions = ctx.action ? ctx.action.map((a: any) => this.visit(a)) : [];
 
+        // Optimization: use a temporary variable for sourceAccess if it's a function call or expression
+        const sourceVar =
+          sourceAccess.includes('(') || sourceAccess.includes('[') || sourceAccess.includes(' ')
+            ? '_sectionSource'
+            : sourceAccess;
+        const sourceInit =
+          sourceVar === '_sectionSource' ? `const _sectionSource = ${sourceAccess};\n` : '';
+
         if (isMultiple) {
           const filterPart = hasWhere
             ? `.filter(item => { const source = item; return ${whereCondition}; })`
             : '';
           return `
-      if (${sourceAccess} && Array.isArray(${sourceAccess})) {
-        ${sectionAccess} = ${sourceAccess}${filterPart}.map(item => {
-          const source = item;
-          const target = {};
-          ${regularActions.join('\n          ')}
-          return target;
-        });
+      {
+        ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
+          ${sectionAccess} = ${sourceVar}${filterPart}.map(item => {
+            const source = item;
+            const target = {};
+            ${regularActions.join('\n            ')}
+            return target;
+          });
+        }
       }
       `;
         } else {
           // Single section with where = find first match
           if (hasWhere) {
             return `
-      if (${sourceAccess} && Array.isArray(${sourceAccess})) {
-        const _filtered = ${sourceAccess}.find(item => { const source = item; return ${whereCondition}; });
-        if (_filtered) {
-          ${sectionAccess} = (function(innerSource) {
-            const source = innerSource;
-            const target = {};
-            ${regularActions.join('\n            ')}
-            return target;
-          })(_filtered);
+      {
+        ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
+          const _filtered = ${sourceVar}.find(item => { const source = item; return ${whereCondition}; });
+          if (_filtered) {
+            ${sectionAccess} = (function(innerSource) {
+              const source = innerSource;
+              const target = {};
+              ${regularActions.join('\n              ')}
+              return target;
+            })(_filtered);
+          }
         }
       }
       `;
           } else {
             return `
-      if (${sourceAccess}) {
-        ${sectionAccess} = (function(innerSource) {
-          const source = innerSource;
-          const target = {};
-          ${regularActions.join('\n          ')}
-          return target;
-        })(${sourceAccess});
+      {
+        ${sourceInit}if (${sourceVar}) {
+          ${sectionAccess} = (function(innerSource) {
+            const source = innerSource;
+            const target = {};
+            ${regularActions.join('\n            ')}
+            return target;
+          })(${sourceVar});
+        }
       }
       `;
           }
