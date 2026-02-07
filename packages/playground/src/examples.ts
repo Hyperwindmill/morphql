@@ -248,4 +248,48 @@ transform
       2,
     ),
   },
+  {
+    name: "Invoice Mapping (EDIFACT to JSON)",
+    query: morphQL`from edifact to object
+transform
+  set invoiceNumber = BGM[0][1]
+  set invoiceDate = DTM[0][0][1]
+  
+  section buyer(
+    set id = NAD[0][1][0]
+    set name = NAD[0][4]
+    set address = NAD[0][5] + ", " + NAD[0][6]
+  ) from NAD where NAD[0] == "BY"
+  
+  section seller(
+    set id = NAD[0][1][0]
+    set name = NAD[0][4]
+    set address = NAD[0][5] + ", " + NAD[0][6]
+  ) from NAD where NAD[0] == "SE"
+  
+  section multiple items(
+    set lineNo = LIN[0]
+    set productId = LIN[2][0]
+    set quantity = number(QTY[0][1])
+    set unit = QTY[0][2]
+    set amount = number(MOA[0][1])
+    set currency = MOA[0][2]
+  ) from LIN`,
+    source: `UNB+IATB:1+6PPH:ZZ+240509:1358+1'
+UNH+1+INVOIC:D:97B:UN'
+BGM+380+INV001+9'
+DTM+137:20240509:102'
+NAD+BY+87654321::9++BUYER CORP+STREET 1+CITY++12345+US'
+NAD+SE+12345678::9++SELLER INC+AVENUE 2+TOWN++54321+UK'
+LIN+1++PRODUCT_A:EN'
+QTY+47:100:PCE'
+MOA+203:500.00:USD'
+LIN+2++PRODUCT_B:EN'
+QTY+47:50:PCE'
+MOA+203:250.00:USD'
+UNS+S'
+MOA+77:750.00:USD'
+UNT+13+1'
+UNZ+1+1'`,
+  },
 ];
