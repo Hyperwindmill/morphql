@@ -1,6 +1,6 @@
 {
   "name": "@morphql/server-instance",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "private": true,
   "scripts": {
     "build": "nest build",
@@ -11,8 +11,8 @@
     "docs:generate": "node dist/src/generate-docs.js"
   },
   "dependencies": {
-    "@morphql/server": "^0.1.12",
-    "@morphql/core": "^0.1.12",
+    "@morphql/server": "^0.1.13",
+    "@morphql/core": "^0.1.13",
     "@nestjs/common": "^11.1.13",
     "@nestjs/core": "^11.1.13",
     "@nestjs/platform-express": "^11.1.13",
