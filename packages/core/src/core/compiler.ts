@@ -161,13 +161,31 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     return image;
   }
 
+  private safify(path: string): string {
+    if (!this.safeMode) return path;
+    // Replace . with ?. and [ with ?.[, but avoid double ?? or ?.[ if they were somehow already there
+    return path.replace(/\.(?!\?)/g, '?.').replace(/\[/g, '?.[');
+  }
+
   private genAccess(base: string, id: { name: string; quoted: boolean }, isLHS: boolean = false) {
     // Don't use optional chaining on left-hand side of assignments
-    const optionalChain = this.safeMode && !isLHS ? '?.' : '.';
-    if (id.quoted || (id.name.includes('-') && !id.name.includes('.') && !id.name.includes('['))) {
-      return `${base}${this.safeMode && !isLHS ? '?.' : ''}["${id.name}"]`;
+    if (!this.safeMode || isLHS) {
+      if (
+        id.quoted ||
+        (id.name.includes('-') && !id.name.includes('.') && !id.name.includes('['))
+      ) {
+        return `${base}["${id.name}"]`;
+      }
+      return `${base}.${id.name}`;
     }
-    return `${base}${optionalChain}${id.name}`;
+
+    // Safe Mode + RHS
+    if (id.quoted) {
+      return `${base}?.[${JSON.stringify(id.name)}]`;
+    }
+
+    const path = this.safify(id.name);
+    return `${base}?.${path}`;
   }
 
   anyIdentifier(ctx: any) {
@@ -419,12 +437,12 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         if (id.name.startsWith('source.') || id.name.startsWith('source[')) {
           // User explicitly specified source context - don't prepend
           if (this.isAnalyzing) this.tracker.recordAccess(id.name.substring(7), 'any', false);
-          return id.name;
+          return this.safeMode ? this.safify(id.name) : id.name;
         }
         if (id.name.startsWith('target.') || id.name.startsWith('target[')) {
           // User explicitly specified target context - don't prepend
           if (this.isAnalyzing) this.tracker.recordAccess(id.name.substring(7), 'any', true);
-          return id.name;
+          return this.safeMode ? this.safify(id.name) : id.name;
         }
 
         // Bare 'source' or 'target' keywords
@@ -442,7 +460,9 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           id.name.startsWith('_source[')
         ) {
           if (this.isAnalyzing) this.tracker.recordAccess(id.name.substring(7) || '', 'any', false); // Simplified root tracking
-          return `_rootSource${id.name.substring(7)}`;
+          const path = id.name.substring(7);
+          const safified = this.safeMode ? this.safify(path) : path;
+          return `_rootSource${safified}`;
         }
         if (
           id.name === '_target' ||
@@ -450,7 +470,9 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           id.name.startsWith('_target[')
         ) {
           if (this.isAnalyzing) this.tracker.recordAccess(id.name.substring(7) || '', 'any', true);
-          return `_rootTarget${id.name.substring(7)}`;
+          const path = id.name.substring(7);
+          const safified = this.safeMode ? this.safify(path) : path;
+          return `_rootTarget${safified}`;
         }
       }
       // No explicit context - use current readFrom context
