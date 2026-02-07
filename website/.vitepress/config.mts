@@ -43,8 +43,19 @@ export default defineConfig({
         items: [
           { text: "Library (Core)", link: "/guide/library" },
           { text: "Language Reference", link: "/guide/language-reference" },
-          { text: "Adapters", link: "/guide/adapters" },
-          { text: "EDIFACT Adapter", link: "/guide/edifact" },
+          {
+            text: "Adapters",
+            collapsed: false,
+            items: [
+              { text: "Overview", link: "/guide/adapters/overview" },
+              { text: "JSON", link: "/guide/adapters/json" },
+              { text: "XML", link: "/guide/adapters/xml" },
+              { text: "CSV", link: "/guide/adapters/csv" },
+              { text: "Plaintext", link: "/guide/adapters/plaintext" },
+              { text: "EDIFACT", link: "/guide/adapters/edifact" },
+              { text: "Custom Adapters", link: "/guide/adapters/custom" },
+            ],
+          },
           { text: "TypeScript Support", link: "/guide/typescript" },
         ],
       },
