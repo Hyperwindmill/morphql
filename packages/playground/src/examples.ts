@@ -268,13 +268,13 @@ transform
   ) from NAD where source[0] == "SE"
   
   section multiple items(
-    set lineNo = source[0]
-    set productId = source[2][0]
-    set quantity = number(source[3][1])
-    set unit = source[3][2]
-    set amount = number(source[4][1])
-    set currency = source[4][2]
-  ) from LIN`,
+    set lineNo = LIN[0]
+    set productId = LIN[2][0]
+    set quantity = number(QTY[0][1])
+    set unit = QTY[0][2]
+    set amount = number(MOA[0][1])
+    set currency = MOA[0][2]
+  ) from transpose(_source, "LIN", "QTY", "MOA")`,
     source: `UNB+IATB:1+6PPH:ZZ+240509:1358+1'
 UNH+1+INVOIC:D:97B:UN'
 BGM+380+INV001+9'

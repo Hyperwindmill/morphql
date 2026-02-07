@@ -510,7 +510,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         this.lastInferredType = 'string';
       } else if (['number', 'extractnumber'].includes(name)) {
         this.lastInferredType = 'number';
-      } else if (['aslist'].includes(name)) {
+      } else if (['aslist', 'transpose'].includes(name)) {
         this.lastInferredType = 'array';
       } else if (name === 'asobject') {
         this.lastInferredType = 'object';

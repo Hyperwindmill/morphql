@@ -193,4 +193,10 @@ export const functionRegistry: Record<string, FunctionHandler> = {
   concat: (args: string[]) => {
     return `env.functions.concat(${args.join(', ')})`;
   },
+  transpose: (args: string[]) => {
+    if (args.length < 2) {
+      throw new Error('transpose() requires at least 2 arguments (source, key1, [key2, ...])');
+    }
+    return `env.functions.transpose(${args.join(', ')})`;
+  },
 };

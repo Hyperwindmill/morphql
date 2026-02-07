@@ -157,4 +157,38 @@ export const runtimeFunctions = {
       []
     );
   },
+
+  /**
+   * Transposes parallel arrays from a source object into an array of objects.
+   * Signature: transpose(source, ...keys)
+   * Example: transpose(src, "A", "B") -> [{ A: src.A[0], B: src.B[0] }, ...]
+   */
+  transpose: (source: any, ...keys: string[]) => {
+    if (!source || typeof source !== 'object' || keys.length === 0) return [];
+
+    let maxLen = 0;
+    for (const key of keys) {
+      const val = source[key];
+      if (Array.isArray(val)) {
+        maxLen = Math.max(maxLen, val.length);
+      } else if (val != null) {
+        maxLen = Math.max(maxLen, 1);
+      }
+    }
+
+    const result = [];
+    for (let i = 0; i < maxLen; i++) {
+      const row: any = {};
+      for (const key of keys) {
+        const val = source[key];
+        if (Array.isArray(val)) {
+          row[key] = val[i];
+        } else {
+          row[key] = i === 0 ? val : undefined;
+        }
+      }
+      result.push(row);
+    }
+    return result;
+  },
 };
