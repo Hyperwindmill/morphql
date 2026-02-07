@@ -190,4 +190,7 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     const specArgs = specs.join(', ');
     return `env.functions.pack(${obj}, ${specArgs})`;
   },
+  concat: (args: string[]) => {
+    return `env.functions.concat(${args.join(', ')})`;
+  },
 };

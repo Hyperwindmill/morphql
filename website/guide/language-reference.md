@@ -142,7 +142,7 @@ section [multiple] <name>( [subquery] <actions> ) [from <path>]
 
 - `multiple`: Treats the source as an array and maps each item
 - `subquery`: Optional nested query for format conversion
-- `from <path>`: Shifts the context to a specific source path
+- `from <expression>`: Shifts the context to a specific source data source. Can be a path, the `parent` keyword, or a function call (e.g., `spreadsheet(source)`).
 
 **Examples:**
 
@@ -166,6 +166,11 @@ section metadata(
     set name = root.productName
     set price = number(root.cost)
 ) from xmlDataField
+
+// Using an expression in 'from'
+section multiple records(
+  set val = source
+) from concat(list1, list2)
 ```
 
 ### `clone`
@@ -270,6 +275,7 @@ Functions are used within expressions to calculate or transform values.
 | `spreadsheet(array)`                  | Transforms an array of objects into a list of row objects.                      | `spreadsheet(rows)`               |
 | `unpack(str, spec...)`                | Extracts fields from fixed-length string. Spec pattern: `name:start:len[:raw]`. | `unpack(source, "id:0:5")`        |
 | `pack(obj, spec...)`                  | Encodes object to fixed-length string. Spec pattern: `name:start:len[:left]`.   | `pack(target, "id:0:5:left")`     |
+| `concat(arg1, arg2...)`               | Concatenates two or more arrays into one.                                       | `concat(list1, list2)`            |
 
 ---
 

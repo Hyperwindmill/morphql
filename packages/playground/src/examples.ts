@@ -8,7 +8,7 @@ export interface Example {
 
 export const EXAMPLES: Example[] = [
   {
-    name: 'Customer Profile (JSON to XML)',
+    name: "Customer Profile (JSON to XML)",
     query: morphQL`from json
 to xml("UserProfile")
 transform
@@ -56,61 +56,61 @@ transform
     source: JSON.stringify(
       {
         customer: {
-          id: 'CUST-001',
-          name: 'Jane Doe',
+          id: "CUST-001",
+          name: "Jane Doe",
           isActive: true,
           contact: {
-            email: 'jane.doe@example.com',
-            phone: '+1-555-0199',
+            email: "jane.doe@example.com",
+            phone: "+1-555-0199",
           },
           addresses: [
             {
-              type: 'billing',
-              street: '123 Main St',
-              city: 'Metropolis',
-              zip: '10001',
+              type: "billing",
+              street: "123 Main St",
+              city: "Metropolis",
+              zip: "10001",
               primary: true,
             },
             {
-              type: 'shipping',
-              street: '456 Ocean Dr',
-              city: 'Gotham',
-              zip: '10200',
+              type: "shipping",
+              street: "456 Ocean Dr",
+              city: "Gotham",
+              zip: "10200",
               primary: false,
             },
           ],
           orders: [
             {
-              id: 'ORD-2023-001',
-              date: '2023-10-15',
+              id: "ORD-2023-001",
+              date: "2023-10-15",
               total: 150.5,
-              status: 'shipped',
+              status: "shipped",
               items: [
-                { sku: 'WIDGET-A', qty: 2, price: 50.0 },
-                { sku: 'GADGET-B', qty: 1, price: 50.5 },
+                { sku: "WIDGET-A", qty: 2, price: 50.0 },
+                { sku: "GADGET-B", qty: 1, price: 50.5 },
               ],
             },
             {
-              id: 'ORD-2023-009',
-              date: '2023-11-01',
+              id: "ORD-2023-009",
+              date: "2023-11-01",
               total: 200.0,
-              status: 'pending',
-              items: [{ sku: 'LUX-ITEM', qty: 1, price: 200.0 }],
+              status: "pending",
+              items: [{ sku: "LUX-ITEM", qty: 1, price: 200.0 }],
             },
           ],
           metrics: {
             visits: 42,
-            lastLogin: '2023-11-05T10:00:00Z',
-            tags: ['vip', 'early-adopter'],
+            lastLogin: "2023-11-05T10:00:00Z",
+            tags: ["vip", "early-adopter"],
           },
         },
       },
       null,
-      2
+      2,
     ),
   },
   {
-    name: 'Simple Math (JSON to JSON)',
+    name: "Simple Math (JSON to JSON)",
     query: morphQL`from json
 to json
 transform
@@ -125,11 +125,11 @@ transform
         b: 5,
       },
       null,
-      2
+      2,
     ),
   },
   {
-    name: 'Books (XML to JSON)',
+    name: "Books (XML to JSON)",
     query: morphQL`from xml
 to json
 transform
@@ -152,5 +152,124 @@ transform
     <year>1949</year>
   </book>
 </catalog>`,
+  },
+  {
+    name: "Inventory (CSV to JSON)",
+    query: morphQL`from csv
+to json
+transform
+  section multiple products(
+    set id = ID
+    set name = Name
+    set stock = Number(Quantity)
+    set price = Number(Price)
+    set category = Category
+  ) from spreadsheet(source)`,
+    source: `ID,Name,Quantity,Price,Category
+P001,Wireless Mouse,50,25.99,Accessories
+P002,Mechanical Keyboard,30,89.50,Accessories
+P003,USB-C Hub,100,15.00,Cables`,
+  },
+  {
+    name: "Log Parsing (Plaintext to JSON)",
+    query: morphQL`from plaintext
+to json
+transform
+  section multiple entries(
+    set result = unpack(source,
+      "timestamp:0:19",
+      "level:21:5",
+      "message:27:50"
+    )
+  ) from split(source, "\\n")`,
+    source: `2023-10-27 10:00:01 INFO  Application started successfully
+2023-10-27 10:05:23 WARN  Memory usage reaching 80%
+2023-10-27 10:10:12 ERROR Failed to connect to database`,
+  },
+  {
+    name: "Data Utilities (JSON to JSON)",
+    query: morphQL`from json
+to json
+transform
+  set original = textValue
+  set encoded = to_base64(textValue)
+  set decoded = from_base64(to_base64(textValue))
+  set listData = aslist(singleValue)
+  set emptyList = aslist(null)`,
+    source: JSON.stringify(
+      {
+        textValue: "Hello MorphQL!",
+        singleValue: 42,
+      },
+      null,
+      2,
+    ),
+  },
+  {
+    name: "XML Attributes (JSON to XML)",
+    query: morphQL`from json
+to xml("Store")
+transform
+  section multiple items(
+    set result = xmlnode(name, "id", id, "qty", quantity)
+  ) from products`,
+    source: JSON.stringify(
+      {
+        products: [
+          { id: "item-1", name: "Apple", quantity: 10 },
+          { id: "item-2", name: "Banana", quantity: 20 },
+        ],
+      },
+      null,
+      2,
+    ),
+  },
+  {
+    name: "Fixed-Width Output (JSON to Plaintext)",
+    query: morphQL`from json
+to plaintext
+transform
+  section multiple lines(
+    set result = pack(source,
+      "id:0:5:left",
+      "name:5:15",
+      "score:20:5:left"
+    )
+  ) from users`,
+    source: JSON.stringify(
+      {
+        users: [
+          { id: "1", name: "Alice", score: "100" },
+          { id: "2", name: "Bob", score: "85" },
+          { id: "3", name: "Charlie", score: "92" },
+        ],
+      },
+      null,
+      2,
+    ),
+  },
+  {
+    name: "Edge Case: Missing Fields",
+    query: morphQL`from json
+to json
+transform
+  set name = source?.profile?.name
+  set email = source?.profile?.email ?? "N/A"
+  
+  optional transform (
+    section metadata(
+      set lastLogin = source?.meta?.timestamp
+    )
+  )`,
+    source: JSON.stringify(
+      {
+        profile: {
+          name: "Jane Doe",
+        },
+        meta: null,
+      },
+      null,
+      2,
+    ),
   },
 ];

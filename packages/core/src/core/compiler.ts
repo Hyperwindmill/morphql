@@ -505,9 +505,28 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     const sectionName = sectionId.name;
     const sectionAccess = this.genAccess('target', sectionId, true); // LHS = true (being assigned to)
 
-    const followPathId = ctx.followPath ? this.visit(ctx.followPath) : sectionId;
-    const sourceAccess =
-      followPathId.name === 'parent' ? 'source' : this.genAccess('source', followPathId);
+    let sourceAccess: string;
+    let followName: string;
+
+    if (ctx.followExpr) {
+      const exprResult = this.visit(ctx.followExpr);
+      const normalized = exprResult.replace(/\?\./g, '.');
+      const isParent =
+        normalized === 'source.parent' ||
+        normalized === 'this.source.parent' ||
+        normalized === `${this.readFrom.replace(/\?\./g, '.')}.parent`;
+
+      if (isParent) {
+        sourceAccess = 'source';
+        followName = 'parent';
+      } else {
+        sourceAccess = exprResult;
+        followName = sourceAccess;
+      }
+    } else {
+      sourceAccess = this.genAccess('source', sectionId);
+      followName = sectionId.name;
+    }
 
     const isMultiple = !!ctx.Multiple;
 
@@ -574,8 +593,16 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     });
 
     try {
+      let followPathForTracker = followName;
+      if (followPathForTracker !== 'parent') {
+        followPathForTracker = followPathForTracker
+          .replace(/^source\??\./, '')
+          .replace(/^this\.source\??\./, '')
+          .replace(/\?\./g, '.');
+      }
+
       if (this.isAnalyzing) {
-        this.tracker.pushSection(sectionName, followPathId.name, isMultiple);
+        this.tracker.pushSection(sectionName, followPathForTracker, isMultiple);
       }
 
       try {
@@ -606,7 +633,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         }
       } finally {
         if (this.isAnalyzing) {
-          this.tracker.popSection(followPathId.name, isMultiple);
+          this.tracker.popSection(followPathForTracker, isMultiple);
         }
       }
     } finally {

@@ -4,7 +4,11 @@ export const runtimeFunctions = {
    * an array of objects where keys are taken from the first row.
    */
   spreadsheet: (data: any) => {
-    const sheet = Array.isArray(data) ? data : data == null ? [] : [data];
+    // console.log('SPREADSHEET INPUT:', JSON.stringify(data));
+    let sheet = Array.isArray(data) ? data : data == null ? [] : [data];
+    if (!Array.isArray(data) && data && typeof data === 'object' && Array.isArray(data.rows)) {
+      sheet = data.rows;
+    }
     if (sheet.length === 0) return [];
 
     const result: any[] = [];
@@ -32,6 +36,7 @@ export const runtimeFunctions = {
         result.push(rowObject);
       }
     }
+    // console.log('SPREADSHEET RESULT:', JSON.stringify(result));
     return result;
   },
 
@@ -141,5 +146,15 @@ export const runtimeFunctions = {
     }
 
     return line;
+  },
+
+  /**
+   * Concatenates two or more arrays.
+   */
+  concat: (...args: any[]) => {
+    return args.reduce(
+      (acc, val) => acc.concat(Array.isArray(val) ? val : val == null ? [] : [val]),
+      []
+    );
   },
 };

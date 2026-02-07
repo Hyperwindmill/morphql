@@ -270,7 +270,7 @@ export class MorphParser extends CstParser {
     this.CONSUME(t.RParen);
     this.OPTION3(() => {
       this.CONSUME1(t.From, { LABEL: 'followFrom' });
-      this.SUBRULE2(this.anyIdentifier, { LABEL: 'followPath' });
+      this.SUBRULE(this.expression, { LABEL: 'followExpr' });
     });
   });
 

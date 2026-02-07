@@ -107,7 +107,7 @@ export class MappingTracker {
       const part = parts[i];
       if (!current.properties) current.properties = {};
       if (i === parts.length - 1) {
-        if (!current.properties[part]) {
+        if (!current.properties[part] || current.properties[part].type === 'any') {
           current.properties[part] = { type };
           if (type === 'object') {
             current.properties[part].properties = {};
