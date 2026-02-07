@@ -229,8 +229,8 @@ transform
     query: morphQL`from json
 to plaintext
 transform
-  section multiple lines(
-    set result = pack(source,
+  section multiple rows(
+    return pack(source,
       "id:0:5:left",
       "name:5:15",
       "score:20:5:left"
@@ -243,30 +243,6 @@ transform
           { id: "2", name: "Bob", score: "85" },
           { id: "3", name: "Charlie", score: "92" },
         ],
-      },
-      null,
-      2,
-    ),
-  },
-  {
-    name: "Edge Case: Missing Fields",
-    query: morphQL`from json
-to json
-transform
-  set name = source?.profile?.name
-  set email = source?.profile?.email ?? "N/A"
-  
-  optional transform (
-    section metadata(
-      set lastLogin = source?.meta?.timestamp
-    )
-  )`,
-    source: JSON.stringify(
-      {
-        profile: {
-          name: "Jane Doe",
-        },
-        meta: null,
       },
       null,
       2,
