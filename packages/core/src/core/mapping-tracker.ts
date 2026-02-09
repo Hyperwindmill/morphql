@@ -100,13 +100,45 @@ export class MappingTracker {
     }
   }
 
+  private parsePath(path: string): string[] {
+    if (!path) return [];
+    // Tokenize path into parts where [n] is converted to '[]'
+    // Example: a.b[0][1].c -> ['a', 'b', '[]', '[]', 'c']
+    const result: string[] = [];
+    const internalParts = path.split('.');
+    for (const part of internalParts) {
+      const match = part.match(/^([^[\]]*)((?:\[\d+\])*)$/);
+      if (match) {
+        if (match[1]) result.push(match[1]);
+        const brackets = match[2].match(/\[\d+\]/g);
+        if (brackets) {
+          for (const _ of brackets) {
+            result.push('[]');
+          }
+        }
+      } else {
+        result.push(part);
+      }
+    }
+    return result;
+  }
+
   private setInNode(node: SchemaNode, path: string, type: MorphType) {
-    const parts = path.split('.');
+    const parts = this.parsePath(path);
     let current = node;
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
+      const isLast = i === parts.length - 1;
+
+      if (part === '[]') {
+        current.type = 'array';
+        if (!current.items) current.items = { type: isLast ? type : 'object', properties: {} };
+        current = current.items;
+        continue;
+      }
+
       if (!current.properties) current.properties = {};
-      if (i === parts.length - 1) {
+      if (isLast) {
         if (!current.properties[part] || current.properties[part].type === 'any') {
           current.properties[part] = { type };
           if (type === 'object') {
@@ -124,12 +156,26 @@ export class MappingTracker {
   }
 
   private setInNodeExplicit(node: SchemaNode, path: string, newNode: SchemaNode) {
-    const parts = path.split('.');
+    const parts = this.parsePath(path);
     let current = node;
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
+      const isLast = i === parts.length - 1;
+
+      if (part === '[]') {
+        current.type = 'array';
+        if (!current.items)
+          current.items = { type: isLast ? newNode.type : 'object', properties: {} };
+        if (isLast) {
+          current.items = newNode;
+        } else {
+          current = current.items;
+        }
+        continue;
+      }
+
       if (!current.properties) current.properties = {};
-      if (i === parts.length - 1) {
+      if (isLast) {
         current.properties[part] = newNode;
       } else {
         if (!current.properties[part])
@@ -140,25 +186,55 @@ export class MappingTracker {
   }
 
   private deleteInNode(node: SchemaNode, path: string) {
-    const parts = path.split('.');
+    const parts = this.parsePath(path);
     let current = node;
     for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const isLast = i === parts.length - 1;
+
+      if (part === '[]') {
+        if (!current.items) return;
+        if (isLast) {
+          delete (current as any).items;
+          current.type = 'any';
+        } else {
+          current = current.items;
+        }
+        continue;
+      }
+
       if (!current.properties) return;
-      if (i === parts.length - 1) {
-        delete current.properties[parts[i]];
+      if (isLast) {
+        delete current.properties[part];
       } else {
-        current = current.properties[parts[i]];
+        current = current.properties[part];
         if (!current) return;
       }
     }
   }
 
   private getOrSetNode(node: SchemaNode, path: string, defaultType: MorphType): SchemaNode {
-    const parts = path.split('.');
+    const parts = this.parsePath(path);
     let current = node;
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       const isLast = i === parts.length - 1;
+
+      if (part === '[]') {
+        current.type = 'array';
+        if (!current.items) {
+          const type = isLast ? defaultType : 'object';
+          current.items = { type };
+          if (type === 'object') {
+            current.items.properties = {};
+          } else if (type === 'array') {
+            current.items.items = { type: 'object', properties: {} };
+          }
+        }
+        current = current.items;
+        continue;
+      }
+
       const type = isLast ? defaultType : 'object';
 
       if (!current.properties) current.properties = {};
