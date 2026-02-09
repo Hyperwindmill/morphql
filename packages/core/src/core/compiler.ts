@@ -161,6 +161,12 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
     return image;
   }
 
+  private isSimplePath(path: string): boolean {
+    if (!path) return false;
+    // Simple path should not contain function calls, operators or spaces
+    return !/[()+*/-]/.test(path) && !path.includes(' ');
+  }
+
   private safify(path: string): string {
     if (!this.safeMode) return path;
     // Replace . with ?. and [ with ?.[, but avoid double ?? or ?.[ if they were somehow already there
@@ -436,12 +442,14 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         // Check for explicit context prefixes (source.field or target.field)
         if (id.name.startsWith('source.') || id.name.startsWith('source[')) {
           // User explicitly specified source context - don't prepend
-          if (this.isAnalyzing) this.tracker.recordAccess(id.name.substring(7), 'any', false);
+          const path = id.name.startsWith('source.') ? id.name.substring(7) : id.name.substring(6);
+          if (this.isAnalyzing && path) this.tracker.recordAccess(path, 'any', false);
           return this.safeMode ? this.safify(id.name) : id.name;
         }
         if (id.name.startsWith('target.') || id.name.startsWith('target[')) {
           // User explicitly specified target context - don't prepend
-          if (this.isAnalyzing) this.tracker.recordAccess(id.name.substring(7), 'any', true);
+          const path = id.name.startsWith('target.') ? id.name.substring(7) : id.name.substring(6);
+          if (this.isAnalyzing && path) this.tracker.recordAccess(path, 'any', true);
           return this.safeMode ? this.safify(id.name) : id.name;
         }
 
@@ -459,8 +467,11 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           id.name.startsWith('_source.') ||
           id.name.startsWith('_source[')
         ) {
-          if (this.isAnalyzing) this.tracker.recordAccess(id.name.substring(7) || '', 'any', false); // Simplified root tracking
           const path = id.name.substring(7);
+          if (this.isAnalyzing) {
+            const trackPath = path.startsWith('.') ? path.substring(1) : path;
+            if (trackPath) this.tracker.recordAccess(trackPath, 'any', false);
+          }
           const safified = this.safeMode ? this.safify(path) : path;
           return `_rootSource${safified}`;
         }
@@ -469,8 +480,11 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           id.name.startsWith('_target.') ||
           id.name.startsWith('_target[')
         ) {
-          if (this.isAnalyzing) this.tracker.recordAccess(id.name.substring(7) || '', 'any', true);
           const path = id.name.substring(7);
+          if (this.isAnalyzing) {
+            const trackPath = path.startsWith('.') ? path.substring(1) : path;
+            if (trackPath) this.tracker.recordAccess(trackPath, 'any', true);
+          }
           const safified = this.safeMode ? this.safify(path) : path;
           return `_rootTarget${safified}`;
         }
@@ -666,7 +680,13 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       }
 
       if (this.isAnalyzing) {
-        this.tracker.pushSection(sectionName, followPathForTracker, isMultiple);
+        if (followPathForTracker === 'parent' || this.isSimplePath(followPathForTracker)) {
+          this.tracker.pushSection(sectionName, followPathForTracker, isMultiple);
+        } else {
+          // If it's a complex expression, we treat it as if it's from the current parent context
+          // but we don't record the full expression as a path in the schema.
+          this.tracker.pushSection(sectionName, 'parent', isMultiple);
+        }
       }
 
       try {
@@ -731,7 +751,11 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         }
       } finally {
         if (this.isAnalyzing) {
-          this.tracker.popSection(followPathForTracker, isMultiple);
+          const trackPath =
+            followPathForTracker === 'parent' || this.isSimplePath(followPathForTracker)
+              ? followPathForTracker
+              : 'parent';
+          this.tracker.popSection(trackPath, isMultiple);
         }
       }
     } finally {
