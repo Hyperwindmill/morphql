@@ -1,6 +1,6 @@
 {
   "name": "@morphql/core",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "A high-performance, isomorphic Query-to-Code engine for structural data transformations.",
   "type": "module",
   "publishConfig": {

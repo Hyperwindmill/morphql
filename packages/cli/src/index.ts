@@ -23,7 +23,7 @@ program
   .description(
     "CLI tool for morphql - transform structural data from the command line.",
   )
-  .version("0.1.15")
+  .version("0.1.16")
   .option("-f, --from <path>", "Path to the source file")
   .option("-i, --input <string>", "Raw source content as string")
   .option(
