@@ -82,9 +82,9 @@ export const KEYWORDS: KeywordDef[] = [
     category: "action",
     doc: {
       signature:
-        "section [multiple] <name>( [subquery] <actions> ) [from <path>]",
+        "section [multiple] <name>( [subquery] <actions> ) [from <path>] [where <condition>]",
       description:
-        "Creates a nested object or array in the output. Can optionally include a subquery for format conversion.",
+        "Creates a nested object or array in the output. Can optionally include a subquery for format conversion and a where clause for filtering.",
       parameters: [
         { name: "multiple", description: "(Optional) Treat as array mapping" },
         { name: "name", description: "The section/field name" },
@@ -101,9 +101,31 @@ export const KEYWORDS: KeywordDef[] = [
           name: "from",
           description: "(Optional) Source path for the section data",
         },
+        {
+          name: "where",
+          description:
+            "(Optional) Condition to filter source items (only for arrays)",
+        },
       ],
       example:
-        "section items(\n  from csv to object\n  transform\n    set name = A\n) from csvString",
+        "section multiple items(\n  set name = A\n) from rows where age > 18",
+    },
+  },
+  {
+    name: "where",
+    category: "control",
+    doc: {
+      signature: "section ... where <condition>",
+      description:
+        "Filters elements in a section based on a condition. Only works when the source is an array.",
+      parameters: [
+        {
+          name: "condition",
+          description: "Boolean expression to evaluate for each item",
+        },
+      ],
+      example:
+        "section multiple users(set name = A) from rows where status == 'active'",
     },
   },
   {

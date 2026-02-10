@@ -42,14 +42,18 @@ transform unsafe
             <b>Example:</b><pre>set fullName = firstName + " " + lastName</pre>
         """.trimIndent(),
         "section" to """
-            <b>section [multiple] <name>( [subquery] <actions> ) [from <path>]</b><br/>
-            Creates a nested object or array in the output. Can optionally include a subquery for format conversion.<br/><br/>
-            <b>Parameters:</b><ul><li><b>multiple:</b> (Optional) Treat as array mapping</li><li><b>name:</b> The section/field name</li><li><b>subquery:</b> (Optional) Nested query: from <format> to <format> [transform]</li><li><b>actions:</b> Actions to perform within the section</li><li><b>from:</b> (Optional) Source path for the section data</li></ul>
-            <b>Example:</b><pre>section items(
-  from csv to object
-  transform
-    set name = A
-) from csvString</pre>
+            <b>section [multiple] <name>( [subquery] <actions> ) [from <path>] [where <condition>]</b><br/>
+            Creates a nested object or array in the output. Can optionally include a subquery for format conversion and a where clause for filtering.<br/><br/>
+            <b>Parameters:</b><ul><li><b>multiple:</b> (Optional) Treat as array mapping</li><li><b>name:</b> The section/field name</li><li><b>subquery:</b> (Optional) Nested query: from <format> to <format> [transform]</li><li><b>actions:</b> Actions to perform within the section</li><li><b>from:</b> (Optional) Source path for the section data</li><li><b>where:</b> (Optional) Condition to filter source items (only for arrays)</li></ul>
+            <b>Example:</b><pre>section multiple items(
+  set name = A
+) from rows where age > 18</pre>
+        """.trimIndent(),
+        "where" to """
+            <b>section ... where <condition></b><br/>
+            Filters elements in a section based on a condition. Only works when the source is an array.<br/><br/>
+            <b>Parameters:</b><ul><li><b>condition:</b> Boolean expression to evaluate for each item</li></ul>
+            <b>Example:</b><pre>section multiple users(set name = A) from rows where status == 'active'</pre>
         """.trimIndent(),
         "multiple" to """
             <b>section multiple <name>(...)</b><br/>
@@ -203,6 +207,18 @@ substring("Hello World", -5)     // "World"</pre>
             Encodes an object into a fixed-length string using field specifications. Specs follow the pattern "name:start:length[:modifier]".<br/><br/>
             <b>Parameters:</b><ul><li><b>obj:</b> The object containing data to pack</li><li><b>fieldSpec:</b> Field definition: "name:start:length". Optional ":left" modifier at the end uses left-padding (right-alignment).</li></ul>
             <b>Example:</b><pre>pack(target, "id:0:5:left", "name:5:20")</pre>
+        """.trimIndent(),
+        "list" to """
+            <b>list(value1, [value2, ...])</b><br/>
+            Creates an array from the given arguments. Useful for constructing nested structures in a single assignment.<br/><br/>
+            <b>Parameters:</b><ul><li><b>values:</b> Values to include in the array</li></ul>
+            <b>Example:</b><pre>list("A", "B", list("C1", "C2"))  // ["A", "B", ["C1", "C2"]]</pre>
+        """.trimIndent(),
+        "array" to """
+            <b>array(value1, [value2, ...])</b><br/>
+            Alias for `list()`. Creates an array from the given arguments.<br/><br/>
+            <b>Parameters:</b><ul><li><b>values:</b> Values to include in the array</li></ul>
+            <b>Example:</b><pre>array(1, 2, 3)  // [1, 2, 3]</pre>
         """.trimIndent()
     )
 }

@@ -208,6 +208,32 @@ export const FUNCTIONS: FunctionDef[] = [
       example: 'pack(target, "id:0:5:left", "name:5:20")',
     },
   },
+  {
+    name: "list",
+    doc: {
+      signature: "list(value1, [value2, ...])",
+      description:
+        "Creates an array from the given arguments. Useful for constructing nested structures in a single assignment.",
+      parameters: [
+        { name: "values", description: "Values to include in the array" },
+      ],
+      returns: "array",
+      example: 'list("A", "B", list("C1", "C2"))  // ["A", "B", ["C1", "C2"]]',
+    },
+  },
+  {
+    name: "array",
+    doc: {
+      signature: "array(value1, [value2, ...])",
+      description:
+        "Alias for `list()`. Creates an array from the given arguments.",
+      parameters: [
+        { name: "values", description: "Values to include in the array" },
+      ],
+      returns: "array",
+      example: "array(1, 2, 3)  // [1, 2, 3]",
+    },
+  },
 ];
 
 // Helper to get all function names

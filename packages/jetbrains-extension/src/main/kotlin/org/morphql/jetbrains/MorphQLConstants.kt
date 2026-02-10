@@ -12,6 +12,7 @@ object MorphQLConstants {
         "unsafe",
         "set",
         "section",
+        "where",
         "multiple",
         "clone",
         "delete",
@@ -37,7 +38,9 @@ object MorphQLConstants {
         "aslist",
         "spreadsheet",
         "unpack",
-        "pack"
+        "pack",
+        "list",
+        "array"
     )
 
     val OPERATORS = setOf(

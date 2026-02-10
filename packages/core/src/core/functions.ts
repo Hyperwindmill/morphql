@@ -199,4 +199,10 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     }
     return `env.functions.transpose(${args.join(', ')})`;
   },
+  list: (args: string[]) => {
+    return `[${args.join(', ')}]`;
+  },
+  array: (args: string[]) => {
+    return `[${args.join(', ')}]`;
+  },
 };

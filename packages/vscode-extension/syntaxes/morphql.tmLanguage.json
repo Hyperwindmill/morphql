@@ -33,7 +33,7 @@
       "patterns": [
         {
           "name": "keyword.control.morphql",
-          "match": "\\b(from|to|transform|unsafe|if|else)\\b"
+          "match": "\\b(from|to|transform|unsafe|where|if|else)\\b"
         },
         {
           "name": "keyword.other.morphql",
@@ -58,7 +58,7 @@
       "patterns": [
         {
           "name": "entity.name.function.morphql",
-          "match": "\\b(substring|split|replace|text|number|uppercase|lowercase|extractnumber|xmlnode|to_base64|from_base64|aslist|spreadsheet)(?=\\s*\\()"
+          "match": "\\b(substring|split|replace|text|number|uppercase|lowercase|extractnumber|xmlnode|to_base64|from_base64|aslist|spreadsheet|unpack|pack|list|array)(?=\\s*\\()"
         }
       ]
     },
