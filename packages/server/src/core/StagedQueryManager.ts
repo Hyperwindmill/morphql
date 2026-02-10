@@ -21,31 +21,49 @@ export class StagedQueryManager {
   private readonly queries: Map<string, StagedQuery> = new Map();
 
   async loadFromDirectory(dir: string): Promise<void> {
-    if (!fs.existsSync(dir)) {
+    try {
+      await fs.promises.access(dir);
+    } catch {
       console.warn(`Queries directory not found: ${dir}`);
       return;
     }
 
-    const files = fs.readdirSync(dir);
+    const files = await fs.promises.readdir(dir);
     const morphFiles = files.filter((f) => f.endsWith('.morphql'));
 
-    for (const file of morphFiles) {
-      const name = path.parse(file).name;
-      const filePath = path.join(dir, file);
-      const content = fs.readFileSync(filePath, 'utf-8');
+    await Promise.all(
+      morphFiles.map(async (file) => {
+        const name = path.parse(file).name;
+        const filePath = path.join(dir, file);
+        const content = await fs.promises.readFile(filePath, 'utf-8');
 
-      let meta: Record<string, any> | undefined;
-      const yamlPath = path.join(dir, `${name}.meta.yaml`);
-      const jsonPath = path.join(dir, `${name}.meta.json`);
+        let meta: Record<string, any> | undefined;
+        const yamlPath = path.join(dir, `${name}.meta.yaml`);
+        const jsonPath = path.join(dir, `${name}.meta.json`);
 
-      if (fs.existsSync(yamlPath)) {
-        meta = yaml.load(fs.readFileSync(yamlPath, 'utf-8')) as any;
-      } else if (fs.existsSync(jsonPath)) {
-        meta = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
-      }
+        const yamlExists = await fs.promises
+          .access(yamlPath)
+          .then(() => true)
+          .catch(() => false);
 
-      await this.add({ name, query: content, meta });
-    }
+        if (yamlExists) {
+          const yamlContent = await fs.promises.readFile(yamlPath, 'utf-8');
+          meta = yaml.load(yamlContent) as any;
+        } else {
+          const jsonExists = await fs.promises
+            .access(jsonPath)
+            .then(() => true)
+            .catch(() => false);
+
+          if (jsonExists) {
+            const jsonContent = await fs.promises.readFile(jsonPath, 'utf-8');
+            meta = JSON.parse(jsonContent);
+          }
+        }
+
+        await this.add({ name, query: content, meta });
+      }),
+    );
   }
 
   async loadFromArray(definitions: QueryDefinition[]): Promise<void> {
