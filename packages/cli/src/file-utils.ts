@@ -31,6 +31,7 @@ export interface ProcessOptions {
   outputPath: string;
   doneDir?: string;
   errorDir?: string;
+  deleteSource?: boolean;
 }
 
 /**
@@ -123,11 +124,13 @@ export async function processFile(
 
     await fs.writeFile(outputPath, result, "utf8");
 
-    // Handle --done-dir
+    // Handle --done-dir or --delete
     if (doneDir) {
       if (!existsSync(doneDir)) await fs.mkdir(doneDir, { recursive: true });
       const dest = path.join(doneDir, path.basename(inputPath));
       await fs.rename(inputPath, dest);
+    } else if (options.deleteSource) {
+      await fs.unlink(inputPath);
     }
 
     return {

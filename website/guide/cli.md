@@ -86,6 +86,7 @@ morphql batch \
 | `--pattern <glob>`        | Include pattern for filenames (default: `*`).          |
 | `--done-dir <path>`       | Move source files here after success.                  |
 | `--error-dir <path>`      | Move source files here on failure.                     |
+| `--delete`                | Delete source files after successful processing.       |
 | `--cache-dir <path>`      | Compiled query cache directory (default: `.compiled`). |
 | `--log-format <format>`   | Log output format: `text` (default) or `json`.         |
 
@@ -99,7 +100,8 @@ morphql batch \
 4. Lists files matching `--pattern` (dot-files are skipped by default).
 5. Transforms each file and writes the result to `--out` with the correct extension.
 6. Prints a summary with file count, errors, and elapsed time.
-7. Exits with code `1` if any errors occurred, `0` otherwise.
+7. If `--delete` is used (and no `--done-dir` is provided), source files are removed after success.
+8. Exits with code `1` if any errors occurred, `0` otherwise.
 
 ### Examples
 
@@ -115,7 +117,7 @@ morphql batch \
 
 **Archive processed files, quarantine failures:**
 
-```bash
+````bash
 morphql batch \
   -q "from csv to json transform set imported = true" \
   --in ./spool/inbox/ \
@@ -123,7 +125,14 @@ morphql batch \
   --done-dir ./spool/archive/ \
   --error-dir ./spool/failed/ \
   --pattern "*.csv"
-```
+
+**Delete source files after transformation:**
+
+```bash
+morphql batch -q "from json to xml" --in ./in --out ./out --delete
+````
+
+````
 
 ---
 
@@ -137,7 +146,7 @@ morphql watch \
   --in ./incoming/ \
   --out ./processed/ \
   --pattern "*.xml"
-```
+````
 
 ### Options
 
