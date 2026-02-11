@@ -183,7 +183,7 @@ MorphQL is available in multiple forms to fit your workflow:
 | Package                                          | Description                                                                                                |
 | :----------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
 | **[@morphql/core](./packages/core)**             | Core engine. Embed in Node.js or browser apps. Compile once, execute fast.                                 |
-| **[@morphql/cli](./packages/cli)**               | Terminal tool. Batch transforms, directory watching, Unix piping, `--delete` (coming in v0.1.18) and more. |
+| **[@morphql/cli](./packages/cli)**               | Terminal tool. Batch transforms, directory watching, Unix piping, `--delete` and more.                     |
 | **[@morphql/server](./packages/server)**         | REST API with Redis caching and Staged Queries for pre-defined transformation endpoints.                   |
 | **[@morphql/playground](./packages/playground)** | Interactive web editor. Experiment with queries in the browser with live feedback.                         |
 
