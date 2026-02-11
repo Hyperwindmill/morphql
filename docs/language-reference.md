@@ -101,6 +101,25 @@ transform
 
 > **Tip:** `_source` and `_target` always refer to the **outermost** transformation scope, even when deeply nested in multiple sections or subqueries.
 
+### Iteration Index: `_key`
+
+When inside a `section multiple` block, you can use the `_key` identifier to access the current iteration index (starting from 0).
+
+```morphql
+section multiple items(
+  set rank = _key + 1
+  set name = productName
+) from products
+```
+
+The `_key` is also available in the `where` clause of a section to filter by position:
+
+```morphql
+section multiple firstThree(
+  set val = source
+) from data where _key < 3
+```
+
 ---
 
 ## Actions
@@ -141,7 +160,7 @@ section [multiple] <name>( [subquery] <actions> ) [from <path>] [where <conditio
 - `multiple`: Treats the source as an array and maps each item
 - `subquery`: Optional nested query for format conversion
 - `from <expression>`: Shifts the context to a specific source data source. Can be a path, the `parent` keyword, or a function call (e.g., `spreadsheet(source)`).
-- `where <condition>`: Filters the source data before transformation. For `multiple` sections, only matching items are included. For single sections, the first matching item is used.
+- `where <condition>`: Filters the source data before transformation. For `multiple` sections, only matching items are included. For single sections, the first matching item is used. You can use `_key` here to filter by index.
 
 **Examples:**
 

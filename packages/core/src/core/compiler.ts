@@ -438,6 +438,10 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       if (['true', 'false', 'null'].includes(id.name) && !id.quoted) {
         return id.name;
       }
+      if (id.name === '_key' && !id.quoted) {
+        return '_key';
+      }
+
       if (!id.quoted) {
         // Check for explicit context prefixes (source.field or target.field)
         if (id.name.startsWith('source.') || id.name.startsWith('source[')) {
@@ -608,14 +612,15 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
 
         if (isMultiple) {
           const filterPart = hasWhere
-            ? `.filter(item => { const source = item; return ${whereCondition}; })`
+            ? `.filter((item, index) => { const source = item; const _key = index; return ${whereCondition}; })`
             : '';
           return `
         {
           ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-            ${sectionAccess} = ${sourceVar}${filterPart}.map(item => {
+            ${sectionAccess} = ${sourceVar}${filterPart}.map((item, index) => {
               const subSource = env.parse('${subSourceType.name}', item, ${subSourceOptions});
               const source = subSource;
+              const _key = index;
               const target = {};
               ${actions.join('\n              ')}
               return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
@@ -629,15 +634,16 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
             return `
         {
           ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-            const _filtered = ${sourceVar}.find(item => { const source = item; return ${whereCondition}; });
+            const _filtered = ${sourceVar}.find((item, index) => { const source = item; const _key = index; return ${whereCondition}; });
             if (_filtered) {
-              ${sectionAccess} = (function(innerSource) {
+              ${sectionAccess} = (function(innerSource, innerIndex) {
                 const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
                 const source = subSource;
+                const _key = innerIndex;
                 const target = {};
                 ${actions.join('\n                ')}
                 return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
-              })(_filtered);
+              })(_filtered, ${sourceVar}.indexOf(_filtered));
             }
           }
         }
@@ -649,6 +655,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
             ${sectionAccess} = (function(innerSource) {
               const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
               const source = subSource;
+              const _key = 0; // Single section without where, index is effectively 0 if we consider it an "iteration"
               const target = {};
               ${actions.join('\n              ')}
               return env.serialize('${subTargetType.name}', target, ${subTargetOptions});
@@ -702,13 +709,14 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
 
         if (isMultiple) {
           const filterPart = hasWhere
-            ? `.filter(item => { const source = item; return ${whereCondition}; })`
+            ? `.filter((item, index) => { const source = item; const _key = index; return ${whereCondition}; })`
             : '';
           return `
       {
         ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-          ${sectionAccess} = ${sourceVar}${filterPart}.map(item => {
+          ${sectionAccess} = ${sourceVar}${filterPart}.map((item, index) => {
             const source = item;
+            const _key = index;
             const target = {};
             ${regularActions.join('\n            ')}
             return target;
@@ -722,14 +730,15 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
             return `
       {
         ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-          const _filtered = ${sourceVar}.find(item => { const source = item; return ${whereCondition}; });
+          const _filtered = ${sourceVar}.find((item, index) => { const source = item; const _key = index; return ${whereCondition}; });
           if (_filtered) {
-            ${sectionAccess} = (function(innerSource) {
+            ${sectionAccess} = (function(innerSource, innerIndex) {
               const source = innerSource;
+              const _key = innerIndex;
               const target = {};
               ${regularActions.join('\n              ')}
               return target;
-            })(_filtered);
+            })(_filtered, ${sourceVar}.indexOf(_filtered));
           }
         }
       }
@@ -740,6 +749,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         ${sourceInit}if (${sourceVar}) {
           ${sectionAccess} = (function(innerSource) {
             const source = innerSource;
+            const _key = 0;
             const target = {};
             ${regularActions.join('\n            ')}
             return target;

@@ -11,22 +11,15 @@ describe('Transpose Function (Variadic)', () => {
           set age = ages
         ) from transpose(_source, "names", "ages")
     `;
-    const fs = await import('fs');
-    try {
-      const engine = await compile(query);
-      fs.writeFileSync('debug_transpose.js', engine.code);
-      const result = engine({
-        names: ['Alice', 'Bob'],
-        ages: [25, 30],
-      });
-      expect(result.joined).toEqual([
-        { name: 'Alice', age: 25 },
-        { name: 'Bob', age: 30 },
-      ]);
-    } catch (e: any) {
-      fs.writeFileSync('debug_transpose.js', 'ERROR: ' + e.message + '\n' + e.stack);
-      throw e;
-    }
+    const engine = await compile(query);
+    const result = engine({
+      names: ['Alice', 'Bob'],
+      ages: [25, 30],
+    });
+    expect(result.joined).toEqual([
+      { name: 'Alice', age: 25 },
+      { name: 'Bob', age: 30 },
+    ]);
   });
 
   it('should handle unbalanced arrays by filling with undefined', async () => {
