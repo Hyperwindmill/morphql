@@ -1,14 +1,24 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Hyperwindmill/morphql/main/morphql.png" alt="MorphQL" width="200" />
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@morphql/language-definitions"><img src="https://img.shields.io/npm/v/@morphql/language-definitions?label=%40morphql%2Flanguage-definitions" alt="npm version" /></a>
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" />
+</p>
+
 # @morphql/language-definitions
 
-**Single source of truth** for MorphQL language definitions across all platforms.
+The **single source of truth** for MorphQL language definitions (keywords, functions, operators) across all platforms. This package ensures consistency between the engine, IDE extensions, and documentation.
 
 ## Purpose
 
-This package centralizes all MorphQL language definitions (keywords, functions, operators, documentation) in TypeScript, eliminating duplication across:
+This shared package centralizes the MorphQL grammar for reuse in:
 
-- VSCode extension
-- Monaco Editor (playground)
-- Documentation
+- **VSCode Extension**: TextMate grammar and hover providers.
+- **Monaco Editor (Playground)**: Language configuration and Monarch tokens.
+- **Documentation**: Automatic generation of function and keyword references.
+- **Type Safety**: TypeScript interfaces for language features.
 
 ## Installation
 
@@ -16,130 +26,37 @@ This package centralizes all MorphQL language definitions (keywords, functions, 
 npm install @morphql/language-definitions
 ```
 
-## Usage
-
-### Get Language Data
+## Basic Usage
 
 ```typescript
 import {
   KEYWORDS,
   FUNCTIONS,
-  OPERATORS,
   getKeywordNames,
   getFunctionNames,
-  getOperatorSymbols,
 } from "@morphql/language-definitions";
 
-// Get all keyword names
+// Get all keyword names for a lexer
 const keywords = getKeywordNames();
-// ['from', 'to', 'transform', 'set', ...]
 
-// Get all function names
-const functions = getFunctionNames();
-// ['substring', 'split', 'replace', ...]
-
-// Get documentation for a keyword
+// Get documentation for hover providers
 import { getKeywordDoc } from "@morphql/language-definitions";
 const doc = getKeywordDoc("set");
-// { signature: 'set <target> = <expression>', description: '...', ... }
+// { signature: "set <target> = <expression>", description: "..." }
 ```
 
-### Generate VSCode TextMate Grammar
+## Maintenance
 
-```typescript
-import { generateTextMateKeywordsPattern } from "@morphql/language-definitions";
+To add a new language feature (keyword, function, or operator), you should:
 
-const keywordsPattern = generateTextMateKeywordsPattern();
-// Use in morphql.tmLanguage.json
-```
+1.  Update the appropriate file in `src/` (e.g., `src/functions.ts`).
+2.  Run `npm run build`.
+3.  Changes will propagate to the VS Code extension and Playground on their next build.
 
-### Generate Monaco Language Config
+## Learn More
 
-```typescript
-import { generateMonacoLanguageConfig } from "@morphql/language-definitions";
-
-const monacoConfig = generateMonacoLanguageConfig();
-monaco.languages.register({ id: "morphql" });
-monaco.languages.setMonarchTokensProvider("morphql", monacoConfig);
-```
-
-### Generate Hover Documentation
-
-```typescript
-import { generateHoverDocs } from "@morphql/language-definitions";
-
-const { keywordDocs, functionDocs } = generateHoverDocs();
-// Use in VSCode HoverProvider or Monaco HoverProvider
-```
-
-## Adding New Language Features
-
-### 1. Add to This Package
-
-Edit the appropriate file:
-
-- **Keywords**: `src/keywords.ts`
-- **Functions**: `src/functions.ts`
-- **Operators**: `src/operators.ts`
-
-### 2. Update the Lexer
-
-Update `@morphql/core/src/core/lexer.ts` with the new token.
-
-### 3. Rebuild
-
-```bash
-npm run build
-```
-
-### 4. Update Consumers
-
-The VSCode extension and playground will automatically use the new definitions on their next build.
-
-## Structure
-
-```
-src/
-├── types.ts       # TypeScript interfaces
-├── keywords.ts    # Keyword definitions + docs
-├── functions.ts   # Function definitions + docs
-├── operators.ts   # Operator definitions
-└── index.ts       # Exports + generators
-```
-
-## Benefits
-
-✅ **Single source of truth** - Edit once, use everywhere  
-✅ **Type-safe** - Full TypeScript support  
-✅ **Auto-generated** - Configs generated from definitions  
-✅ **Consistent** - No more sync issues between platforms  
-✅ **Documented** - All definitions include documentation
-
-## Example: Adding a New Keyword
-
-```typescript
-// 1. Edit src/keywords.ts
-export const KEYWORDS: KeywordDef[] = [
-  // ... existing keywords ...
-  {
-    name: "loop",
-    category: "control",
-    doc: {
-      signature: "loop <count> ( <actions> )",
-      description: "Repeats actions a specified number of times.",
-      parameters: [
-        { name: "count", description: "Number of iterations" },
-        { name: "actions", description: "Actions to repeat" },
-      ],
-      example: "loop 5 (\n  set item = value\n)",
-    },
-  },
-];
-
-// 2. Update lexer in @morphql/core
-// 3. Rebuild this package: npm run build
-// 4. VSCode and Monaco will pick it up automatically!
-```
+- 👉 **[Official Documentation](https://hyperwindmill.github.io/morphql/)**
+- 🏠 **[Main Repository](https://github.com/Hyperwindmill/morphql)**
 
 ## License
 

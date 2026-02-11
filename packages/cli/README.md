@@ -1,6 +1,23 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Hyperwindmill/morphql/main/morphql.png" alt="MorphQL" width="200" />
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@morphql/cli"><img src="https://img.shields.io/npm/v/@morphql/cli?label=%40morphql%2Fcli" alt="npm version" /></a>
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" />
+</p>
+
 # @morphql/cli
 
-CLI tool for **morphql** - structural data transformation powered by the Morph Query Language (MorphQL).
+The command-line interface for **MorphQL**. Transform structural data (JSON, XML, CSV, etc.) directly from your terminal using declarative queries.
+
+## Key Features
+
+- 🏎️ **Fast Execution**: Compiles queries to optimized native JavaScript functions.
+- 📂 **Batch Processing**: Transform entire directories of files in one command.
+- 👁️ **Watch Mode**: Real-time directory monitoring and automatic transformation.
+- 📊 **Structured Logging**: Human-readable `text` or machine-parsable `json` output.
+- 🧩 **Lightweight**: Minimal dependencies, leveraging Node.js native modules where possible.
 
 ## Installation
 
@@ -8,49 +25,53 @@ CLI tool for **morphql** - structural data transformation powered by the Morph Q
 npm install -g @morphql/cli
 ```
 
-## Usage
+## Basic Usage
+
+### Single File (Default)
 
 ```bash
-morphql [-f <input-file> | -i <raw-input>] [-t <output-file>] -q <query>
+# Inline transformation
+echo '{"name":"Alice"}' | morphql -q "from json to xml"
+
+# File-to-file
+morphql --from data.json --to output.xml -q "from json to xml"
 ```
 
-### Options
-
-- `-f, --from <path>`: Path to the source file (JSON, XML).
-- `-i, --input <string>`: Raw source content as a string.
-- `-t, --to <path>`: Path to the destination file. If omitted, result is printed to `stdout`.
-- `-q, --query <string>`: The MorphQL query to execute.
-- `--cache-dir <path>`: Directory for compiled cache (default: `.compiled`).
-
-### Examples
-
-**Transforming a file to another file:**
+### Batch Processing
 
 ```bash
-morphql --from ./data.json --to ./output.xml -q "from json to xml transform set fullName = firstName + \" \" + lastName"
+morphql batch \
+  -q "from xml to json transform set status = 'processed'" \
+  --in ./inbox \
+  --out ./outbox \
+  --pattern "*.xml"
 ```
 
-**Transforming raw input to stdout (useful for piping):**
+### Watch Mode
 
 ```bash
-morphql -i '{"name": "John"}' -q "from json to xml"
+morphql watch \
+  -q "from csv to json" \
+  --in ./incoming \
+  --out ./processed \
+  --delete
 ```
 
-**Piping output to another tool:**
+## Options Summary
 
-```bash
-morphql --from data.json -q "from json to json" | jq .
-```
+| Feature      | Example                | Description                                      |
+| :----------- | :--------------------- | :----------------------------------------------- |
+| **Patterm**  | `--pattern "*.json"`   | Filter which files to process.                   |
+| **Archive**  | `--done-dir ./done`    | Move files here after success.                   |
+| **Error**    | `--error-dir ./err`    | Move files here on failure.                      |
+| **Cleanup**  | `--delete`             | Remove source files after successful processing. |
+| **Logging**  | `--log-format json`    | Output JSONL for automated monitoring.           |
+| **PID File** | `--pid-file morph.pid` | Write process PID for service management.        |
 
-> [!NOTE]
-> All status and success messages are printed to `stderr`, ensuring that `stdout` contains only the transformation result.
+## Learn More
 
-## Features
-
-- **Blazing Fast**: Compiles queries to native JavaScript for high performance.
-- **Smart Caching**: Standardized file-system caching to avoid re-compilation of queries.
-- **Format Agnostic**: Seamlessly convert between JSON and XML.
-- **Shell Friendly**: Supports raw input strings and stdout output for easy integration into pipelines.
+- 👉 **[Official Documentation](https://hyperwindmill.github.io/morphql/)**
+- 🏠 **[Main Repository](https://github.com/Hyperwindmill/morphql)**
 
 ## License
 
