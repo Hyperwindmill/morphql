@@ -26,7 +26,7 @@ In modern software development, data transformation is everywhere. Whether you'r
 
 - **Complex mapping logic** scattered across your codebase.
 - **Performance bottlenecks** when processing large datasets.
-- **Format juggling** between JSON, XML, and native Objects.Also supports UN/EDIFACT, CSV,plaintext and more to come.
+- **Format juggling** between JSON, XML, CSV, UN/EDIFACT, Plaintext, and native Objects.
 - **Inconsistent transformations** across different microservices.
 - **Debugging nightmares** with deeply nested, imperative mapping code.
 
@@ -49,14 +49,14 @@ This declarative query is then **compiled into a specialized JavaScript function
 
 ### Why MorphQL?
 
-| Feature                | Benefit                                                                                     |
-| :--------------------- | :------------------------------------------------------------------------------------------ |
-| **Declarative DSL**    | Write _what_ you want, not _how_ to loop and assign. Queries are self-documenting.          |
-| **Native Performance** | Queries compile to optimized JavaScript. No runtime interpretation overhead.                |
-| **Format Agnostic**    | Built-in format conversion (JSON ↔ XML ↔ Object) in a single query.                         |
-| **Centralized Logic**  | Keep transformation logic separate and portable.                                            |
-| **Inspectable Code**   | The generated code is readable JavaScript—debug it if needed.                               |
-| **LLM Efficient**      | Constrained DSL reduces token cost and hallucinations compared to generating imperative JS. |
+| Feature                | Benefit                                                                                       |
+| :--------------------- | :-------------------------------------------------------------------------------------------- |
+| **Declarative DSL**    | Write _what_ you want, not _how_ to loop and assign. Queries are self-documenting.            |
+| **Native Performance** | Queries compile to optimized JavaScript. No runtime interpretation overhead.                  |
+| **Format Agnostic**    | Built-in conversion across JSON, XML, CSV, EDIFACT, Plaintext, and Objects in a single query. |
+| **Centralized Logic**  | Keep transformation logic separate and portable.                                              |
+| **Inspectable Code**   | The generated code is readable JavaScript—debug it if needed.                                 |
+| **LLM Efficient**      | Constrained DSL reduces token cost and hallucinations compared to generating imperative JS.   |
 
 ### What MorphQL is NOT
 
@@ -72,51 +72,47 @@ If you're looking for a point-and-click integration builder, this isn't it. If y
 
 ## Quick Start
 
-### 1. Install
+### As a library
 
 ```bash
 npm install @morphql/core
 ```
 
-### 2. Transform
-
 ```javascript
 import { compile, morphQL } from "@morphql/core";
 
-// Define your transformation
-const query = morphQL`
+const engine = await compile(morphQL`
   from object to json
   transform
     set greeting = "Hello, " + name + "!"
     set isAdult = age >= 18
-`;
+`);
 
-// Compile once
-const engine = await compile(query);
-
-// Execute many times
-const result = engine({ name: "Alice", age: 25 });
+engine({ name: "Alice", age: 25 });
 // → '{"greeting":"Hello, Alice!","isAdult":true}'
 ```
 
-> 💡 **Tip**: Use the `morphQL` tagged template for syntax highlighting in VSCode and JetBrains IDEs.
+> 💡 **Tip**: Use the `morphQL` tagged template for syntax highlighting in VSCode and JetBrains IDEs , download the extension from the [release page](https://github.com/hyperwindmill/morphql/releases).
 
----
+### From the command line
 
-## Available Tools
+```bash
+npm install -g @morphql/cli
+```
 
-MorphQL is available in multiple forms to fit your workflow:
+```bash
+# Inline transformation
+echo '{"name":"Alice"}' | morphql -q "from json to xml"
 
-| Package                                          | Description                        | Use Case                                                                |
-| :----------------------------------------------- | :--------------------------------- | :---------------------------------------------------------------------- |
-| **[@morphql/core](./packages/core)**             | Core transformation engine         | Embed in Node.js or browser apps. Compile once, execute fast.           |
-| **[@morphql/cli](./packages/cli)**               | Command-line interface             | Scripting, batch processing, piping with Unix tools.                    |
-| **[@morphql/server](./packages/server)**         | REST API server with Redis caching | Production microservices with Staged Queries for pre-defined endpoints. |
-| **[@morphql/playground](./packages/playground)** | Interactive web editor             | Experiment with queries in the browser with live feedback.              |
+# File-to-file
+morphql --from data.json --to output.xml -q "from json to xml"
 
-> 💬 _"So with the server package and a custom adapter, I could create APIs on my data directly?"_
->
-> **Yes, you could.** Define a transformation, point it at your data source, and you have a live API endpoint—no boilerplate, no middleware sprawl.
+# Batch: process an entire directory
+morphql batch -q "from xml to json" --in ./invoices/ --out ./converted/ --pattern "*.xml"
+
+# Watch: monitor a directory for new files
+morphql watch -q "from csv to json" --in ./incoming/ --out ./processed/
+```
 
 ---
 
@@ -126,17 +122,78 @@ MorphQL is available in multiple forms to fit your workflow:
 
 Transform backend responses into frontend-friendly formats without cluttering your application code.
 
+```morphql
+from json to json
+transform
+  set id = orderId
+  set customer = billing.customerName
+  section multiple items(
+    set name = productName
+    set price = number(unitPrice)
+  ) from lineItems
+```
+
 ### 📦 High-Throughput ETL
 
 Compile transformations once and process millions of records at native JavaScript speed.
 
+```javascript
+const transform = await compile(morphQL`from xml to json`);
+data.map(transform); // process millions of records
+```
+
 ### 🔧 Format Conversion
 
-Convert between JSON, XML, and Objects with zero boilerplate—just declare source and target.
+One line. No boilerplate.
+
+```bash
+morphql --from data.xml --to data.json -q "from xml to json"
+```
 
 ### 🧩 Nested Data Processing
 
 Handle complex structures with subqueries that can even parse embedded formats (e.g., XML inside a JSON field).
+
+```morphql
+from json to object
+transform
+  set orderId = id
+  section metadata(
+    from xml to object
+    transform set supplier = root.vendor.name
+  ) from embeddedXmlField
+```
+
+---
+
+## Available Tools
+
+MorphQL is available in multiple forms to fit your workflow:
+
+| Package                                          | Description                                                                              |
+| :----------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| **[@morphql/core](./packages/core)**             | Core engine. Embed in Node.js or browser apps. Compile once, execute fast.               |
+| **[@morphql/cli](./packages/cli)**               | Terminal tool. Batch transforms, directory watching, Unix piping, `--delete` (coming in v0.1.18) and more.   |
+| **[@morphql/server](./packages/server)**         | REST API with Redis caching and Staged Queries for pre-defined transformation endpoints. |
+| **[@morphql/playground](./packages/playground)** | Interactive web editor. Experiment with queries in the browser with live feedback.       |
+
+> 💬 _"So with the server package and a custom adapter, I could create APIs on my data directly?"_
+>
+> **Yes, you could.** Define a transformation, point it at your data source, and you have a live API endpoint—no boilerplate, no middleware sprawl.
+
+---
+
+## Supported Formats
+
+| Format        | Read | Write | Notes                                               |
+| :------------ | :--: | :---: | :-------------------------------------------------- |
+| **JSON**      |  ✅  |  ✅   | Native parsing and serialization.                   |
+| **XML**       |  ✅  |  ✅   | Fast XML with configurable options.                 |
+| **CSV**       |  ✅  |  ✅   | Via PapaParse. Headers auto-detected.               |
+| **EDIFACT**   |  ✅  |  ✅   | UN/EDIFACT message parsing.                         |
+| **Plaintext** |  ✅  |  ✅   | Line-based splitting and joining.                   |
+| **Object**    |  ✅  |  ✅   | In-memory JS objects (no serialization).            |
+| **Custom**    |  ✅  |  ✅   | Register your own adapters via `registerAdapter()`. |
 
 ---
 
@@ -146,11 +203,12 @@ Handle complex structures with subqueries that can even parse embedded formats (
 
 ---
 
-## Planned / Missing Features
+## Contributing
 
-MorphQL is actively evolving, I have lots of ideas, but I'd be also interested in your feedback on real-world integration scenarios and problems you are trying to solve.
+MorphQL is actively evolving. If you have feedback on real-world integration scenarios or problems you're trying to solve, I'd love to hear from you.
 
-Feel free to open an issue or join the discussion section on GitHub (https://github.com/Hyperwindmill/morphql/discussions)
+- 🐛 [Open an issue](https://github.com/Hyperwindmill/morphql/issues)
+- 💬 [Join the discussion](https://github.com/Hyperwindmill/morphql/discussions)
 
 ---
 
