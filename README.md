@@ -5,6 +5,7 @@
 <p align="center">
   <a href="https://github.com/Hyperwindmill/morphql/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Hyperwindmill/morphql/ci.yml?label=CI&logo=github" alt="CI" /></a>
   <a href="https://www.npmjs.com/package/@morphql/core"><img src="https://img.shields.io/npm/v/@morphql/core?label=%40morphql%2Fcore" alt="npm core version" /></a>
+  <a href="https://www.npmjs.com/package/@morphql/cli"><img src="https://img.shields.io/npm/v/@morphql/cli?label=%40morphql%2Fcli" alt="npm cli version" /></a>
   <img src="https://img.shields.io/npm/dm/@morphql/core?label=downloads" alt="npm downloads" />
   <img src="https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript&logoColor=white" alt="TypeScript" />
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
