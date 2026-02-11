@@ -9,10 +9,12 @@ import {
   matchesPattern,
   processFile,
   resolveOutputPath,
+  resolveQuery,
 } from "./file-utils.js";
 
 export interface WatchOptions {
-  query: string;
+  query?: string;
+  queryFile?: string;
   in: string;
   out: string;
   pattern: string;
@@ -30,7 +32,6 @@ export async function watchAction(options: WatchOptions) {
     const {
       in: inDir,
       out: outDir,
-      query,
       pattern,
       cacheDir,
       doneDir,
@@ -57,6 +58,7 @@ export async function watchAction(options: WatchOptions) {
     if (!existsSync(absOutDir)) await fs.mkdir(absOutDir, { recursive: true });
 
     // 3. Compile Query Once
+    const query = resolveQuery(options.query, options.queryFile);
     const cache = new MorphQLFileCache(cacheDir);
     const engine = await compile(query, { cache });
     const targetFormat = extractTargetFormat(query);

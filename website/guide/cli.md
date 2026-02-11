@@ -29,6 +29,7 @@ morphql -i '{"hello": "world"}' -q "from json to xml"
 | Option         | Alias | Description                                                |
 | :------------- | :---- | :--------------------------------------------------------- |
 | `--query`      | `-q`  | The MorphQL query string to execute.                       |
+| `--query-file` | `-Q`  | Path to a file containing the MorphQL query.               |
 | `--from`       | `-f`  | Path to the source file.                                   |
 | `--input`      | `-i`  | Raw source content as a string.                            |
 | `--to`         | `-t`  | Path to the destination file.                              |
@@ -46,6 +47,12 @@ morphql \
   --from ./input.json \
   --to ./output.xml \
   -q "from json to xml transform set fullName = firstName + ' ' + lastName"
+```
+
+**Using a query file:**
+
+```bash
+morphql --from ./input.json --to ./output.xml -Q ./queries/transform.mql
 ```
 
 **Piping:**
@@ -70,16 +77,19 @@ morphql batch \
 
 ### Options
 
-| Option                  | Description                                            |
-| :---------------------- | :----------------------------------------------------- |
-| `-q, --query <string>`  | **(Required)** MorphQL query string.                   |
-| `--in <path>`           | **(Required)** Input directory.                        |
-| `--out <path>`          | **(Required)** Output directory (created if missing).  |
-| `--pattern <glob>`      | Include pattern for filenames (default: `*`).          |
-| `--done-dir <path>`     | Move source files here after success.                  |
-| `--error-dir <path>`    | Move source files here on failure.                     |
-| `--cache-dir <path>`    | Compiled query cache directory (default: `.compiled`). |
-| `--log-format <format>` | Log output format: `text` (default) or `json`.         |
+| Option                    | Description                                            |
+| :------------------------ | :----------------------------------------------------- |
+| `-q, --query <string>`    | MorphQL query string (\*).                             |
+| `-Q, --query-file <path>` | Path to a file containing the query (\*).              |
+| `--in <path>`             | **(Required)** Input directory.                        |
+| `--out <path>`            | **(Required)** Output directory (created if missing).  |
+| `--pattern <glob>`        | Include pattern for filenames (default: `*`).          |
+| `--done-dir <path>`       | Move source files here after success.                  |
+| `--error-dir <path>`      | Move source files here on failure.                     |
+| `--cache-dir <path>`      | Compiled query cache directory (default: `.compiled`). |
+| `--log-format <format>`   | Log output format: `text` (default) or `json`.         |
+
+> (\*) Provide either `--query` or `--query-file`.
 
 ### Behavior
 

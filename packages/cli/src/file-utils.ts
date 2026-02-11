@@ -1,6 +1,21 @@
 import * as fs from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import * as path from "node:path";
+
+/**
+ * Resolves the query string from either --query or --query-file.
+ * Throws if neither is provided or the file doesn't exist.
+ */
+export function resolveQuery(query?: string, queryFile?: string): string {
+  if (query) return query;
+  if (queryFile) {
+    if (!existsSync(queryFile)) {
+      throw new Error(`Query file not found: ${queryFile}`);
+    }
+    return readFileSync(queryFile, "utf8").trim();
+  }
+  throw new Error("Either --query (-q) or --query-file (-Q) must be provided.");
+}
 
 export interface ProcessResult {
   success: boolean;

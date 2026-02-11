@@ -7,6 +7,7 @@ import { existsSync } from "node:fs";
 import { batchAction } from "./batch.js";
 import { watchAction } from "./watch.js";
 import { createLogger, LogFormat } from "./logger.js";
+import { resolveQuery } from "./file-utils.js";
 
 /**
  * Reads all data from stdin (for pipe support)
@@ -32,7 +33,11 @@ program
 program
   .command("batch")
   .description("Transform all files in a directory")
-  .requiredOption("-q, --query <string>", "MorphQL query string")
+  .option("-q, --query <string>", "MorphQL query string")
+  .option(
+    "-Q, --query-file <path>",
+    "Path to a file containing the MorphQL query",
+  )
   .requiredOption("--in <path>", "Input directory")
   .requiredOption("--out <path>", "Output directory")
   .option("--pattern <glob>", "Include pattern for source files", "*")
@@ -46,7 +51,11 @@ program
 program
   .command("watch")
   .description("Watch a directory and transform new files")
-  .requiredOption("-q, --query <string>", "MorphQL query string")
+  .option("-q, --query <string>", "MorphQL query string")
+  .option(
+    "-Q, --query-file <path>",
+    "Path to a file containing the MorphQL query",
+  )
   .requiredOption("--in <path>", "Input directory")
   .requiredOption("--out <path>", "Output directory")
   .option("--pattern <glob>", "Include pattern for source files", "*")
@@ -66,13 +75,15 @@ program
     "Path to the destination file (if omitted, result is printed to stdout)",
   )
   .option("-q, --query <string>", "MorphQL query string")
+  .option(
+    "-Q, --query-file <path>",
+    "Path to a file containing the MorphQL query",
+  )
   .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
   .option("--log-format <format>", "Log output format: text or json", "text")
   .action(async (options) => {
-    // If a subcommand was used, Commander will have already executed it.
-    // However, if no subcommand was used, this action will run.
-    // If the user provided a query, we consider it a single-file execution.
-    if (!options.query) {
+    // If no query is provided (inline or file), show help
+    if (!options.query && !options.queryFile) {
       program.help();
       return;
     }
@@ -80,7 +91,8 @@ program
     const logger = createLogger(options.logFormat as LogFormat);
 
     try {
-      const { from, input, to, query, cacheDir } = options;
+      const { from, input, to, cacheDir } = options;
+      const query = resolveQuery(options.query, options.queryFile);
 
       // 1. Resolve source content
       let sourceContent: string;
