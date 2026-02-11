@@ -27,7 +27,7 @@ program
   .description(
     "CLI tool for morphql - transform structural data from the command line.",
   )
-  .version("0.1.17");
+  .version("0.1.18");
 
 // --- 1. Batch Subcommand ---
 program
