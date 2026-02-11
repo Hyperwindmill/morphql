@@ -4,6 +4,9 @@ import { Command } from "commander";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { existsSync } from "node:fs";
+import { batchAction } from "./batch.js";
+import { watchAction } from "./watch.js";
+import { createLogger, LogFormat } from "./logger.js";
 
 /**
  * Reads all data from stdin (for pipe support)
@@ -23,16 +26,59 @@ program
   .description(
     "CLI tool for morphql - transform structural data from the command line.",
   )
-  .version("0.1.16")
+  .version("0.1.16");
+
+// --- 1. Batch Subcommand ---
+program
+  .command("batch")
+  .description("Transform all files in a directory")
+  .requiredOption("-q, --query <string>", "MorphQL query string")
+  .requiredOption("--in <path>", "Input directory")
+  .requiredOption("--out <path>", "Output directory")
+  .option("--pattern <glob>", "Include pattern for source files", "*")
+  .option("--done-dir <path>", "Move processed files here")
+  .option("--error-dir <path>", "Move failed files here")
+  .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
+  .option("--log-format <format>", "Log output format: text or json", "text")
+  .action(batchAction);
+
+// --- 2. Watch Subcommand ---
+program
+  .command("watch")
+  .description("Watch a directory and transform new files")
+  .requiredOption("-q, --query <string>", "MorphQL query string")
+  .requiredOption("--in <path>", "Input directory")
+  .requiredOption("--out <path>", "Output directory")
+  .option("--pattern <glob>", "Include pattern for source files", "*")
+  .option("--done-dir <path>", "Move processed files here")
+  .option("--error-dir <path>", "Move failed files here")
+  .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
+  .option("--pid-file <path>", "Write PID to file for process management")
+  .option("--log-format <format>", "Log output format: text or json", "text")
+  .action(watchAction);
+
+// --- 3. Default Command (Single File) ---
+program
   .option("-f, --from <path>", "Path to the source file")
   .option("-i, --input <string>", "Raw source content as string")
   .option(
     "-t, --to <path>",
     "Path to the destination file (if omitted, result is printed to stdout)",
   )
-  .requiredOption("-q, --query <string>", "MorphQL query string")
+  .option("-q, --query <string>", "MorphQL query string")
   .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
+  .option("--log-format <format>", "Log output format: text or json", "text")
   .action(async (options) => {
+    // If a subcommand was used, Commander will have already executed it.
+    // However, if no subcommand was used, this action will run.
+    // If the user provided a query, we consider it a single-file execution.
+    if (!options.query) {
+      program.help();
+      return;
+    }
+
+    const logger = createLogger(options.logFormat as LogFormat);
+
     try {
       const { from, input, to, query, cacheDir } = options;
 
@@ -42,7 +88,7 @@ program
         sourceContent = input;
       } else if (from) {
         if (!existsSync(from)) {
-          console.error(`Error: Source file not found: ${from}`);
+          logger.error(`Source file not found: ${from}`);
           process.exit(1);
         }
         sourceContent = await fs.readFile(from, "utf8");
@@ -50,8 +96,8 @@ program
         // Read from stdin (pipe)
         sourceContent = await readStdin();
       } else {
-        console.error(
-          "Error: Either --from <path>, --input <string>, or pipe data via stdin must be provided.",
+        logger.error(
+          "Either --from <path>, --input <string>, or pipe data via stdin must be provided.",
         );
         process.exit(1);
       }
@@ -72,13 +118,12 @@ program
           await fs.mkdir(destDir, { recursive: true });
         }
         await fs.writeFile(to, result, "utf8");
-        // Only log success if writing to file, otherwise we'd pollute stdout
-        console.error(`Successfully transformed to ${to}`);
+        logger.info(`Successfully transformed to ${to}`);
       } else {
-        console.log(result);
+        process.stdout.write(result + "\n");
       }
     } catch (error: any) {
-      console.error(`Error during transformation: ${error.message}`);
+      logger.error(`Error during transformation: ${error.message}`);
       process.exit(1);
     }
   });
