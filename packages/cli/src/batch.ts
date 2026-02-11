@@ -22,6 +22,7 @@ export interface BatchOptions {
   errorDir?: string;
   cacheDir: string;
   logFormat: LogFormat;
+  delete?: boolean;
 }
 
 export async function batchAction(options: BatchOptions) {
@@ -92,6 +93,7 @@ export async function batchAction(options: BatchOptions) {
         outputPath,
         doneDir: absDoneDir,
         errorDir: absErrorDir,
+        deleteSource: options.delete,
       });
 
       if (result.success) {

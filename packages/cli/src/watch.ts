@@ -23,6 +23,7 @@ export interface WatchOptions {
   cacheDir: string;
   logFormat: LogFormat;
   pidFile?: string;
+  delete?: boolean;
 }
 
 export async function watchAction(options: WatchOptions) {
@@ -81,6 +82,7 @@ export async function watchAction(options: WatchOptions) {
           outputPath,
           doneDir: absDoneDir,
           errorDir: absErrorDir,
+          deleteSource: options.delete,
         });
       }
     }
@@ -140,6 +142,7 @@ export async function watchAction(options: WatchOptions) {
             outputPath,
             doneDir: absDoneDir,
             errorDir: absErrorDir,
+            deleteSource: options.delete,
           });
 
           if (result.success) {

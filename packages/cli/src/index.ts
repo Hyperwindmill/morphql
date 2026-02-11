@@ -43,6 +43,10 @@ program
   .option("--pattern <glob>", "Include pattern for source files", "*")
   .option("--done-dir <path>", "Move processed files here")
   .option("--error-dir <path>", "Move failed files here")
+  .option(
+    "--delete",
+    "Delete source files after successful processing (if --done-dir is missing)",
+  )
   .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
   .option("--log-format <format>", "Log output format: text or json", "text")
   .action(batchAction);
@@ -61,6 +65,10 @@ program
   .option("--pattern <glob>", "Include pattern for source files", "*")
   .option("--done-dir <path>", "Move processed files here")
   .option("--error-dir <path>", "Move failed files here")
+  .option(
+    "--delete",
+    "Delete source files after successful processing (if --done-dir is missing)",
+  )
   .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
   .option("--pid-file <path>", "Write PID to file for process management")
   .option("--log-format <format>", "Log output format: text or json", "text")

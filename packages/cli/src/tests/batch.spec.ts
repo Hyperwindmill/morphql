@@ -110,4 +110,24 @@ describe("batch mode", () => {
     expect(fs.existsSync(path.join(inDir, "bad.json"))).toBe(false);
     expect(fs.existsSync(path.join(errorDir, "bad.json"))).toBe(true);
   });
+
+  it("should delete files after success if --delete is provided", async () => {
+    fs.writeFileSync(
+      path.join(inDir, "delete-me.json"),
+      JSON.stringify({ ok: true }),
+    );
+
+    await batchAction({
+      query: "from json to json",
+      in: inDir,
+      out: outDir,
+      pattern: "*",
+      delete: true,
+      cacheDir,
+      logFormat: "text",
+    });
+
+    expect(fs.existsSync(path.join(inDir, "delete-me.json"))).toBe(false);
+    expect(fs.existsSync(path.join(outDir, "delete-me.json"))).toBe(true);
+  });
 });

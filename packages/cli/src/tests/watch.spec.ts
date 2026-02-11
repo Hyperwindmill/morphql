@@ -91,4 +91,38 @@ describe("watch mode", () => {
       process.exit = originalExit;
     }
   });
+
+  it("should delete source file after success if --delete is provided", async () => {
+    const originalExit = process.exit;
+    (process.exit as any) = (code: number) => {
+      if (code !== 0 && code !== 1) originalExit(code);
+    };
+
+    try {
+      const watchPromise = watchAction({
+        query: "from json to json",
+        in: inDir,
+        out: outDir,
+        pattern: "*.json",
+        delete: true,
+        cacheDir,
+        logFormat: "text",
+      });
+
+      await sleep(200);
+
+      const inputFile = path.join(inDir, "delete-me.json");
+      fs.writeFileSync(inputFile, JSON.stringify({ hello: "world" }));
+
+      await sleep(500);
+
+      expect(fs.existsSync(path.join(outDir, "delete-me.json"))).toBe(true);
+      expect(fs.existsSync(inputFile)).toBe(false);
+
+      process.emit("SIGINT" as any);
+      await watchPromise;
+    } finally {
+      process.exit = originalExit;
+    }
+  });
 });
