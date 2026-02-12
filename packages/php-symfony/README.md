@@ -10,25 +10,51 @@ Symfony integration for [MorphQL](https://github.com/Hyperwindmill/morphql) — 
 composer require morphql/morphql-symfony
 ```
 
-## Configuration
+With **Symfony Flex** (Currently waiting for submission to [symfony/recipes-contrib](https://github.com/symfony/recipes-contrib)), this will automatically:
 
-Create `config/packages/morphql.yaml` to configure the bundle:
+- Registers `MorphQLBundle` in `bundles.php`
+- Creates `config/packages/morphql.yaml` with sensible defaults
+- Scaffolds the `morphql-queries/` directory at your project root
+
+> Without Flex, you could have to register the bundle manually in `config/bundles.php` (depends on your Symfony version):
+>
+> ```php
+> MorphQL\SymfonyBundle\MorphQLBundle::class => ['all' => true],
+> ```
+
+**The bundle is fully zero-config.** All settings have sensible defaults — no YAML file is needed to get started. Just install, drop a `.morphql` file in `morphql-queries/`, and you're ready to go.
+
+## Configuration (optional)
+
+To customize behavior, create or edit `config/packages/morphql.yaml`:
 
 ```yaml
 morphql:
   # Execution provider: "cli" (bundled Node.js engine) or "server" (remote REST API)
-  provider: cli
+  # provider: cli
 
-  # Optional: override paths
-  node_path: "node"
-  cli_path: ~
+  # Directory containing .morphql query files
+  # query_dir: '%kernel.project_dir%/morphql-queries'
 
-  # Cache directory for compiled queries
-  cache_dir: "%kernel.cache_dir%/morphql"
-
-  # Directory containing .morphql files (default: %kernel.project_dir%/morphql-queries)
-  query_dir: "%kernel.project_dir%/morphql-queries"
+  # Server provider settings (uncomment if using provider: server)
+  # server_url: '%env(MORPHQL_SERVER_URL)%'
+  # api_key: '%env(MORPHQL_API_KEY)%'
 ```
+
+All options have sensible defaults — zero-config works out of the box.
+
+### Full Configuration Reference
+
+| Option       | Default                                | Description                                           |
+| :----------- | :------------------------------------- | :---------------------------------------------------- |
+| `provider`   | `cli`                                  | `cli` (bundled Node.js) or `server` (remote REST API) |
+| `cli_path`   | _(auto)_                               | Override CLI binary path                              |
+| `node_path`  | `node`                                 | Path to Node.js binary                                |
+| `cache_dir`  | `%kernel.cache_dir%/morphql`           | Compiled query cache                                  |
+| `query_dir`  | `%kernel.project_dir%/morphql-queries` | `.morphql` file directory                             |
+| `server_url` | `http://localhost:3000`                | MorphQL server URL                                    |
+| `api_key`    | —                                      | API key for server auth                               |
+| `timeout`    | `30`                                   | Execution timeout (seconds)                           |
 
 ## Usage
 
@@ -86,9 +112,32 @@ class MyController
 
 ## Features
 
-- **Filesystem Discovery**: Dot-notation is not required; use standard paths like `'sub/folder/query'`.
+- **Symfony Flex Recipe**: Automatic bundle registration, config scaffolding, and query directory creation.
+- **Filesystem Discovery**: Use standard paths like `'sub/folder/query'` — no dot-notation required.
 - **Pre-configured**: The `MorphQL` service is automatically configured from your YAML settings.
 - **Isomorphic**: Switch between `cli` and `server` providers via config without changing your code.
+
+## Symfony Flex Recipe
+
+The recipe files are staged in the [`recipe/`](./recipe/) directory and need to be submitted to [`symfony/recipes-contrib`](https://github.com/symfony/recipes-contrib) for Flex to pick them up automatically.
+
+To submit the recipe:
+
+1. Fork [symfony/recipes-contrib](https://github.com/symfony/recipes-contrib)
+2. Create `morphql/morphql-symfony/0.1/` in the fork
+3. Copy the contents of `recipe/` into that directory
+4. Open a Pull Request following the [recipe contribution guide](https://github.com/symfony/recipes/blob/main/RECIPES.md)
+
+Until the recipe is accepted, users can manually:
+
+- Create `config/packages/morphql.yaml` (copy from `recipe/config/packages/morphql.yaml`)
+- Create the `morphql-queries/` directory at their project root
+
+## Prerequisites
+
+- **PHP 8.1+**
+- **Node.js 18+** (for the `cli` provider)
+- **Symfony 5.4+**, **6.x**, or **7.x**
 
 ## License
 

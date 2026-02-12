@@ -1,0 +1,10 @@
+morphql:
+  # Execution provider: "cli" (bundled Node.js engine) or "server" (remote REST API)
+  # provider: cli
+
+  # Directory containing .morphql query files
+  # query_dir: '%kernel.project_dir%/morphql-queries'
+
+  # Server provider settings (uncomment if using provider: server)
+  # server_url: '%env(MORPHQL_SERVER_URL)%'
+  # api_key: '%env(MORPHQL_API_KEY)%'

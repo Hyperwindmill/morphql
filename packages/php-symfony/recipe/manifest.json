@@ -1,0 +1,9 @@
+{
+    "bundles": {
+        "MorphQL\\SymfonyBundle\\MorphQLBundle": ["all"]
+    },
+    "copy-from-recipe": {
+        "config/": "%CONFIG_DIR%/",
+        "morphql-queries/": "morphql-queries/"
+    }
+}

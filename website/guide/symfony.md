@@ -10,20 +10,23 @@ Install the bundle via Composer:
 composer require morphql/morphql-symfony
 ```
 
-## Configuration
+**The bundle is fully zero-config.** All settings have sensible defaults — no YAML file is needed. Just install, drop a `.morphql` file in `morphql-queries/`, and start using the `TransformationRegistry`.
 
-Configure the bundle in `config/packages/morphql.yaml`:
+## Configuration (optional)
+
+To customize behavior, create `config/packages/morphql.yaml`:
 
 ```yaml
 morphql:
   # Execution provider: "cli" (standard) or "server" (remote)
-  provider: cli
-
-  # Optional: path overrides
-  node_path: "node"
+  # provider: cli
 
   # Query directory (default: %kernel.project_dir%/morphql-queries)
-  query_dir: "%kernel.project_dir%/morphql-queries"
+  # query_dir: '%kernel.project_dir%/morphql-queries'
+
+  # Server provider settings (uncomment if using provider: server)
+  # server_url: '%env(MORPHQL_SERVER_URL)%'
+  # api_key: '%env(MORPHQL_API_KEY)%'
 ```
 
 ## The Query Directory
