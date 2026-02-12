@@ -3,7 +3,15 @@
   "description": "PHP wrapper for MorphQL — transform data with declarative queries",
   "type": "library",
   "license": "MIT",
-  "keywords": ["morphql", "transform", "json", "xml", "csv", "edifact", "data-transformation"],
+  "keywords": [
+    "morphql",
+    "transform",
+    "json",
+    "xml",
+    "csv",
+    "edifact",
+    "data-transformation"
+  ],
   "homepage": "https://github.com/Hyperwindmill/morphql",
   "authors": [
     {
@@ -28,5 +36,6 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "version": "0.1.19"
 }

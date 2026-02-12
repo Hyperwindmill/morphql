@@ -1,3 +1,5 @@
 /vendor/
+/bin/
+/.compiled/
 composer.lock
 .phpunit.result.cache

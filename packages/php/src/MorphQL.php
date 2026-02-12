@@ -29,6 +29,8 @@ class MorphQL
     private static $optionDefaults = array(
         'provider'   => self::PROVIDER_CLI,
         'cli_path'   => 'morphql',
+        'node_path'  => 'node',
+        'cache_dir'  => null, // resolved lazily to sys_get_temp_dir() . '/morphql'
         'server_url' => 'http://localhost:3000',
         'api_key'    => null,
         'timeout'    => 30,
@@ -162,27 +164,117 @@ class MorphQL
     private static function executeViaCli($query, $data, $config)
     {
         $dataStr = self::normalizeData($data);
+        $cliCmd  = self::resolveCliCommand($config);
 
         $cmd = sprintf(
-            '%s -q %s -i %s 2>&1',
-            escapeshellarg($config['cli_path']),
+            '%s -q %s -i %s --cache-dir %s',
+            $cliCmd,
             escapeshellarg($query),
-            escapeshellarg($dataStr)
+            escapeshellarg($dataStr),
+            escapeshellarg(self::resolveCacheDir($config))
         );
 
-        $output   = array();
-        $exitCode = 0;
-        exec($cmd, $output, $exitCode);
+        $descriptors = array(
+            0 => array('pipe', 'r'), // stdin
+            1 => array('pipe', 'w'), // stdout
+            2 => array('pipe', 'w'), // stderr (captured separately)
+        );
 
-        $result = implode("\n", $output);
+        // Suppress Node.js warnings that pollute output
+        $env = array_merge(
+            self::getEnvArray(),
+            array('NODE_NO_WARNINGS' => '1')
+        );
+
+        $process = proc_open($cmd, $descriptors, $pipes, null, $env);
+
+        if (!is_resource($process)) {
+            throw new \RuntimeException('MorphQL: failed to start CLI process');
+        }
+
+        fclose($pipes[0]); // close stdin
+        $stdout = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        $exitCode = proc_close($process);
 
         if ($exitCode !== 0) {
+            $errorMsg = trim($stderr) !== '' ? trim($stderr) : trim($stdout);
             throw new \RuntimeException(
-                'MorphQL CLI error (exit code ' . $exitCode . '): ' . $result
+                'MorphQL CLI error (exit code ' . $exitCode . '): ' . $errorMsg
             );
         }
 
-        return $result;
+        return trim($stdout);
+    }
+
+    /**
+     * Get current environment variables as an array.
+     *
+     * @return array
+     */
+    private static function getEnvArray()
+    {
+        // $_ENV may be empty if variables_order doesn't include 'E'
+        if (!empty($_ENV)) {
+            return $_ENV;
+        }
+        // Fallback: build from getenv() (PHP 7.1+) or return empty
+        if (function_exists('getenv') && PHP_VERSION_ID >= 70100) {
+            $env = getenv();
+            return is_array($env) ? $env : array();
+        }
+        return array();
+    }
+
+    /**
+     * Resolve the CLI command to use.
+     *
+     * Priority:
+     *   1. Explicit cli_path (if user overrode the default)
+     *   2. Bundled bin/morphql.js (shipped with this package, invoked via node)
+     *   3. System-installed "morphql" binary
+     *
+     * @param array $config
+     *
+     * @return string Shell-safe command string.
+     */
+    private static function resolveCliCommand($config)
+    {
+        // 1. User explicitly set a custom cli_path → use it directly
+        if (isset($config['cli_path']) && $config['cli_path'] !== 'morphql') {
+            return escapeshellarg($config['cli_path']);
+        }
+
+        // 2. Bundled binary (shipped with this Composer package)
+        $bundled = __DIR__ . '/../bin/morphql.js';
+        if (file_exists($bundled)) {
+            $node = isset($config['node_path']) ? $config['node_path'] : 'node';
+            return escapeshellarg($node) . ' ' . escapeshellarg(realpath($bundled));
+        }
+
+        // 3. Fall back to system-installed morphql
+        return escapeshellarg($config['cli_path']);
+    }
+
+    /**
+     * Resolve the cache directory for CLI compiled queries.
+     *
+     * Defaults to sys_get_temp_dir()/morphql to avoid polluting
+     * the application's working directory with a .compiled folder.
+     *
+     * @param array $config
+     *
+     * @return string Absolute path to the cache directory.
+     */
+    private static function resolveCacheDir($config)
+    {
+        if (isset($config['cache_dir']) && $config['cache_dir'] !== null) {
+            return $config['cache_dir'];
+        }
+
+        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'morphql';
     }
 
     // ------------------------------------------------------------------
@@ -336,6 +428,8 @@ class MorphQL
         $envMap = array(
             'provider'   => 'MORPHQL_PROVIDER',
             'cli_path'   => 'MORPHQL_CLI_PATH',
+            'node_path'  => 'MORPHQL_NODE_PATH',
+            'cache_dir'  => 'MORPHQL_CACHE_DIR',
             'server_url' => 'MORPHQL_SERVER_URL',
             'api_key'    => 'MORPHQL_API_KEY',
             'timeout'    => 'MORPHQL_TIMEOUT',
