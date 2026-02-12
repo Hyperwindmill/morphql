@@ -1,0 +1,32 @@
+{
+  "name": "morphql/morphql",
+  "description": "PHP wrapper for MorphQL — transform data with declarative queries",
+  "type": "library",
+  "license": "MIT",
+  "keywords": ["morphql", "transform", "json", "xml", "csv", "edifact", "data-transformation"],
+  "homepage": "https://github.com/Hyperwindmill/morphql",
+  "authors": [
+    {
+      "name": "Hyperwindmill",
+      "homepage": "https://github.com/Hyperwindmill"
+    }
+  ],
+  "require": {
+    "php": ">=5.6"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.7 || ^9.0 || ^10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "MorphQL\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MorphQL\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
