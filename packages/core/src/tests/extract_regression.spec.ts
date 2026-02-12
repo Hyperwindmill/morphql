@@ -30,4 +30,16 @@ describe('Advanced Extract Regression', () => {
       { number: 'TRN-9988', type: 'Transport Document' },
     ]);
   });
+
+  it('should support JSON string input even with "from object"', async () => {
+    const query = `
+      from object to object
+      transform
+        set val = source.key
+    `;
+    const engine = await compile(query);
+    const input = JSON.stringify({ key: 'hello' });
+    const output = await engine(input);
+    expect(output.val).toBe('hello');
+  });
 });

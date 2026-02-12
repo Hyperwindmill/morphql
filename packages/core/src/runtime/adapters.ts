@@ -256,9 +256,21 @@ registerAdapter('edifact', {
   },
 });
 
-// Object Adapter (Identity)
+// Object Adapter (Identity with fallback parsing)
 registerAdapter('object', {
-  parse: (content) => content, // Assumes input is already an object
+  parse: (content) => {
+    if (
+      typeof content === 'string' &&
+      (content.trim().startsWith('{') || content.trim().startsWith('['))
+    ) {
+      try {
+        return JSON.parse(content);
+      } catch (e) {
+        return content;
+      }
+    }
+    return content;
+  },
   serialize: (data) => data, // Returns object directly
 });
 
