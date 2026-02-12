@@ -289,25 +289,26 @@ Backticks can be escaped with `\` when needed in a field name.
 
 Functions are used within expressions to calculate or transform values.
 
-| Function                              | Description                                                                     | Example                           |
-| :------------------------------------ | :------------------------------------------------------------------------------ | :-------------------------------- |
-| `substring(str, start, [length])`     | Extracts a part of a string. Supports negative indices.                         | `substring(sku, 0, 3)`            |
-| `if(cond, trueVal, falseVal)`         | Ternary-like expression.                                                        | `if(age >= 18, "adult", "minor")` |
-| `text(val)`                           | Converts a value to a string.                                                   | `text(123)`                       |
-| `number(val)`                         | Converts a value to a number.                                                   | `number("42")`                    |
-| `replace(str, search, replace)`       | Replaces occurrences in a string.                                               | `replace(name, " ", "_")`         |
-| `split(str, [sep], [limit])`          | Splits a string into an array. Default separator is `""`.                       | `split(sku, "-")`                 |
-| `extractnumber(str)`                  | Extracts the first numeric sequence from a string.                              | `extractnumber("Price: 100USD")`  |
-| `uppercase(str)`                      | Converts string to uppercase.                                                   | `uppercase("hello")`              |
-| `lowercase(str)`                      | Converts string to lowercase.                                                   | `lowercase("HELLO")`              |
-| `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.                          | `xmlnode(content, "id", 1)`       |
-| `to_base64(val)`                      | Encodes a string to Base64 (isomorphic).                                        | `to_base64("hello")`              |
-| `from_base64(val)`                    | Decodes a Base64 string (isomorphic).                                           | `from_base64("aGVsbG8=")`         |
-| `aslist(val)`                         | Ensures a value is an array (useful for XML parsing).                           | `aslist(items)`                   |
-| `spreadsheet(array)`                  | Transforms an array of objects into a list of row objects.                      | `spreadsheet(rows)`               |
-| `unpack(str, spec...)`                | Extracts fields from fixed-length string. Spec pattern: `name:start:len[:raw]`. | `unpack(source, "id:0:5")`        |
-| `pack(obj, spec...)`                  | Encodes object to fixed-length string. Spec pattern: `name:start:len[:left]`.   | `pack(target, "id:0:5:left")`     |
-| `concat(arg1, arg2...)`               | Concatenates two or more arrays into one.                                       | `concat(list1, list2)`            |
+| Function                              | Description                                                                     | Example                               |
+| :------------------------------------ | :------------------------------------------------------------------------------ | :------------------------------------ |
+| `substring(str, start, [length])`     | Extracts a part of a string. Supports negative indices.                         | `substring(sku, 0, 3)`                |
+| `if(cond, trueVal, falseVal)`         | Ternary-like expression.                                                        | `if(age >= 18, "adult", "minor")`     |
+| `text(val)`                           | Converts a value to a string.                                                   | `text(123)`                           |
+| `number(val)`                         | Converts a value to a number.                                                   | `number("42")`                        |
+| `replace(str, search, replace)`       | Replaces occurrences in a string.                                               | `replace(name, " ", "_")`             |
+| `split(str, [sep], [limit])`          | Splits a string into an array. Default separator is `""`.                       | `split(sku, "-")`                     |
+| `extractnumber(str)`                  | Extracts the first numeric sequence from a string.                              | `extractnumber("Price: 100USD")`      |
+| `uppercase(str)`                      | Converts string to uppercase.                                                   | `uppercase("hello")`                  |
+| `lowercase(str)`                      | Converts string to lowercase.                                                   | `lowercase("HELLO")`                  |
+| `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.                          | `xmlnode(content, "id", 1)`           |
+| `to_base64(val)`                      | Encodes a string to Base64 (isomorphic).                                        | `to_base64("hello")`                  |
+| `from_base64(val)`                    | Decodes a Base64 string (isomorphic).                                           | `from_base64("aGVsbG8=")`             |
+| `aslist(val)`                         | Ensures a value is an array (useful for XML parsing).                           | `aslist(items)`                       |
+| `spreadsheet(array)`                  | Transforms an array of objects into a list of row objects.                      | `spreadsheet(rows)`                   |
+| `unpack(str, spec...)`                | Extracts fields from fixed-length string. Spec pattern: `name:start:len[:raw]`. | `unpack(source, "id:0:5")`            |
+| `extract(obj, spec...)`               | Extracts fields from an object. Spec: `"key"` or `"target:source"`.             | `extract(src, "id", "name:fullName")` |
+| `pack(obj, spec...)`                  | Encodes object to fixed-length string. Spec pattern: `name:start:len[:left]`.   | `pack(target, "id:0:5:left")`         |
+| `concat(arg1, arg2...)`               | Concatenates two or more arrays into one.                                       | `concat(list1, list2)`                |
 
 ---
 

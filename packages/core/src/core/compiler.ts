@@ -88,7 +88,9 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       const code = `
       return function(input, env) {
         // 1. Parse Input
-        const source = env.parse('${sourceTypeName}', input, ${sourceOptions});
+        const _safeSource = (v) => (typeof v === 'object' && v !== null) ? (Array.isArray(v) ? [...v] : { ...v }) : (v || {});
+        const _parsedSource = env.parse('${sourceTypeName}', input, ${sourceOptions});
+        const source = _safeSource(_parsedSource);
         const _rootSource = source;
         
         // 2. Transform
@@ -534,7 +536,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         this.lastInferredType = 'object';
       }
 
-      return handler(args);
+      return handler(args, this);
     }
 
     throw new Error(`Unknown function: ${originalName}`);
@@ -619,7 +621,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
             ${sectionAccess} = ${sourceVar}${filterPart}.map((item, index) => {
               const subSource = env.parse('${subSourceType.name}', item, ${subSourceOptions});
-              const source = subSource;
+              const source = _safeSource(subSource);
               const _key = index;
               const target = {};
               ${actions.join('\n              ')}
@@ -638,7 +640,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
             if (_filtered) {
               ${sectionAccess} = (function(innerSource, innerIndex) {
                 const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
-                const source = subSource;
+                const source = _safeSource(subSource);
                 const _key = innerIndex;
                 const target = {};
                 ${actions.join('\n                ')}
@@ -654,7 +656,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           ${sourceInit}if (${sourceVar}) {
             ${sectionAccess} = (function(innerSource) {
               const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
-              const source = subSource;
+              const source = _safeSource(subSource);
               const _key = 0; // Single section without where, index is effectively 0 if we consider it an "iteration"
               const target = {};
               ${actions.join('\n              ')}
@@ -709,13 +711,13 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
 
         if (isMultiple) {
           const filterPart = hasWhere
-            ? `.filter((item, index) => { const source = item; const _key = index; return ${whereCondition}; })`
+            ? `.filter((item, index) => { const source = _safeSource(item); const _key = index; return ${whereCondition}; })`
             : '';
           return `
       {
         ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
           ${sectionAccess} = ${sourceVar}${filterPart}.map((item, index) => {
-            const source = item;
+            const source = _safeSource(item);
             const _key = index;
             const target = {};
             ${regularActions.join('\n            ')}
@@ -730,10 +732,10 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
             return `
       {
         ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-          const _filtered = ${sourceVar}.find((item, index) => { const source = item; const _key = index; return ${whereCondition}; });
+          const _filtered = ${sourceVar}.find((item, index) => { const source = _safeSource(item); const _key = index; return ${whereCondition}; });
           if (_filtered) {
             ${sectionAccess} = (function(innerSource, innerIndex) {
-              const source = innerSource;
+              const source = _safeSource(innerSource);
               const _key = innerIndex;
               const target = {};
               ${regularActions.join('\n              ')}
@@ -748,7 +750,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       {
         ${sourceInit}if (${sourceVar}) {
           ${sectionAccess} = (function(innerSource) {
-            const source = innerSource;
+            const source = _safeSource(innerSource);
             const _key = 0;
             const target = {};
             ${regularActions.join('\n            ')}

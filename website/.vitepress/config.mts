@@ -70,6 +70,10 @@ export default defineConfig({
             text: "EDIFACT Mapping",
             link: "/guide/edifact-mapping",
           },
+          {
+            text: "Advanced Object Construction",
+            link: "/guide/advanced-object-construction",
+          },
         ],
       },
 

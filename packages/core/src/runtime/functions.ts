@@ -191,4 +191,49 @@ export const runtimeFunctions = {
     }
     return result;
   },
+
+  /**
+   * Extracts fields from a source object into a new object.
+   * Supports renaming via "target:source" syntax and nested paths.
+   * Respects MorphQL's safe/unsafe mode.
+   */
+  extract: (source: any, safe: boolean, ...specs: string[]) => {
+    if (!source || typeof source !== 'object') return {};
+
+    const getValue = (obj: any, path: string, isSafe: boolean): any => {
+      if (!path) return obj;
+      const parts = path.split('.');
+      let current = obj;
+
+      for (const part of parts) {
+        if (isSafe) {
+          if (current == null) return undefined;
+          current = current[part];
+        } else {
+          // Unsafe mode: will throw if accessing property of null/undefined
+          current = current[part];
+        }
+      }
+      return current;
+    };
+
+    const result: any = {};
+    for (const spec of specs) {
+      // Handle "target:source_path" or just "key"
+      const separatorIndex = spec.indexOf(':');
+      let targetKey: string;
+      let sourcePath: string;
+
+      if (separatorIndex !== -1) {
+        targetKey = spec.substring(0, separatorIndex);
+        sourcePath = spec.substring(separatorIndex + 1);
+      } else {
+        targetKey = spec;
+        sourcePath = spec;
+      }
+
+      result[targetKey] = getValue(source, sourcePath, safe);
+    }
+    return result;
+  },
 };

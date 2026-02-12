@@ -292,4 +292,25 @@ MOA+77:750.00:USD'
 UNT+13+1'
 UNZ+1+1'`,
   },
+  {
+    name: "Advanced Object Construction (Flat to Array)",
+    query: morphQL`from object to object
+transform
+  define INV_TYPE = "Invoice"
+  define TRN_TYPE = "Transport Document"
+
+  set documents = list(
+    extract(source, "number:inv_number", "type:INV_TYPE"),
+    extract(source, "number:trn_number", "type:TRN_TYPE")
+  )`,
+    source: JSON.stringify(
+      {
+        inv_number: "INV-2024-01",
+        trn_number: "TRN-9988",
+        date: "2024-02-12",
+      },
+      null,
+      2,
+    ),
+  },
 ];
