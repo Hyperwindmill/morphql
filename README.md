@@ -7,7 +7,7 @@
   <a href="https://www.npmjs.com/package/@morphql/core"><img src="https://img.shields.io/npm/v/@morphql/core?label=%40morphql%2Fcore" alt="npm core version" /></a>
   <a href="https://www.npmjs.com/package/@morphql/cli"><img src="https://img.shields.io/npm/v/@morphql/cli?label=%40morphql%2Fcli" alt="npm cli version" /></a>
   <a href="https://www.npmjs.com/package/@morphql/server"><img src="https://img.shields.io/npm/v/@morphql/server?label=%40morphql%2Fserver" alt="npm server version" /></a>
-  <a href="https://packagist.org/packages/morphql/morphql"><img src="https://img.shields.io/packagist/v/morphql/morphql?label=php" alt="Packagist version" /></a>
+  <a href="https://packagist.org/packages/morphql/morphql"><img src="https://img.shields.io/packagist/v/morphql/morphql?label=morphql-php" alt="Packagist version" /></a>
   <img src="https://img.shields.io/npm/dm/@morphql/core?label=downloads" alt="npm downloads" />
   <img src="https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript&logoColor=white" alt="TypeScript" />
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
