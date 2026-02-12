@@ -100,3 +100,9 @@ morphql:
   provider: "%env(MORPHQL_PROVIDER)%"
   server_url: "%env(MORPHQL_SERVER_URL)%"
 ```
+
+## Prerequisites
+
+- **PHP 8.1+**
+- **Node.js 18+** (for the `cli` provider)
+- **Symfony 5.4+**, **6.x**, **7.x**, or **8.x**

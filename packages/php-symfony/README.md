@@ -137,7 +137,7 @@ Until the recipe is accepted, users can manually:
 
 - **PHP 8.1+**
 - **Node.js 18+** (for the `cli` provider)
-- **Symfony 5.4+**, **6.x**, or **7.x**
+- **Symfony 5.4+**, **6.x**, **7.x**, or **8.x**
 
 ## License
 
