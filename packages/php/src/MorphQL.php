@@ -16,8 +16,6 @@ namespace MorphQL;
 
 class MorphQL
 {
-    const VERSION = '0.1.0';
-
     const PROVIDER_CLI    = 'cli';
     const PROVIDER_SERVER = 'server';
 
