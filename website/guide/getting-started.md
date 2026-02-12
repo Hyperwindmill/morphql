@@ -55,4 +55,6 @@ MorphQL is available in multiple forms to fit your workflow:
 - **[Library (Core)](./library)**: Integrate MorphQL directly into your Node.js or browser application.
 - **[CLI](./cli)**: Use the command-line interface for scripting and file transformations.
 - **[Server Guide](./server)**: Learn about the **Headless Core** (for embedding staged queries in your app) and the **Standalone Server** (for a dedicated microservice).
+- **[PHP Library](./php)**: Native PHP wrapper with bundled engine support.
+- **[Symfony Bundle](./symfony)**: Full Symfony integration with YAML config and autowiring.
 - **[Language Reference](./language-reference)**: Learn the full syntax, functions, and operators.

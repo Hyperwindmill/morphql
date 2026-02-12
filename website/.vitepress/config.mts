@@ -83,6 +83,7 @@ export default defineConfig({
           { text: "CLI", link: "/guide/cli" },
           { text: "Server", link: "/guide/server" },
           { text: "PHP Library", link: "/guide/php" },
+          { text: "Symfony Bundle", link: "/guide/symfony" },
           { text: "IDE Extensions", link: "/guide/ide-extensions" },
         ],
       },
