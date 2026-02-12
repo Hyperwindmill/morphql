@@ -197,13 +197,14 @@ transform
 
 MorphQL is available in multiple forms to fit your workflow:
 
-| Package                                          | Description                                                                              |
-| :----------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| **[@morphql/core](./packages/core)**             | Core engine. Embed in Node.js or browser apps. Compile once, execute fast.               |
-| **[@morphql/cli](./packages/cli)**               | Terminal tool. Batch transforms, directory watching, Unix piping, `--delete` and more.   |
-| **[@morphql/server](./packages/server)**         | REST API with Redis caching and Staged Queries for pre-defined transformation endpoints. |
-| **[@morphql/playground](./packages/playground)** | Interactive web editor. Experiment with queries in the browser with live feedback.       |
-| **[morphql/morphql](./packages/php)**            | PHP wrapper. Bundled engine, PHP 5.6+, `composer require morphql/morphql`.               |
+| Package                                               | Description                                                                              |
+| :---------------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| **[@morphql/core](./packages/core)**                  | Core engine. Embed in Node.js or browser apps. Compile once, execute fast.               |
+| **[@morphql/cli](./packages/cli)**                    | Terminal tool. Batch transforms, directory watching, Unix piping, `--delete` and more.   |
+| **[@morphql/server](./packages/server)**              | REST API with Redis caching and Staged Queries for pre-defined transformation endpoints. |
+| **[@morphql/playground](./packages/playground)**      | Interactive web editor. Experiment with queries in the browser with live feedback.       |
+| **[morphql/morphql](./packages/php)**                 | PHP wrapper. Bundled engine, PHP 5.6+, `composer require morphql/morphql`.               |
+| **[morphql/morphql-symfony](./packages/php-symfony)** | Symfony Bundle. Twig-style file convention, autowiring, YAML config, PHP 8.1+.           |
 
 > 💬 _"So with the server package and a custom adapter, I could create APIs on my data directly?"_
 >

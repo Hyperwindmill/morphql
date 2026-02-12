@@ -104,6 +104,23 @@ class MorphQL
     }
 
     /**
+     * Static one-shot execution from a .morphql file.
+     *
+     * @param string            $queryFile  Path to the .morphql file.
+     * @param string|array|null $data       Source data.
+     * @param array             $options    Additional options.
+     *
+     * @return string Transformation result.
+     */
+    public static function executeFile($queryFile, $data = null, $options = array())
+    {
+        self::validateQueryFile($queryFile);
+        $config = self::resolveConfig($options);
+
+        return self::dispatch(null, $data, $config, $queryFile);
+    }
+
+    /**
      * Instance-based execution using preset defaults.
      *
      * @param string            $query   MorphQL query string.
@@ -119,6 +136,26 @@ class MorphQL
         return self::dispatch($query, $data, $config);
     }
 
+    /**
+     * Instance-based execution from a .morphql file.
+     *
+     * @param string            $queryFile  Absolute path to a .morphql file.
+     * @param string|array|null $data       Source data.
+     * @param array             $options    Per-call overrides.
+     *
+     * @return string Transformation result.
+     *
+     * @throws \InvalidArgumentException If the file does not exist.
+     * @throws \RuntimeException         On execution failure.
+     */
+    public function runFile($queryFile, $data = null, $options = array())
+    {
+        self::validateQueryFile($queryFile);
+        $config = self::resolveConfig($options, $this->defaults);
+
+        return self::dispatch(null, $data, $config, $queryFile);
+    }
+
     // ------------------------------------------------------------------
     //  Dispatch
     // ------------------------------------------------------------------
@@ -126,19 +163,20 @@ class MorphQL
     /**
      * Route execution to the configured provider.
      *
-     * @param string            $query
+     * @param string|null       $query
      * @param string|array|null $data
-     * @param array             $config  Fully resolved configuration.
+     * @param array             $config     Fully resolved configuration.
+     * @param string|null       $queryFile  Optional path to a .morphql file.
      *
      * @return string
      */
-    private static function dispatch($query, $data, $config)
+    private static function dispatch($query, $data, $config, $queryFile = null)
     {
         if ($config['provider'] === self::PROVIDER_SERVER) {
-            return self::executeViaServer($query, $data, $config);
+            return self::executeViaServer($query, $data, $config, $queryFile);
         }
 
-        return self::executeViaCli($query, $data, $config);
+        return self::executeViaCli($query, $data, $config, $queryFile);
     }
 
     // ------------------------------------------------------------------
@@ -151,26 +189,37 @@ class MorphQL
      * Uses `exec()` with `-i` (inline input) and `-q` (query) flags.
      * The CLI writes the result to stdout.
      *
-     * @param string            $query
+     * @param string|null       $query
      * @param string|array|null $data
      * @param array             $config
+     * @param string|null       $queryFile
      *
      * @return string
      *
      * @throws \RuntimeException If the CLI exits with a non-zero code.
      */
-    private static function executeViaCli($query, $data, $config)
+    private static function executeViaCli($query, $data, $config, $queryFile = null)
     {
         $dataStr = self::normalizeData($data);
         $cliCmd  = self::resolveCliCommand($config);
 
-        $cmd = sprintf(
-            '%s -q %s -i %s --cache-dir %s',
-            $cliCmd,
-            escapeshellarg($query),
-            escapeshellarg($dataStr),
-            escapeshellarg(self::resolveCacheDir($config))
-        );
+        if ($queryFile !== null) {
+            $cmd = sprintf(
+                '%s -Q %s -i %s --cache-dir %s',
+                $cliCmd,
+                escapeshellarg($queryFile),
+                escapeshellarg($dataStr),
+                escapeshellarg(self::resolveCacheDir($config))
+            );
+        } else {
+            $cmd = sprintf(
+                '%s -q %s -i %s --cache-dir %s',
+                $cliCmd,
+                escapeshellarg($query),
+                escapeshellarg($dataStr),
+                escapeshellarg(self::resolveCacheDir($config))
+            );
+        }
 
         $descriptors = array(
             0 => array('pipe', 'r'), // stdin
@@ -284,16 +333,21 @@ class MorphQL
      *
      * Tries cURL first; falls back to file_get_contents with stream context.
      *
-     * @param string            $query
+     * @param string|null       $query
      * @param string|array|null $data
      * @param array             $config
+     * @param string|null       $queryFile
      *
      * @return mixed The transformation result (decoded from JSON response).
      *
      * @throws \RuntimeException On network or server errors.
      */
-    private static function executeViaServer($query, $data, $config)
+    private static function executeViaServer($query, $data, $config, $queryFile = null)
     {
+        if ($queryFile !== null) {
+            $query = trim(file_get_contents($queryFile));
+        }
+
         // The server expects data as a decoded object, not a raw string.
         if (is_string($data)) {
             $decoded = json_decode($data, true);
@@ -507,5 +561,22 @@ class MorphQL
         }
 
         return $options[$key];
+    }
+
+    /**
+     * Validate that a query file exists and is readable.
+     *
+     * @param string $path
+     *
+     * @throws \InvalidArgumentException
+     */
+    private static function validateQueryFile($path)
+    {
+        if (!file_exists($path)) {
+            throw new \InvalidArgumentException('MorphQL: query file not found: ' . $path);
+        }
+        if (!is_readable($path)) {
+            throw new \InvalidArgumentException('MorphQL: query file not readable: ' . $path);
+        }
     }
 }

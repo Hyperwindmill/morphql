@@ -154,8 +154,52 @@ class MorphQLTest extends TestCase
     }
 
     // ------------------------------------------------------------------
+    //  File-based Execution
+    // ------------------------------------------------------------------
+
+    public function testExecuteFileThrowsOnMissingFile()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('MorphQL: query file not found');
+
+        MorphQL::executeFile('/tmp/nonexistent-' . uniqid() . '.morphql', '{}');
+    }
+
+    public function testRunFileThrowsOnMissingFile()
+    {
+        $morph = new MorphQL();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('MorphQL: query file not found');
+
+        $morph->runFile('/tmp/nonexistent-' . uniqid() . '.morphql', '{}');
+    }
+
+    // ------------------------------------------------------------------
     //  CLI Integration (requires @morphql/cli installed)
     // ------------------------------------------------------------------
+
+    public function testCliIntegrationWithQueryFile()
+    {
+        exec('which morphql 2>/dev/null', $output, $exitCode);
+        if ($exitCode !== 0) {
+            $this->markTestSkipped('morphql CLI is not installed');
+        }
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'morphql-test-');
+        rename($tmpFile, $tmpFile . '.morphql');
+        $tmpFile .= '.morphql';
+
+        file_put_contents($tmpFile, 'from json to json transform set greeting = "Hello"');
+
+        try {
+            $result = MorphQL::executeFile($tmpFile, '{"name":"World"}');
+            $decoded = json_decode($result, true);
+            $this->assertEquals('Hello', $decoded['greeting']);
+        } finally {
+            unlink($tmpFile);
+        }
+    }
 
     public function testCliIntegrationSimpleTransform()
     {
