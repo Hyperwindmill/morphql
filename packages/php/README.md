@@ -1,8 +1,12 @@
 # MorphQL PHP
 
+[![Packagist Version](https://img.shields.io/packagist/v/morphql/morphql)](https://packagist.org/packages/morphql/morphql)
+[![PHP](https://img.shields.io/packagist/php-v/morphql/morphql)](https://packagist.org/packages/morphql/morphql)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
 A minimalist PHP wrapper for [MorphQL](https://github.com/Hyperwindmill/morphql) — transform data with declarative queries.
 
-**PHP 5.6+ compatible · Zero runtime dependencies · Composer-ready**
+**PHP 5.6+ compatible · Bundled engine · Composer-ready**
 
 ## Installation
 

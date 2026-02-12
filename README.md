@@ -7,6 +7,7 @@
   <a href="https://www.npmjs.com/package/@morphql/core"><img src="https://img.shields.io/npm/v/@morphql/core?label=%40morphql%2Fcore" alt="npm core version" /></a>
   <a href="https://www.npmjs.com/package/@morphql/cli"><img src="https://img.shields.io/npm/v/@morphql/cli?label=%40morphql%2Fcli" alt="npm cli version" /></a>
   <a href="https://www.npmjs.com/package/@morphql/server"><img src="https://img.shields.io/npm/v/@morphql/server?label=%40morphql%2Fserver" alt="npm server version" /></a>
+  <a href="https://packagist.org/packages/morphql/morphql"><img src="https://img.shields.io/packagist/v/morphql/morphql?label=php" alt="Packagist version" /></a>
   <img src="https://img.shields.io/npm/dm/@morphql/core?label=downloads" alt="npm downloads" />
   <img src="https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript&logoColor=white" alt="TypeScript" />
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
@@ -124,6 +125,22 @@ morphql batch -q "from xml to json" --in ./invoices/ --out ./converted/ --patter
 morphql watch -q "from csv to json" --in ./incoming/ --out ./processed/
 ```
 
+### From PHP
+
+```bash
+composer require morphql/morphql
+```
+
+```php
+use MorphQL\MorphQL;
+
+$result = MorphQL::execute(
+    'from json to json transform set greeting = "Hello, " + name',
+    '{"name": "Alice"}'
+);
+// → '{"greeting":"Hello, Alice"}'
+```
+
 ---
 
 ## Use Cases
@@ -180,12 +197,13 @@ transform
 
 MorphQL is available in multiple forms to fit your workflow:
 
-| Package                                          | Description                                                                                                |
-| :----------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| **[@morphql/core](./packages/core)**             | Core engine. Embed in Node.js or browser apps. Compile once, execute fast.                                 |
-| **[@morphql/cli](./packages/cli)**               | Terminal tool. Batch transforms, directory watching, Unix piping, `--delete` and more.                     |
-| **[@morphql/server](./packages/server)**         | REST API with Redis caching and Staged Queries for pre-defined transformation endpoints.                   |
-| **[@morphql/playground](./packages/playground)** | Interactive web editor. Experiment with queries in the browser with live feedback.                         |
+| Package                                          | Description                                                                              |
+| :----------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| **[@morphql/core](./packages/core)**             | Core engine. Embed in Node.js or browser apps. Compile once, execute fast.               |
+| **[@morphql/cli](./packages/cli)**               | Terminal tool. Batch transforms, directory watching, Unix piping, `--delete` and more.   |
+| **[@morphql/server](./packages/server)**         | REST API with Redis caching and Staged Queries for pre-defined transformation endpoints. |
+| **[@morphql/playground](./packages/playground)** | Interactive web editor. Experiment with queries in the browser with live feedback.       |
+| **[morphql/morphql](./packages/php)**            | PHP wrapper. Bundled engine, PHP 5.6+, `composer require morphql/morphql`.               |
 
 > 💬 _"So with the server package and a custom adapter, I could create APIs on my data directly?"_
 >

@@ -82,6 +82,7 @@ export default defineConfig({
         items: [
           { text: "CLI", link: "/guide/cli" },
           { text: "Server", link: "/guide/server" },
+          { text: "PHP Library", link: "/guide/php" },
           { text: "IDE Extensions", link: "/guide/ide-extensions" },
         ],
       },
