@@ -12,7 +12,11 @@
     "edifact",
     "data-transformation"
   ],
-  "homepage": "https://github.com/Hyperwindmill/morphql",
+  "homepage": "https://github.com/Hyperwindmill/morphql-php",
+  "support": {
+    "issues": "https://github.com/Hyperwindmill/morphql/issues",
+    "source": "https://github.com/Hyperwindmill/morphql"
+  },
   "authors": [
     {
       "name": "Hyperwindmill",

@@ -43,3 +43,43 @@ jobs:
           npm publish -w @morphql/cli --provenance
           npm publish -w @morphql/server --provenance
           npm publish -w @morphql/playground --provenance
+
+  publish-php:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build All Packages
+        run: npm run build:all
+
+      - name: Bundle CLI for PHP
+        run: bash scripts/bundle-php.sh
+
+      - name: Push to morphql-php repo
+        env:
+          PHP_REPO_TOKEN: ${{ secrets.PHP_REPO_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          cd packages/php
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Release $TAG"
+          git tag "$TAG"
+          git remote add origin "https://x-access-token:${PHP_REPO_TOKEN}@github.com/Hyperwindmill/morphql-php.git"
+          git push origin main --force
+          git push origin "$TAG" --force
