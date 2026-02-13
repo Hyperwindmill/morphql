@@ -101,6 +101,24 @@ morphql:
   server_url: "%env(MORPHQL_SERVER_URL)%"
 ```
 
+## Troubleshooting
+
+### "node" not found
+
+If you use a version manager like **NVM**, **asdf**, or **Volta**, the `node` binary might not be in the default `PATH` used by your web server or PHP process.
+
+**Solution 1: Set the path in .env**
+
+```dotenv
+MORPHQL_NODE_PATH=/usr/local/bin/node # Use 'which node' to find yours
+```
+
+**Solution 2: Create a system symlink**
+
+```bash
+sudo ln -s $(which node) /usr/local/bin/node
+```
+
 ## Prerequisites
 
 - **PHP 8.1+**
