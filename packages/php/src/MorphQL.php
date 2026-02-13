@@ -525,7 +525,7 @@ class MorphQL
     /**
      * Normalize data to a JSON string for CLI transport.
      *
-     * @param string|array|null $data
+     * @param string|array|object|null $data
      *
      * @return string
      */
@@ -535,7 +535,7 @@ class MorphQL
             return '{}';
         }
 
-        if (is_array($data)) {
+        if (is_array($data) || is_object($data)) {
             return json_encode($data);
         }
 

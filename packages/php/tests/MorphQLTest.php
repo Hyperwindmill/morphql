@@ -133,6 +133,17 @@ class MorphQLTest extends TestCase
         $this->assertEquals('{"a":1}', $method->invoke(null, '{"a":1}'));
     }
 
+    public function testNormalizeDataWithObject()
+    {
+        $method = new \ReflectionMethod(MorphQL::class, 'normalizeData');
+        $method->setAccessible(true);
+
+        $obj = new \stdClass();
+        $obj->name = 'Bob';
+        $result = $method->invoke(null, $obj);
+        $this->assertEquals('{"name":"Bob"}', $result);
+    }
+
     // ------------------------------------------------------------------
     //  Instance API
     // ------------------------------------------------------------------
