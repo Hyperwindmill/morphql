@@ -38,4 +38,9 @@ class MorphQLExtension extends Extension
         $container->setDefinition(TransformationRegistry::class, $registryDef);
         $container->setAlias('morphql.registry', TransformationRegistry::class)->setPublic(false);
     }
+
+    public function getAlias(): string
+    {
+        return 'morphql';
+    }
 }
