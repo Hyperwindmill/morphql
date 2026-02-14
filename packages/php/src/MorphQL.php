@@ -328,23 +328,7 @@ class MorphQL
         $qjsBin = $config['qjs_path'];
 
         if (!$qjsBin) {
-            // Try to find bundled binary based on OS
-            $os = strtolower(PHP_OS);
-            $suffix = '';
-            if (strpos($os, 'win') !== false) {
-                $suffix = '-windows-x86_64.exe';
-            } elseif (strpos($os, 'darwin') !== false) {
-                $suffix = '-darwin'; 
-            } else {
-                $suffix = '-linux-x86_64';
-            }
-
-            $bundledBin = __DIR__ . '/../bin/qjs' . $suffix;
-            if (file_exists($bundledBin)) {
-                $qjsBin = realpath($bundledBin);
-            } else {
-                $qjsBin = 'qjs'; // fallback to system path
-            }
+            $qjsBin = self::maybeInstallQjs();
         }
 
         // Resolve the standalone JS bundle
@@ -356,10 +340,90 @@ class MorphQL
         }
 
         if (!file_exists($bundle)) {
-            throw new \RuntimeException('MorphQL: QuickJS bundle not found. Please run build:qjs or install it.');
+            throw new \RuntimeException('MorphQL: QuickJS bundle not found. Please run build:qjs or insure it is in bin/qjs.js.');
         }
 
         return escapeshellarg($qjsBin) . ' --std -m ' . escapeshellarg(realpath($bundle));
+    }
+
+    /**
+     * Determine OS-specific QuickJS binary name and ensure it is installed.
+     *
+     * @return string Path to the executable.
+     * @throws \RuntimeException If download fails and no system binary is found.
+     */
+    private static function maybeInstallQjs()
+    {
+        $os = strtolower(PHP_OS);
+        $suffix = '';
+        if (strpos($os, 'win') !== false) {
+            $suffix = '-windows-x86_64.exe';
+        } elseif (strpos($os, 'darwin') !== false) {
+            $suffix = '-darwin';
+        } else {
+            $suffix = '-linux-x86_64';
+        }
+
+        $localName = 'qjs' . $suffix;
+
+        // 1. Check bundled bin directory (best for Composer installs if writable)
+        $bundled = __DIR__ . '/../bin/' . $localName;
+        if (file_exists($bundled)) {
+            return realpath($bundled);
+        }
+
+        // 2. Check writable cache/temp directory
+        $cacheDir = self::resolveCacheDir(array());
+        $cached = $cacheDir . DIRECTORY_SEPARATOR . $localName;
+        if (file_exists($cached)) {
+            return realpath($cached);
+        }
+
+        // 3. Try to download it
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
+        }
+
+        $version = 'v0.11.0';
+        $url = "https://github.com/quickjs-ng/quickjs/releases/download/$version/$localName";
+
+        try {
+            self::downloadFile($url, $cached);
+            chmod($cached, 0755);
+            return realpath($cached);
+        } catch (\Exception $e) {
+            // Fallback to system-wide 'qjs' if everything else fails
+            return 'qjs';
+        }
+    }
+
+    /**
+     * Download a file with redirect support and multiple fallbacks.
+     *
+     * @param string $url
+     * @param string $target
+     * @throws \RuntimeException
+     */
+    private static function downloadFile($url, $target)
+    {
+        $content = @file_get_contents($url);
+
+        if ($content === false && function_exists('curl_init')) {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $content = curl_exec($ch);
+            curl_close($ch);
+        }
+
+        if ($content === false || strlen($content) < 1000) {
+            throw new \RuntimeException('MorphQL: Failed to download ' . $url);
+        }
+
+        if (@file_put_contents($target, $content) === false) {
+            throw new \RuntimeException('MorphQL: Failed to write to ' . $target);
+        }
     }
 
     /**
