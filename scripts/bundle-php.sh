@@ -24,8 +24,8 @@ npm run build -w @morphql/core --prefix "$ROOT_DIR"
 echo "  → Building @morphql/cli..."
 npm run build -w @morphql/cli --prefix "$ROOT_DIR"
 
-# 2. Bundle with ncc
-echo "  → Running ncc bundle..."
+# 2. Bundle Node.js CLI with ncc
+echo "  → Running ncc bundle for Node.js..."
 mkdir -p "$BIN_DIR"
 npx -y @vercel/ncc build "$ROOT_DIR/packages/cli/bin/morphql.js" \
     -o "$BIN_DIR" \
@@ -36,7 +36,14 @@ if [ -f "$BIN_DIR/index.js" ]; then
     mv "$BIN_DIR/index.js" "$BIN_DIR/morphql.js"
 fi
 
+# 3. Bundle QuickJS CLI with esbuild
+echo "  → Running esbuild for QuickJS..."
+npm run build:qjs -w @morphql/cli --prefix "$ROOT_DIR"
+cp "$ROOT_DIR/packages/cli/dist/qjs/qjs.js" "$BIN_DIR/qjs.js"
+
 # Remove the package.json that ncc generates (not needed)
 rm -f "$BIN_DIR/package.json"
 
-echo "==> Done! Bundle: $BIN_DIR/morphql.js ($(du -h "$BIN_DIR/morphql.js" | cut -f1))"
+echo "==> Done!"
+echo "  - Node.js bundle: $BIN_DIR/morphql.js ($(du -h "$BIN_DIR/morphql.js" | cut -f1))"
+echo "  - QuickJS bundle: $BIN_DIR/qjs.js ($(du -h "$BIN_DIR/qjs.js" | cut -f1))"

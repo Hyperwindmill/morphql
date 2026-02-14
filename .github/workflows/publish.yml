@@ -68,6 +68,9 @@ jobs:
       - name: Bundle CLI for PHP
         run: bash scripts/bundle-php.sh
 
+      - name: Download QuickJS Binaries
+        run: php packages/php/bin/install-qjs.php
+
       - name: Push to morphql-php repo
         env:
           PHP_REPO_TOKEN: ${{ secrets.PHP_REPO_TOKEN }}

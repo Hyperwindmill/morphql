@@ -19,6 +19,9 @@ class MorphQL
     const PROVIDER_CLI    = 'cli';
     const PROVIDER_SERVER = 'server';
 
+    const RUNTIME_NODE = 'node';
+    const RUNTIME_QJS  = 'qjs';
+
     /**
      * Default option values.
      *
@@ -26,8 +29,10 @@ class MorphQL
      */
     private static $optionDefaults = array(
         'provider'   => self::PROVIDER_CLI,
+        'runtime'    => self::RUNTIME_NODE,
         'cli_path'   => 'morphql',
         'node_path'  => 'node',
+        'qjs_path'   => null, // resolved lazily to bundled binary if available
         'cache_dir'  => null, // resolved lazily to sys_get_temp_dir() . '/morphql'
         'server_url' => 'http://localhost:3000',
         'api_key'    => null,
@@ -221,6 +226,9 @@ class MorphQL
             );
         }
 
+        // For QuickJS, we don't need to specify flags if we use the standalone bundle correctly,
+        // but our src/qjs.ts supports the same flags -q, -Q, -i, -f, -t
+
         $descriptors = array(
             0 => array('pipe', 'r'), // stdin
             1 => array('pipe', 'w'), // stdout
@@ -289,6 +297,10 @@ class MorphQL
      */
     private static function resolveCliCommand($config)
     {
+        if ($config['runtime'] === self::RUNTIME_QJS) {
+            return self::resolveQjsCommand($config);
+        }
+
         // 1. User explicitly set a custom cli_path → use it directly
         if (isset($config['cli_path']) && $config['cli_path'] !== 'morphql') {
             return escapeshellarg($config['cli_path']);
@@ -303,6 +315,51 @@ class MorphQL
 
         // 3. Fall back to system-installed morphql
         return escapeshellarg($config['cli_path']);
+    }
+
+    /**
+     * Resolve the QuickJS command to use.
+     *
+     * @param array $config
+     * @return string
+     */
+    private static function resolveQjsCommand($config)
+    {
+        $qjsBin = $config['qjs_path'];
+
+        if (!$qjsBin) {
+            // Try to find bundled binary based on OS
+            $os = strtolower(PHP_OS);
+            $suffix = '';
+            if (strpos($os, 'win') !== false) {
+                $suffix = '-windows-x86_64.exe';
+            } elseif (strpos($os, 'darwin') !== false) {
+                $suffix = '-darwin'; 
+            } else {
+                $suffix = '-linux-x86_64';
+            }
+
+            $bundledBin = __DIR__ . '/../bin/qjs' . $suffix;
+            if (file_exists($bundledBin)) {
+                $qjsBin = realpath($bundledBin);
+            } else {
+                $qjsBin = 'qjs'; // fallback to system path
+            }
+        }
+
+        // Resolve the standalone JS bundle
+        // 1. Check if we are in the monorepo structure
+        $bundle = __DIR__ . '/../../cli/dist/qjs/qjs.js';
+        if (!file_exists($bundle)) {
+            // 2. Check if we are in the distributed structure (where it might be in bin/)
+            $bundle = __DIR__ . '/../bin/qjs.js';
+        }
+
+        if (!file_exists($bundle)) {
+            throw new \RuntimeException('MorphQL: QuickJS bundle not found. Please run build:qjs or install it.');
+        }
+
+        return escapeshellarg($qjsBin) . ' --std -m ' . escapeshellarg(realpath($bundle));
     }
 
     /**
@@ -479,8 +536,10 @@ class MorphQL
     {
         $envMap = array(
             'provider'   => 'MORPHQL_PROVIDER',
+            'runtime'    => 'MORPHQL_RUNTIME',
             'cli_path'   => 'MORPHQL_CLI_PATH',
             'node_path'  => 'MORPHQL_NODE_PATH',
+            'qjs_path'   => 'MORPHQL_QJS_PATH',
             'cache_dir'  => 'MORPHQL_CACHE_DIR',
             'server_url' => 'MORPHQL_SERVER_URL',
             'api_key'    => 'MORPHQL_API_KEY',
