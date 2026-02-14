@@ -389,7 +389,7 @@ export function Playground({
       <footer className="px-6 py-2 border-t border-slate-800 bg-[#1e293b] flex justify-between items-center">
         <div className="flex items-center gap-6">
           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
-            Version: 0.1.25
+            Version: 0.1.25.1
           </div>
         </div>
         <div className="text-[10px] text-slate-500 font-medium italic">
