@@ -16,9 +16,10 @@ composer require morphql/morphql
 
 ### Prerequisites
 
-The package ships with a **bundled MorphQL engine** — the only requirement is **Node.js** (v18+).
+The package ships with the **MorphQL engine pre-bundled**. You have two options for execution:
 
-Alternatively, you can use the **server provider** to connect to a remote MorphQL server instance, in which case Node.js is not required.
+1.  **Node.js** (Default): Requires Node.js v18+ installed on the system.
+2.  **QuickJS** (Embedded): Self-contained, **zero external dependencies**. Binaries are automatically downloaded upon installation.
 
 ## Quick Start
 
@@ -70,12 +71,23 @@ $other  = $morph->run('from json to json transform set id = uuid', $data2);
 
 ## Providers
 
-| Provider | Backend               | Transport                  |
-| :------- | :-------------------- | :------------------------- |
-| `cli`    | Bundled engine (Node) | `proc_open()` / shell      |
-| `server` | MorphQL REST server   | cURL / `file_get_contents` |
+| Provider | Backend             | Transport                  | Runtime         |
+| :------- | :------------------ | :------------------------- | :-------------- |
+| `cli`    | Bundled engine      | `proc_open()` / shell      | `node` or `qjs` |
+| `server` | MorphQL REST server | cURL / `file_get_contents` | —               |
 
-The CLI provider auto-detects the bundled engine shipped with this package. Falls back to a system-installed `morphql` if the bundle is missing.
+The CLI provider auto-detects the bundled engine. By default, it uses **Node.js**, but it can be configured to use an embedded **QuickJS** runtime for a completely self-contained setup.
+
+### Node-less Runtime (QuickJS)
+
+For a completely self-contained setup without Node.js, simply configure MorphQL to use the embedded QuickJS runtime:
+
+```php
+$morph = new MorphQL(['runtime' => 'qjs']);
+```
+
+> [!TIP]
+> **Automatic Installation**: QuickJS binaries for your platform are automatically downloaded by Composer. If you need to reinstall them manually, run `php bin/install-qjs.php`.
 
 ## Configuration
 
@@ -84,8 +96,10 @@ Options are resolved in priority order: **call params → constructor → env va
 | Option       | Env Var              | Default                      | Description              |
 | :----------- | :------------------- | :--------------------------- | :----------------------- |
 | `provider`   | `MORPHQL_PROVIDER`   | `cli`                        | `cli` or `server`        |
+| `runtime`    | `MORPHQL_RUNTIME`    | `node`                       | `node` or `qjs`          |
 | `cli_path`   | `MORPHQL_CLI_PATH`   | _(auto)_                     | Override CLI binary path |
 | `node_path`  | `MORPHQL_NODE_PATH`  | `node`                       | Path to Node.js binary   |
+| `qjs_path`   | `MORPHQL_QJS_PATH`   | _(auto)_                     | Path to QuickJS binary   |
 | `cache_dir`  | `MORPHQL_CACHE_DIR`  | `sys_get_temp_dir()/morphql` | CLI query cache dir      |
 | `server_url` | `MORPHQL_SERVER_URL` | `http://localhost:3000`      | Server base URL          |
 | `api_key`    | `MORPHQL_API_KEY`    | _(none)_                     | API key for server auth  |

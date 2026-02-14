@@ -1,5 +1,7 @@
 /vendor/
-/bin/
+/bin/qjs*
+/bin/morphql.js
+!/bin/*.php
 /.compiled/
 composer.lock
 .phpunit.result.cache

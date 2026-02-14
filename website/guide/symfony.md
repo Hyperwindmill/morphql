@@ -107,13 +107,19 @@ morphql:
 
 If you use a version manager like **NVM**, **asdf**, or **Volta**, the `node` binary might not be in the default `PATH` used by your web server or PHP process.
 
-**Solution 1: Set the path in .env**
+**Solution 1: Use the Node-less QuickJS runtime**
+
+If you don't want to deal with Node.js paths, you can switch to the embedded **QuickJS** runtime which is self-contained and pre-bundled:
+
+Set in `.env`: `MORPHQL_RUNTIME=qjs`
+
+**Solution 2: Set the Node path in .env**
 
 ```dotenv
 MORPHQL_NODE_PATH=/usr/local/bin/node # Use 'which node' to find yours
 ```
 
-**Solution 2: Create a system symlink**
+**Solution 3: Create a system symlink**
 
 ```bash
 sudo ln -s $(which node) /usr/local/bin/node
@@ -122,5 +128,5 @@ sudo ln -s $(which node) /usr/local/bin/node
 ## Prerequisites
 
 - **PHP 8.1+**
-- **Node.js 18+** (for the `cli` provider)
+- **Node.js 18+** OR **QuickJS** (for the `cli` provider)
 - **Symfony 5.4+**, **6.x**, **7.x**, or **8.x**

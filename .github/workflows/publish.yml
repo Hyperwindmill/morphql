@@ -68,8 +68,8 @@ jobs:
       - name: Bundle CLI for PHP
         run: bash scripts/bundle-php.sh
 
-      - name: Download QuickJS Binaries
-        run: php packages/php/bin/install-qjs.php
+      - name: Bundle CLI for PHP
+        run: bash scripts/bundle-php.sh
 
       - name: Push to morphql-php repo
         env:
@@ -81,7 +81,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git add --force bin/
+          git add --force bin/qjs.js
+          git add --force bin/morphql.js
           git commit -m "Release $TAG"
           git tag "$TAG"
           git remote add origin "https://x-access-token:${PHP_REPO_TOKEN}@github.com/Hyperwindmill/morphql-php.git"

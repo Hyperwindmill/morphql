@@ -1,6 +1,6 @@
 # PHP Library
 
-Use MorphQL directly from PHP applications. The package ships with a bundled MorphQL engine — the only external requirement is **Node.js** (v18+).
+Use MorphQL directly from PHP applications. The package ships with a bundled MorphQL engine — compatible with both **Node.js** and **QuickJS** for Node-less environments.
 
 ## Installation
 
@@ -64,12 +64,25 @@ $other  = $morph->run('from csv to json', $csvData);
 
 The library supports two execution providers:
 
-| Provider        | Backend                    | Transport                  |
-| :-------------- | :------------------------- | :------------------------- |
-| `cli` (default) | Bundled engine via Node.js | `proc_open()`              |
-| `server`        | MorphQL REST server        | cURL / `file_get_contents` |
+| Provider        | Backend             | Transport                  | Runtime         |
+| :-------------- | :------------------ | :------------------------- | :-------------- |
+| `cli` (default) | Bundled engine      | `proc_open()`              | `node` or `qjs` |
+| `server`        | MorphQL REST server | cURL / `file_get_contents` | —               |
 
-The `cli` provider uses a bundled copy of the MorphQL engine that ships with the package — no separate installation needed. The `server` provider connects to a remote [MorphQL server instance](./server.md).
+The `cli` provider uses a bundled copy of the MorphQL engine. By default, it requires **Node.js**, but you can switch to the embedded **QuickJS** runtime for a completely self-contained, zero-config installation.
+
+### Node-less execution with QuickJS
+
+QuickJS binaries are **automatically downloaded** for your platform during `composer install` or `composer update`. Just enable the runtime in your configuration:
+
+```php
+$morph = new MorphQL([
+    'runtime' => 'qjs'
+]);
+```
+
+> [!TIP]
+> If you need to download binaries manually or for multiple platforms, you can run the included installer: `php bin/install-qjs.php`.
 
 ## Configuration
 
@@ -78,8 +91,10 @@ Options are resolved in priority order: **call params → constructor → env va
 | Option       | Env Var              | Default          | Description              |
 | :----------- | :------------------- | :--------------- | :----------------------- |
 | `provider`   | `MORPHQL_PROVIDER`   | `cli`            | `cli` or `server`        |
+| `runtime`    | `MORPHQL_RUNTIME`    | `node`           | `node` or `qjs`          |
 | `cli_path`   | `MORPHQL_CLI_PATH`   | _(auto)_         | Override CLI binary path |
 | `node_path`  | `MORPHQL_NODE_PATH`  | `node`           | Path to Node.js binary   |
+| `qjs_path`   | `MORPHQL_QJS_PATH`   | _(auto)_         | Path to QuickJS binary   |
 | `cache_dir`  | `MORPHQL_CACHE_DIR`  | System temp dir  | CLI query cache dir      |
 | `server_url` | `MORPHQL_SERVER_URL` | `localhost:3000` | Server base URL          |
 | `api_key`    | `MORPHQL_API_KEY`    | —                | API key for server auth  |
@@ -100,7 +115,7 @@ try {
 ## Compatibility
 
 - **PHP 5.6+** — No type hints, `array()` syntax, compatible with legacy codebases
-- **Node.js 18+** — Required for the bundled CLI provider
+- **Node.js 18+** OR **QuickJS** — Required for the bundled CLI provider
 - **Zero Composer dependencies** — Only `phpunit` for development
 
 ## Source

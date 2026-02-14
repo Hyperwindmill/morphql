@@ -39,6 +39,14 @@
       "MorphQL\\Tests\\": "tests/"
     }
   },
+  "scripts": {
+    "post-install-cmd": [
+      "@php bin/install-qjs.php"
+    ],
+    "post-update-cmd": [
+      "@php bin/install-qjs.php"
+    ]
+  },
   "minimum-stability": "stable",
   "prefer-stable": true
 }
