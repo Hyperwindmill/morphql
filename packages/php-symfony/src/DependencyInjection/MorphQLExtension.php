@@ -19,8 +19,10 @@ class MorphQLExtension extends Extension
         $morphqlDef = new Definition(MorphQL::class);
         $morphqlDef->setArgument(0, [
             'provider'   => $config['provider'],
+            'runtime'    => $config['runtime'],
             'cli_path'   => $config['cli_path'],
             'node_path'  => $config['node_path'],
+            'qjs_path'   => $config['qjs_path'],
             'cache_dir'  => $config['cache_dir'],
             'server_url' => $config['server_url'],
             'api_key'    => $config['api_key'],
