@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.morphql"
-version = "0.1.25.1"
+version = "0.1.26"
 
 repositories {
     mavenCentral()
