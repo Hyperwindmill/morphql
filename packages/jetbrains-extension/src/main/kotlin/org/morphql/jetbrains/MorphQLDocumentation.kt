@@ -233,10 +233,12 @@ substring("Hello World", -5)     // "World"</pre>
             <b>Example:</b><pre>ceil(4.1)  // 5</pre>
         """.trimIndent(),
         "round" to """
-            <b>round(value)</b><br/>
-            Rounds a number to the nearest integer.<br/><br/>
-            <b>Parameters:</b><ul><li><b>value:</b> The number to round</li></ul>
-            <b>Example:</b><pre>round(4.5)  // 5</pre>
+            <b>round(value, [mode])</b><br/>
+            Rounds a number to the nearest integer. Mode controls tie-breaking: "half-up" (default) rounds .5 away from zero; "half-even" uses banker's rounding (rounds .5 to the nearest even integer).<br/><br/>
+            <b>Parameters:</b><ul><li><b>value:</b> The number to round</li><li><b>mode:</b> (Optional) Rounding mode: "half-up" (default) or "half-even"</li></ul>
+            <b>Example:</b><pre>round(4.5)              // 5  (half-up)
+round(4.5, "half-even") // 4  (banker's)
+round(3.5, "half-even") // 4  (banker's)</pre>
         """.trimIndent(),
         "abs" to """
             <b>abs(value)</b><br/>
@@ -245,12 +247,12 @@ substring("Hello World", -5)     // "World"</pre>
             <b>Example:</b><pre>abs(-42)  // 42</pre>
         """.trimIndent(),
         "fixed" to """
-            <b>fixed(value, [decimals])</b><br/>
-            Formats a number to a fixed number of decimal places, using half-away-from-zero rounding (e.g. 2.5 → "3", -2.5 → "-3"). Returns a string. Default decimals: 2.<br/><br/>
-            <b>Parameters:</b><ul><li><b>value:</b> The number to format</li><li><b>decimals:</b> (Optional) Number of decimal places. Default: 2</li></ul>
-            <b>Example:</b><pre>fixed(1.005, 2)  // "1.01"
-fixed(2.5, 0)   // "3"
-fixed(price)    // "9.99"</pre>
+            <b>fixed(value, [decimals], [mode])</b><br/>
+            Formats a number to a fixed number of decimal places. Mode controls tie-breaking: "half-up" (default) rounds .5 away from zero; "half-even" uses banker's rounding. Returns a string. Default decimals: 2.<br/><br/>
+            <b>Parameters:</b><ul><li><b>value:</b> The number to format</li><li><b>decimals:</b> (Optional) Number of decimal places. Default: 2</li><li><b>mode:</b> (Optional) Rounding mode: "half-up" (default) or "half-even"</li></ul>
+            <b>Example:</b><pre>fixed(2.5, 2)              // "2.50"  (half-up)
+fixed(2.5, 2, "half-even") // "2.50"  (banker's, no tie at 2 decimals)
+fixed(2.5, 0, "half-even") // "2"     (banker's, rounds to even)</pre>
         """.trimIndent(),
         "min" to """
             <b>min(a, b, ...)</b><br/>
