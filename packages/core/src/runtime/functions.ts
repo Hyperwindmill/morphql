@@ -236,4 +236,43 @@ export const runtimeFunctions = {
     }
     return result;
   },
+
+  /**
+   * Rounds a number to the nearest integer.
+   * mode "half-up"   → standard rounding (.5 rounds away from zero)
+   * mode "half-even" → banker's rounding (.5 rounds to nearest even integer)
+   */
+  round: (value: any, mode: string = 'half-up'): number => {
+    const v = Number(value);
+    if (mode === 'half-even') {
+      const f = Math.floor(v);
+      const frac = v - f;
+      if (frac === 0.5) return f % 2 === 0 ? f : f + 1;
+      return Math.round(v);
+    }
+    return Math.round(v);
+  },
+
+  /**
+   * Formats a number to a fixed number of decimal places.
+   * mode "half-up"   → half-away-from-zero rounding (default)
+   * mode "half-even" → banker's rounding
+   * Returns a string (e.g. "1.50").
+   */
+  fixed: (value: any, decimals: any = 2, mode: string = 'half-up'): string => {
+    const v = Number(value);
+    const d = Math.max(0, Math.floor(Number(decimals)));
+    const f = Math.pow(10, d);
+    let r: number;
+    if (mode === 'half-even') {
+      const scaled = Math.abs(v) * f;
+      const floor = Math.floor(scaled);
+      const frac = scaled - floor;
+      const rounded = frac === 0.5 ? (floor % 2 === 0 ? floor : floor + 1) : Math.round(scaled);
+      r = (rounded / f) * Math.sign(v || 1);
+    } else {
+      r = (Math.round(Math.abs(v) * f) / f) * Math.sign(v || 1);
+    }
+    return r.toFixed(d);
+  },
 };

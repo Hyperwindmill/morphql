@@ -87,4 +87,45 @@ describe('fixed() function', async () => {
     `);
     expect(engine({ value: '3.14159' }).result).toBe('3.14');
   });
+
+  it("should support half-even (banker's) rounding mode", async () => {
+    const engine = await compile(morphQL`
+      from object to object
+      transform
+        set result = fixed(value, 0, "half-even")
+    `);
+    expect(engine({ value: 0.5 }).result).toBe('0'); // 0 is even
+    expect(engine({ value: 1.5 }).result).toBe('2'); // 2 is even
+    expect(engine({ value: 2.5 }).result).toBe('2'); // 2 is even
+    expect(engine({ value: 3.5 }).result).toBe('4'); // 4 is even
+    expect(engine({ value: 4.5 }).result).toBe('4'); // 4 is even
+  });
+
+  it('should apply half-even rounding at decimal precision', async () => {
+    const engine = await compile(morphQL`
+      from object to object
+      transform
+        set r1 = fixed(value, 1, "half-even")
+    `);
+    // These are exact in IEEE 754 at 1 decimal place:
+    // 1.25 * 10 = 12.5 → half-even → 12 (even) → "1.2"
+    expect(engine({ value: 1.25 }).r1).toBe('1.2');
+    // 1.35 * 10 = 13.5 → half-even → 14 (even) → "1.4"
+    expect(engine({ value: 1.35 }).r1).toBe('1.4');
+    // 1.45 * 10 = 14.5 → half-even → 14 (even) → "1.4"
+    expect(engine({ value: 1.45 }).r1).toBe('1.4');
+    // 1.55 * 10 = 15.5 → half-even → 16 (even) → "1.6"
+    expect(engine({ value: 1.55 }).r1).toBe('1.6');
+  });
+
+  it('should default to half-up when no mode is given', async () => {
+    const engine = await compile(morphQL`
+      from object to object
+      transform
+        set result = fixed(value, 0)
+    `);
+    expect(engine({ value: 0.5 }).result).toBe('1');
+    expect(engine({ value: 1.5 }).result).toBe('2');
+    expect(engine({ value: 2.5 }).result).toBe('3');
+  });
 });

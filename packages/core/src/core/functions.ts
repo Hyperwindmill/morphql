@@ -226,40 +226,16 @@ export const functionRegistry: Record<string, FunctionHandler> = {
   round: (args: string[], _compiler) => {
     if (args.length < 1 || args.length > 2)
       throw new Error('round() requires 1 or 2 arguments (value, [mode])');
-    const [val, mode = '"half-up"'] = args;
-    // mode "half-up"   → standard Math.round (half away from zero for positives)
-    // mode "half-even" → banker's rounding (round half to nearest even integer)
-    return `(() => {
-      const _v = Number(${val});
-      const _mode = ${mode};
-      if (_mode === 'half-even') {
-        const _f = Math.floor(_v);
-        const _frac = _v - _f;
-        if (_frac === 0.5) return (_f % 2 === 0) ? _f : _f + 1;
-        return Math.round(_v);
-      }
-      return Math.round(_v);
-    })()`;
+    return `env.functions.round(${args.join(', ')})`;
   },
   abs: (args: string[], _compiler) => {
     if (args.length !== 1) throw new Error('abs() requires exactly 1 argument');
     return `Math.abs(${args[0]})`;
   },
   fixed: (args: string[], _compiler) => {
-    if (args.length < 1 || args.length > 2)
-      throw new Error('fixed() requires 1 or 2 arguments (value, [decimals])');
-    const [val, decimals = '2'] = args;
-    // Inline half-away-from-zero rounding:
-    // 1. Multiply by 10^d, round, divide back, then format with padded zeros.
-    // We use a self-invoking function to keep the generated code clean.
-    return `(() => {
-      const _v = Number(${val});
-      const _d = Math.max(0, Math.floor(Number(${decimals})));
-      const _f = Math.pow(10, _d);
-      const _r = Math.round(Math.abs(_v) * _f) / _f * Math.sign(_v || 1);
-      const _s = _r.toFixed(_d);
-      return _s;
-    })()`;
+    if (args.length < 1 || args.length > 3)
+      throw new Error('fixed() requires 1 to 3 arguments (value, [decimals], [mode])');
+    return `env.functions.fixed(${args.join(', ')})`;
   },
   min: (args: string[], _compiler) => {
     if (args.length < 2) throw new Error('min() requires at least 2 arguments');

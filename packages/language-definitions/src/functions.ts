@@ -288,19 +288,24 @@ export const FUNCTIONS: FunctionDef[] = [
   {
     name: "fixed",
     doc: {
-      signature: "fixed(value, [decimals])",
+      signature: "fixed(value, [decimals], [mode])",
       description:
-        'Formats a number to a fixed number of decimal places, using half-away-from-zero rounding (e.g. 2.5 → "3", -2.5 → "-3"). Returns a string. Default decimals: 2.',
+        'Formats a number to a fixed number of decimal places. Mode controls tie-breaking: "half-up" (default) rounds .5 away from zero; "half-even" uses banker\'s rounding. Returns a string. Default decimals: 2.',
       parameters: [
         { name: "value", description: "The number to format" },
         {
           name: "decimals",
           description: "(Optional) Number of decimal places. Default: 2",
         },
+        {
+          name: "mode",
+          description:
+            '(Optional) Rounding mode: "half-up" (default) or "half-even"',
+        },
       ],
       returns: "string",
       example:
-        'fixed(1.005, 2)  // "1.01"\nfixed(2.5, 0)   // "3"\nfixed(price)    // "9.99"',
+        'fixed(2.5, 2)              // "2.50"  (half-up)\nfixed(2.5, 2, "half-even") // "2.50"  (banker\'s, no tie at 2 decimals)\nfixed(2.5, 0, "half-even") // "2"     (banker\'s, rounds to even)',
     },
   },
   {
