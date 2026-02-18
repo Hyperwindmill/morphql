@@ -244,6 +244,14 @@ substring("Hello World", -5)     // "World"</pre>
             <b>Parameters:</b><ul><li><b>value:</b> The number</li></ul>
             <b>Example:</b><pre>abs(-42)  // 42</pre>
         """.trimIndent(),
+        "fixed" to """
+            <b>fixed(value, [decimals])</b><br/>
+            Formats a number to a fixed number of decimal places, using half-away-from-zero rounding (e.g. 2.5 → "3", -2.5 → "-3"). Returns a string. Default decimals: 2.<br/><br/>
+            <b>Parameters:</b><ul><li><b>value:</b> The number to format</li><li><b>decimals:</b> (Optional) Number of decimal places. Default: 2</li></ul>
+            <b>Example:</b><pre>fixed(1.005, 2)  // "1.01"
+fixed(2.5, 0)   // "3"
+fixed(price)    // "9.99"</pre>
+        """.trimIndent(),
         "min" to """
             <b>min(a, b, ...)</b><br/>
             Returns the smallest of two or more numbers.<br/><br/>

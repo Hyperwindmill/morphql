@@ -277,6 +277,24 @@ export const FUNCTIONS: FunctionDef[] = [
     },
   },
   {
+    name: "fixed",
+    doc: {
+      signature: "fixed(value, [decimals])",
+      description:
+        'Formats a number to a fixed number of decimal places, using half-away-from-zero rounding (e.g. 2.5 → "3", -2.5 → "-3"). Returns a string. Default decimals: 2.',
+      parameters: [
+        { name: "value", description: "The number to format" },
+        {
+          name: "decimals",
+          description: "(Optional) Number of decimal places. Default: 2",
+        },
+      ],
+      returns: "string",
+      example:
+        'fixed(1.005, 2)  // "1.01"\nfixed(2.5, 0)   // "3"\nfixed(price)    // "9.99"',
+    },
+  },
+  {
     name: "min",
     doc: {
       signature: "min(a, b, ...)",

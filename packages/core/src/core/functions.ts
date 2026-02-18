@@ -231,6 +231,22 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     if (args.length !== 1) throw new Error('abs() requires exactly 1 argument');
     return `Math.abs(${args[0]})`;
   },
+  fixed: (args: string[], _compiler) => {
+    if (args.length < 1 || args.length > 2)
+      throw new Error('fixed() requires 1 or 2 arguments (value, [decimals])');
+    const [val, decimals = '2'] = args;
+    // Inline half-away-from-zero rounding:
+    // 1. Multiply by 10^d, round, divide back, then format with padded zeros.
+    // We use a self-invoking function to keep the generated code clean.
+    return `(() => {
+      const _v = Number(${val});
+      const _d = Math.max(0, Math.floor(Number(${decimals})));
+      const _f = Math.pow(10, _d);
+      const _r = Math.round(Math.abs(_v) * _f) / _f * Math.sign(_v || 1);
+      const _s = _r.toFixed(_d);
+      return _s;
+    })()`;
+  },
   min: (args: string[], _compiler) => {
     if (args.length < 2) throw new Error('min() requires at least 2 arguments');
     return `Math.min(${args.join(', ')})`;

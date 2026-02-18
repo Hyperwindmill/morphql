@@ -528,6 +528,7 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           'trim',
           'padstart',
           'padend',
+          'fixed',
         ].includes(name)
       ) {
         this.lastInferredType = 'string';

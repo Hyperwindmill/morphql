@@ -45,6 +45,7 @@ object MorphQLConstants {
         "ceil",
         "round",
         "abs",
+        "fixed",
         "min",
         "max",
         "trim",
