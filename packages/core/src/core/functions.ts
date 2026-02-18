@@ -224,8 +224,22 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     return `Math.ceil(${args[0]})`;
   },
   round: (args: string[], _compiler) => {
-    if (args.length !== 1) throw new Error('round() requires exactly 1 argument');
-    return `Math.round(${args[0]})`;
+    if (args.length < 1 || args.length > 2)
+      throw new Error('round() requires 1 or 2 arguments (value, [mode])');
+    const [val, mode = '"half-up"'] = args;
+    // mode "half-up"   → standard Math.round (half away from zero for positives)
+    // mode "half-even" → banker's rounding (round half to nearest even integer)
+    return `(() => {
+      const _v = Number(${val});
+      const _mode = ${mode};
+      if (_mode === 'half-even') {
+        const _f = Math.floor(_v);
+        const _frac = _v - _f;
+        if (_frac === 0.5) return (_f % 2 === 0) ? _f : _f + 1;
+        return Math.round(_v);
+      }
+      return Math.round(_v);
+    })()`;
   },
   abs: (args: string[], _compiler) => {
     if (args.length !== 1) throw new Error('abs() requires exactly 1 argument');

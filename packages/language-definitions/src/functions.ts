@@ -259,11 +259,20 @@ export const FUNCTIONS: FunctionDef[] = [
   {
     name: "round",
     doc: {
-      signature: "round(value)",
-      description: "Rounds a number to the nearest integer.",
-      parameters: [{ name: "value", description: "The number to round" }],
+      signature: "round(value, [mode])",
+      description:
+        'Rounds a number to the nearest integer. Mode controls tie-breaking: "half-up" (default) rounds .5 away from zero; "half-even" uses banker\'s rounding (rounds .5 to the nearest even integer).',
+      parameters: [
+        { name: "value", description: "The number to round" },
+        {
+          name: "mode",
+          description:
+            '(Optional) Rounding mode: "half-up" (default) or "half-even"',
+        },
+      ],
       returns: "number",
-      example: "round(4.5)  // 5",
+      example:
+        'round(4.5)              // 5  (half-up)\nround(4.5, "half-even") // 4  (banker\'s)\nround(3.5, "half-even") // 4  (banker\'s)',
     },
   },
   {

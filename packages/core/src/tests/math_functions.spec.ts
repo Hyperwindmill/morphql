@@ -56,7 +56,7 @@ describe('Math functions', async () => {
   });
 
   describe('round()', async () => {
-    it('should round to nearest integer', async () => {
+    it('should round to nearest integer (half-up by default)', async () => {
       const engine = await compile(morphQL`
         from object to object
         transform
@@ -74,6 +74,46 @@ describe('Math functions', async () => {
           set total = round(price * quantity)
       `);
       expect(engine({ price: 9.99, quantity: 3 }).total).toBe(30); // round(29.97) = 30
+    });
+
+    it('should support explicit half-up mode', async () => {
+      const engine = await compile(morphQL`
+        from object to object
+        transform
+          set result = round(value, "half-up")
+      `);
+      expect(engine({ value: 0.5 }).result).toBe(1);
+      expect(engine({ value: 1.5 }).result).toBe(2);
+      expect(engine({ value: 2.5 }).result).toBe(3);
+      expect(engine({ value: 3.5 }).result).toBe(4);
+    });
+
+    it("should support half-even (banker's rounding)", async () => {
+      const engine = await compile(morphQL`
+        from object to object
+        transform
+          set result = round(value, "half-even")
+      `);
+      // .5 rounds to nearest even
+      expect(engine({ value: 0.5 }).result).toBe(0); // 0 is even
+      expect(engine({ value: 1.5 }).result).toBe(2); // 2 is even
+      expect(engine({ value: 2.5 }).result).toBe(2); // 2 is even
+      expect(engine({ value: 3.5 }).result).toBe(4); // 4 is even
+      expect(engine({ value: 4.5 }).result).toBe(4); // 4 is even
+    });
+
+    it('should round non-.5 values the same in both modes', async () => {
+      const engine = await compile(morphQL`
+        from object to object
+        transform
+          set hu = round(value, "half-up")
+          set he = round(value, "half-even")
+      `);
+      // Non-.5 values behave identically
+      expect(engine({ value: 4.4 }).hu).toBe(4);
+      expect(engine({ value: 4.4 }).he).toBe(4);
+      expect(engine({ value: 4.6 }).hu).toBe(5);
+      expect(engine({ value: 4.6 }).he).toBe(5);
     });
   });
 

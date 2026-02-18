@@ -289,39 +289,39 @@ Backticks can be escaped with `\` when needed in a field name.
 
 Functions are used within expressions to calculate or transform values.
 
-| Function                              | Description                                                                                                        | Example                               |
-| :------------------------------------ | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
-| `substring(str, start, [length])`     | Extracts a part of a string. Supports negative indices.                                                            | `substring(sku, 0, 3)`                |
-| `if(cond, trueVal, falseVal)`         | Ternary-like expression.                                                                                           | `if(age >= 18, "adult", "minor")`     |
-| `text(val)`                           | Converts a value to a string.                                                                                      | `text(123)`                           |
-| `number(val)`                         | Converts a value to a number.                                                                                      | `number("42")`                        |
-| `replace(str, search, replace)`       | Replaces occurrences in a string.                                                                                  | `replace(name, " ", "_")`             |
-| `split(str, [sep], [limit])`          | Splits a string into an array. Default separator is `""`.                                                          | `split(sku, "-")`                     |
-| `extractnumber(str)`                  | Extracts the first numeric sequence from a string.                                                                 | `extractnumber("Price: 100USD")`      |
-| `uppercase(str)`                      | Converts string to uppercase.                                                                                      | `uppercase("hello")`                  |
-| `lowercase(str)`                      | Converts string to lowercase.                                                                                      | `lowercase("HELLO")`                  |
-| `trim(str)`                           | Removes leading and trailing whitespace.                                                                           | `trim("  hello  ")`                   |
-| `padstart(str, len, [char])`          | Pads the start of a string to a target length.                                                                     | `padstart(id, 8, "0")`                |
-| `padend(str, len, [char])`            | Pads the end of a string to a target length.                                                                       | `padend(name, 20)`                    |
-| `indexof(str, search)`                | Returns index of first occurrence, or -1 if not found.                                                             | `indexof(code, "SKU-")`               |
-| `startswith(str, prefix)`             | Returns true if the string starts with the given prefix.                                                           | `startswith(code, "SKU-")`            |
-| `endswith(str, suffix)`               | Returns true if the string ends with the given suffix.                                                             | `endswith(file, ".xml")`              |
-| `floor(val)`                          | Rounds a number down to the nearest integer.                                                                       | `floor(4.9)`                          |
-| `ceil(val)`                           | Rounds a number up to the nearest integer.                                                                         | `ceil(4.1)`                           |
-| `round(val)`                          | Rounds a number to the nearest integer.                                                                            | `round(4.5)`                          |
-| `abs(val)`                            | Returns the absolute value of a number.                                                                            | `abs(-42)`                            |
-| `fixed(val, [decimals])`              | Formats a number to fixed decimal places with half-away-from-zero rounding. Returns a string. Default: 2 decimals. | `fixed(price, 2)`                     |
-| `min(a, b, ...)`                      | Returns the smallest of two or more numbers.                                                                       | `min(price, 100)`                     |
-| `max(a, b, ...)`                      | Returns the largest of two or more numbers.                                                                        | `max(0, discount)`                    |
-| `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.                                                             | `xmlnode(content, "id", 1)`           |
-| `to_base64(val)`                      | Encodes a string to Base64 (isomorphic).                                                                           | `to_base64("hello")`                  |
-| `from_base64(val)`                    | Decodes a Base64 string (isomorphic).                                                                              | `from_base64("aGVsbG8=")`             |
-| `aslist(val)`                         | Ensures a value is an array (useful for XML parsing).                                                              | `aslist(items)`                       |
-| `spreadsheet(array)`                  | Transforms an array of objects into a list of row objects.                                                         | `spreadsheet(rows)`                   |
-| `unpack(str, spec...)`                | Extracts fields from fixed-length string. Spec pattern: `name:start:len[:raw]`.                                    | `unpack(source, "id:0:5")`            |
-| `extract(obj, spec...)`               | Extracts fields from an object. Spec: `"key"` or `"target:source"`.                                                | `extract(src, "id", "name:fullName")` |
-| `pack(obj, spec...)`                  | Encodes object to fixed-length string. Spec pattern: `name:start:len[:left]`.                                      | `pack(target, "id:0:5:left")`         |
-| `concat(arg1, arg2...)`               | Concatenates two or more arrays into one.                                                                          | `concat(list1, list2)`                |
+| Function                              | Description                                                                                                        | Example                                  |
+| :------------------------------------ | :----------------------------------------------------------------------------------------------------------------- | :--------------------------------------- |
+| `substring(str, start, [length])`     | Extracts a part of a string. Supports negative indices.                                                            | `substring(sku, 0, 3)`                   |
+| `if(cond, trueVal, falseVal)`         | Ternary-like expression.                                                                                           | `if(age >= 18, "adult", "minor")`        |
+| `text(val)`                           | Converts a value to a string.                                                                                      | `text(123)`                              |
+| `number(val)`                         | Converts a value to a number.                                                                                      | `number("42")`                           |
+| `replace(str, search, replace)`       | Replaces occurrences in a string.                                                                                  | `replace(name, " ", "_")`                |
+| `split(str, [sep], [limit])`          | Splits a string into an array. Default separator is `""`.                                                          | `split(sku, "-")`                        |
+| `extractnumber(str)`                  | Extracts the first numeric sequence from a string.                                                                 | `extractnumber("Price: 100USD")`         |
+| `uppercase(str)`                      | Converts string to uppercase.                                                                                      | `uppercase("hello")`                     |
+| `lowercase(str)`                      | Converts string to lowercase.                                                                                      | `lowercase("HELLO")`                     |
+| `trim(str)`                           | Removes leading and trailing whitespace.                                                                           | `trim("  hello  ")`                      |
+| `padstart(str, len, [char])`          | Pads the start of a string to a target length.                                                                     | `padstart(id, 8, "0")`                   |
+| `padend(str, len, [char])`            | Pads the end of a string to a target length.                                                                       | `padend(name, 20)`                       |
+| `indexof(str, search)`                | Returns index of first occurrence, or -1 if not found.                                                             | `indexof(code, "SKU-")`                  |
+| `startswith(str, prefix)`             | Returns true if the string starts with the given prefix.                                                           | `startswith(code, "SKU-")`               |
+| `endswith(str, suffix)`               | Returns true if the string ends with the given suffix.                                                             | `endswith(file, ".xml")`                 |
+| `floor(val)`                          | Rounds a number down to the nearest integer.                                                                       | `floor(4.9)`                             |
+| `ceil(val)`                           | Rounds a number up to the nearest integer.                                                                         | `ceil(4.1)`                              |
+| `round(val, [mode])`                  | Rounds to nearest integer. `mode`: `"half-up"` (default) or `"half-even"` (banker's).                              | `round(4.5)` / `round(4.5, "half-even")` |
+| `abs(val)`                            | Returns the absolute value of a number.                                                                            | `abs(-42)`                               |
+| `fixed(val, [decimals])`              | Formats a number to fixed decimal places with half-away-from-zero rounding. Returns a string. Default: 2 decimals. | `fixed(price, 2)`                        |
+| `min(a, b, ...)`                      | Returns the smallest of two or more numbers.                                                                       | `min(price, 100)`                        |
+| `max(a, b, ...)`                      | Returns the largest of two or more numbers.                                                                        | `max(0, discount)`                       |
+| `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.                                                             | `xmlnode(content, "id", 1)`              |
+| `to_base64(val)`                      | Encodes a string to Base64 (isomorphic).                                                                           | `to_base64("hello")`                     |
+| `from_base64(val)`                    | Decodes a Base64 string (isomorphic).                                                                              | `from_base64("aGVsbG8=")`                |
+| `aslist(val)`                         | Ensures a value is an array (useful for XML parsing).                                                              | `aslist(items)`                          |
+| `spreadsheet(array)`                  | Transforms an array of objects into a list of row objects.                                                         | `spreadsheet(rows)`                      |
+| `unpack(str, spec...)`                | Extracts fields from fixed-length string. Spec pattern: `name:start:len[:raw]`.                                    | `unpack(source, "id:0:5")`               |
+| `extract(obj, spec...)`               | Extracts fields from an object. Spec: `"key"` or `"target:source"`.                                                | `extract(src, "id", "name:fullName")`    |
+| `pack(obj, spec...)`                  | Encodes object to fixed-length string. Spec pattern: `name:start:len[:left]`.                                      | `pack(target, "id:0:5:left")`            |
+| `concat(arg1, arg2...)`               | Concatenates two or more arrays into one.                                                                          | `concat(list1, list2)`                   |
 
 ---
 
