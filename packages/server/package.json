@@ -1,6 +1,6 @@
 {
   "name": "@morphql/server",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "MorphQL Server Core - Headless transformation engine",
   "author": "Hyperwindmill",
   "private": false,
@@ -29,10 +29,10 @@
     "js-yaml": "^4.1.1"
   },
   "peerDependencies": {
-    "@morphql/core": "^0.1.26"
+    "@morphql/core": "^0.1.27"
   },
   "devDependencies": {
-    "@morphql/core": "^0.1.26",
+    "@morphql/core": "^0.1.27",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.2.0",
     "typescript": "^5.9.3",
