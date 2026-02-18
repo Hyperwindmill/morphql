@@ -234,6 +234,150 @@ export const FUNCTIONS: FunctionDef[] = [
       example: "array(1, 2, 3)  // [1, 2, 3]",
     },
   },
+
+  // ── Math functions ────────────────────────────────────────────────────────
+  {
+    name: "floor",
+    doc: {
+      signature: "floor(value)",
+      description: "Rounds a number down to the nearest integer.",
+      parameters: [{ name: "value", description: "The number to round down" }],
+      returns: "number",
+      example: "floor(4.9)  // 4",
+    },
+  },
+  {
+    name: "ceil",
+    doc: {
+      signature: "ceil(value)",
+      description: "Rounds a number up to the nearest integer.",
+      parameters: [{ name: "value", description: "The number to round up" }],
+      returns: "number",
+      example: "ceil(4.1)  // 5",
+    },
+  },
+  {
+    name: "round",
+    doc: {
+      signature: "round(value)",
+      description: "Rounds a number to the nearest integer.",
+      parameters: [{ name: "value", description: "The number to round" }],
+      returns: "number",
+      example: "round(4.5)  // 5",
+    },
+  },
+  {
+    name: "abs",
+    doc: {
+      signature: "abs(value)",
+      description: "Returns the absolute value of a number.",
+      parameters: [{ name: "value", description: "The number" }],
+      returns: "number",
+      example: "abs(-42)  // 42",
+    },
+  },
+  {
+    name: "min",
+    doc: {
+      signature: "min(a, b, ...)",
+      description: "Returns the smallest of two or more numbers.",
+      parameters: [{ name: "a, b, ...", description: "Numbers to compare" }],
+      returns: "number",
+      example: "min(3, 1, 4)  // 1",
+    },
+  },
+  {
+    name: "max",
+    doc: {
+      signature: "max(a, b, ...)",
+      description: "Returns the largest of two or more numbers.",
+      parameters: [{ name: "a, b, ...", description: "Numbers to compare" }],
+      returns: "number",
+      example: "max(3, 1, 4)  // 4",
+    },
+  },
+
+  // ── String functions ──────────────────────────────────────────────────────
+  {
+    name: "trim",
+    doc: {
+      signature: "trim(str)",
+      description: "Removes leading and trailing whitespace from a string.",
+      parameters: [{ name: "str", description: "The string to trim" }],
+      returns: "string",
+      example: 'trim("  hello  ")  // "hello"',
+    },
+  },
+  {
+    name: "padstart",
+    doc: {
+      signature: "padstart(str, length, [char])",
+      description:
+        "Pads the start of a string with a character until it reaches the target length.",
+      parameters: [
+        { name: "str", description: "The string to pad" },
+        { name: "length", description: "Target total length" },
+        { name: "char", description: '(Optional) Pad character. Default: " "' },
+      ],
+      returns: "string",
+      example: 'padstart(id, 8, "0")  // "00000042"',
+    },
+  },
+  {
+    name: "padend",
+    doc: {
+      signature: "padend(str, length, [char])",
+      description:
+        "Pads the end of a string with a character until it reaches the target length.",
+      parameters: [
+        { name: "str", description: "The string to pad" },
+        { name: "length", description: "Target total length" },
+        { name: "char", description: '(Optional) Pad character. Default: " "' },
+      ],
+      returns: "string",
+      example: 'padend(name, 20)  // "Alice               "',
+    },
+  },
+  {
+    name: "indexof",
+    doc: {
+      signature: "indexof(str, search)",
+      description:
+        "Returns the index of the first occurrence of a substring. Returns -1 if not found.",
+      parameters: [
+        { name: "str", description: "The string to search in" },
+        { name: "search", description: "The substring to find" },
+      ],
+      returns: "number",
+      example: 'indexof("hello world", "world")  // 6',
+    },
+  },
+  {
+    name: "startswith",
+    doc: {
+      signature: "startswith(str, prefix)",
+      description: "Returns true if the string starts with the given prefix.",
+      parameters: [
+        { name: "str", description: "The string to check" },
+        { name: "prefix", description: "The prefix to look for" },
+      ],
+      returns: "boolean",
+      example: 'startswith("hello", "he")  // true',
+    },
+  },
+  {
+    name: "endswith",
+    doc: {
+      signature: "endswith(str, suffix)",
+      description: "Returns true if the string ends with the given suffix.",
+      parameters: [
+        { name: "str", description: "The string to check" },
+        { name: "suffix", description: "The suffix to look for" },
+      ],
+      returns: "boolean",
+      example: 'endswith("hello", "lo")  // true',
+    },
+  },
 ];
 
 // Helper to get all function names

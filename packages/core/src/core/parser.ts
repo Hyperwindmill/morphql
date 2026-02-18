@@ -195,6 +195,7 @@ export class MorphParser extends CstParser {
       this.OR([
         { ALT: () => this.CONSUME(t.Times, { LABEL: 'ops' }) },
         { ALT: () => this.CONSUME(t.Divide, { LABEL: 'ops' }) },
+        { ALT: () => this.CONSUME(t.Modulo, { LABEL: 'ops' }) },
       ]);
       this.SUBRULE1(this.unaryExpression, { LABEL: 'rhs' });
     });

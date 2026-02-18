@@ -213,4 +213,65 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     // Pass safeMode from compiler to runtime function
     return `env.functions.extract(${source}, ${compiler.safeMode}, ${rest.join(', ')})`;
   },
+
+  // ── Math functions ──────────────────────────────────────────────────────────
+  floor: (args: string[], _compiler) => {
+    if (args.length !== 1) throw new Error('floor() requires exactly 1 argument');
+    return `Math.floor(${args[0]})`;
+  },
+  ceil: (args: string[], _compiler) => {
+    if (args.length !== 1) throw new Error('ceil() requires exactly 1 argument');
+    return `Math.ceil(${args[0]})`;
+  },
+  round: (args: string[], _compiler) => {
+    if (args.length !== 1) throw new Error('round() requires exactly 1 argument');
+    return `Math.round(${args[0]})`;
+  },
+  abs: (args: string[], _compiler) => {
+    if (args.length !== 1) throw new Error('abs() requires exactly 1 argument');
+    return `Math.abs(${args[0]})`;
+  },
+  min: (args: string[], _compiler) => {
+    if (args.length < 2) throw new Error('min() requires at least 2 arguments');
+    return `Math.min(${args.join(', ')})`;
+  },
+  max: (args: string[], _compiler) => {
+    if (args.length < 2) throw new Error('max() requires at least 2 arguments');
+    return `Math.max(${args.join(', ')})`;
+  },
+
+  // ── String functions ─────────────────────────────────────────────────────────
+  trim: (args: string[], _compiler) => {
+    if (args.length !== 1) throw new Error('trim() requires exactly 1 argument');
+    return `String(${args[0]}).trim()`;
+  },
+  padstart: (args: string[], _compiler) => {
+    if (args.length < 2)
+      throw new Error('padstart() requires at least 2 arguments (str, length, [char])');
+    const [str, len, char] = args;
+    return char !== undefined
+      ? `String(${str}).padStart(${len}, ${char})`
+      : `String(${str}).padStart(${len})`;
+  },
+  padend: (args: string[], _compiler) => {
+    if (args.length < 2)
+      throw new Error('padend() requires at least 2 arguments (str, length, [char])');
+    const [str, len, char] = args;
+    return char !== undefined
+      ? `String(${str}).padEnd(${len}, ${char})`
+      : `String(${str}).padEnd(${len})`;
+  },
+  indexof: (args: string[], _compiler) => {
+    if (args.length !== 2) throw new Error('indexof() requires exactly 2 arguments (str, search)');
+    return `String(${args[0]}).indexOf(${args[1]})`;
+  },
+  startswith: (args: string[], _compiler) => {
+    if (args.length !== 2)
+      throw new Error('startswith() requires exactly 2 arguments (str, prefix)');
+    return `String(${args[0]}).startsWith(${args[1]})`;
+  },
+  endswith: (args: string[], _compiler) => {
+    if (args.length !== 2) throw new Error('endswith() requires exactly 2 arguments (str, suffix)');
+    return `String(${args[0]}).endsWith(${args[1]})`;
+  },
 };

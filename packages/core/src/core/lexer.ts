@@ -80,6 +80,7 @@ export const Plus = createToken({ name: 'Plus', pattern: /\+/ });
 export const Minus = createToken({ name: 'Minus', pattern: /-/ });
 export const Times = createToken({ name: 'Times', pattern: /\*/ });
 export const Divide = createToken({ name: 'Divide', pattern: /\// });
+export const Modulo = createToken({ name: 'Modulo', pattern: /%/ });
 export const LParen = createToken({ name: 'LParen', pattern: /\(/ });
 export const RParen = createToken({ name: 'RParen', pattern: /\)/ });
 export const Comma = createToken({ name: 'Comma', pattern: /,/ });
@@ -135,6 +136,7 @@ export const allTokens = [
   Minus,
   Times,
   Divide,
+  Modulo,
   LParen,
   RParen,
   Comma,

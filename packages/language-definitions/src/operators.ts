@@ -29,6 +29,7 @@ export const OPERATORS: OperatorDef[] = [
   { symbol: "-", category: "arithmetic", precedence: 10 },
   { symbol: "*", category: "arithmetic", precedence: 11 },
   { symbol: "/", category: "arithmetic", precedence: 11 },
+  { symbol: "%", category: "arithmetic", precedence: 11 },
 
   // Assignment
   { symbol: "=", category: "assignment", precedence: 1 },

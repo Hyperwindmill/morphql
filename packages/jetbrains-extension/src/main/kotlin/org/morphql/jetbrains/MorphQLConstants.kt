@@ -40,7 +40,19 @@ object MorphQLConstants {
         "unpack",
         "pack",
         "list",
-        "array"
+        "array",
+        "floor",
+        "ceil",
+        "round",
+        "abs",
+        "min",
+        "max",
+        "trim",
+        "padstart",
+        "padend",
+        "indexof",
+        "startswith",
+        "endswith"
     )
 
     val OPERATORS = setOf(
@@ -59,6 +71,7 @@ object MorphQLConstants {
         "-",
         "*",
         "/",
+        "%",
         "="
     )
 }

@@ -298,6 +298,18 @@ Functions are used within expressions to calculate or transform values.
 | `extractnumber(str)`                  | Extracts the first numeric sequence from a string.                              | `extractnumber("Price: 100USD")`      |
 | `uppercase(str)`                      | Converts string to uppercase.                                                   | `uppercase("hello")`                  |
 | `lowercase(str)`                      | Converts string to lowercase.                                                   | `lowercase("HELLO")`                  |
+| `trim(str)`                           | Removes leading and trailing whitespace.                                        | `trim("  hello  ")`                   |
+| `padstart(str, len, [char])`          | Pads the start of a string to a target length.                                  | `padstart(id, 8, "0")`                |
+| `padend(str, len, [char])`            | Pads the end of a string to a target length.                                    | `padend(name, 20)`                    |
+| `indexof(str, search)`                | Returns index of first occurrence, or -1 if not found.                          | `indexof(code, "SKU-")`               |
+| `startswith(str, prefix)`             | Returns true if the string starts with the given prefix.                        | `startswith(code, "SKU-")`            |
+| `endswith(str, suffix)`               | Returns true if the string ends with the given suffix.                          | `endswith(file, ".xml")`              |
+| `floor(val)`                          | Rounds a number down to the nearest integer.                                    | `floor(4.9)`                          |
+| `ceil(val)`                           | Rounds a number up to the nearest integer.                                      | `ceil(4.1)`                           |
+| `round(val)`                          | Rounds a number to the nearest integer.                                         | `round(4.5)`                          |
+| `abs(val)`                            | Returns the absolute value of a number.                                         | `abs(-42)`                            |
+| `min(a, b, ...)`                      | Returns the smallest of two or more numbers.                                    | `min(price, 100)`                     |
+| `max(a, b, ...)`                      | Returns the largest of two or more numbers.                                     | `max(0, discount)`                    |
 | `xmlnode(val, [attrKey, attrVal...])` | Wraps a value for XML output with optional attributes.                          | `xmlnode(content, "id", 1)`           |
 | `to_base64(val)`                      | Encodes a string to Base64 (isomorphic).                                        | `to_base64("hello")`                  |
 | `from_base64(val)`                    | Decodes a Base64 string (isomorphic).                                           | `from_base64("aGVsbG8=")`             |
@@ -320,6 +332,7 @@ Functions are used within expressions to calculate or transform values.
 | `-`      | Subtraction / Unary minus       |
 | `*`      | Multiplication                  |
 | `/`      | Division                        |
+| `%`      | Modulo / Remainder              |
 
 ### Comparison
 

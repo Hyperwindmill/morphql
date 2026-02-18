@@ -219,6 +219,78 @@ substring("Hello World", -5)     // "World"</pre>
             Alias for `list()`. Creates an array from the given arguments.<br/><br/>
             <b>Parameters:</b><ul><li><b>values:</b> Values to include in the array</li></ul>
             <b>Example:</b><pre>array(1, 2, 3)  // [1, 2, 3]</pre>
+        """.trimIndent(),
+        "floor" to """
+            <b>floor(value)</b><br/>
+            Rounds a number down to the nearest integer.<br/><br/>
+            <b>Parameters:</b><ul><li><b>value:</b> The number to round down</li></ul>
+            <b>Example:</b><pre>floor(4.9)  // 4</pre>
+        """.trimIndent(),
+        "ceil" to """
+            <b>ceil(value)</b><br/>
+            Rounds a number up to the nearest integer.<br/><br/>
+            <b>Parameters:</b><ul><li><b>value:</b> The number to round up</li></ul>
+            <b>Example:</b><pre>ceil(4.1)  // 5</pre>
+        """.trimIndent(),
+        "round" to """
+            <b>round(value)</b><br/>
+            Rounds a number to the nearest integer.<br/><br/>
+            <b>Parameters:</b><ul><li><b>value:</b> The number to round</li></ul>
+            <b>Example:</b><pre>round(4.5)  // 5</pre>
+        """.trimIndent(),
+        "abs" to """
+            <b>abs(value)</b><br/>
+            Returns the absolute value of a number.<br/><br/>
+            <b>Parameters:</b><ul><li><b>value:</b> The number</li></ul>
+            <b>Example:</b><pre>abs(-42)  // 42</pre>
+        """.trimIndent(),
+        "min" to """
+            <b>min(a, b, ...)</b><br/>
+            Returns the smallest of two or more numbers.<br/><br/>
+            <b>Parameters:</b><ul><li><b>a, b, ...:</b> Numbers to compare</li></ul>
+            <b>Example:</b><pre>min(3, 1, 4)  // 1</pre>
+        """.trimIndent(),
+        "max" to """
+            <b>max(a, b, ...)</b><br/>
+            Returns the largest of two or more numbers.<br/><br/>
+            <b>Parameters:</b><ul><li><b>a, b, ...:</b> Numbers to compare</li></ul>
+            <b>Example:</b><pre>max(3, 1, 4)  // 4</pre>
+        """.trimIndent(),
+        "trim" to """
+            <b>trim(str)</b><br/>
+            Removes leading and trailing whitespace from a string.<br/><br/>
+            <b>Parameters:</b><ul><li><b>str:</b> The string to trim</li></ul>
+            <b>Example:</b><pre>trim("  hello  ")  // "hello"</pre>
+        """.trimIndent(),
+        "padstart" to """
+            <b>padstart(str, length, [char])</b><br/>
+            Pads the start of a string with a character until it reaches the target length.<br/><br/>
+            <b>Parameters:</b><ul><li><b>str:</b> The string to pad</li><li><b>length:</b> Target total length</li><li><b>char:</b> (Optional) Pad character. Default: " "</li></ul>
+            <b>Example:</b><pre>padstart(id, 8, "0")  // "00000042"</pre>
+        """.trimIndent(),
+        "padend" to """
+            <b>padend(str, length, [char])</b><br/>
+            Pads the end of a string with a character until it reaches the target length.<br/><br/>
+            <b>Parameters:</b><ul><li><b>str:</b> The string to pad</li><li><b>length:</b> Target total length</li><li><b>char:</b> (Optional) Pad character. Default: " "</li></ul>
+            <b>Example:</b><pre>padend(name, 20)  // "Alice               "</pre>
+        """.trimIndent(),
+        "indexof" to """
+            <b>indexof(str, search)</b><br/>
+            Returns the index of the first occurrence of a substring. Returns -1 if not found.<br/><br/>
+            <b>Parameters:</b><ul><li><b>str:</b> The string to search in</li><li><b>search:</b> The substring to find</li></ul>
+            <b>Example:</b><pre>indexof("hello world", "world")  // 6</pre>
+        """.trimIndent(),
+        "startswith" to """
+            <b>startswith(str, prefix)</b><br/>
+            Returns true if the string starts with the given prefix.<br/><br/>
+            <b>Parameters:</b><ul><li><b>str:</b> The string to check</li><li><b>prefix:</b> The prefix to look for</li></ul>
+            <b>Example:</b><pre>startswith("hello", "he")  // true</pre>
+        """.trimIndent(),
+        "endswith" to """
+            <b>endswith(str, suffix)</b><br/>
+            Returns true if the string ends with the given suffix.<br/><br/>
+            <b>Parameters:</b><ul><li><b>str:</b> The string to check</li><li><b>suffix:</b> The suffix to look for</li></ul>
+            <b>Example:</b><pre>endswith("hello", "lo")  // true</pre>
         """.trimIndent()
     )
 }

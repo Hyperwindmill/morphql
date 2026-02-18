@@ -525,11 +525,28 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           'lowercase',
           'to_base64',
           'from_base64',
+          'trim',
+          'padstart',
+          'padend',
         ].includes(name)
       ) {
         this.lastInferredType = 'string';
-      } else if (['number', 'extractnumber'].includes(name)) {
+      } else if (
+        [
+          'number',
+          'extractnumber',
+          'floor',
+          'ceil',
+          'round',
+          'abs',
+          'min',
+          'max',
+          'indexof',
+        ].includes(name)
+      ) {
         this.lastInferredType = 'number';
+      } else if (['startswith', 'endswith'].includes(name)) {
+        this.lastInferredType = 'boolean';
       } else if (['aslist', 'transpose', 'list', 'array'].includes(name)) {
         this.lastInferredType = 'array';
       } else if (name === 'asobject') {
