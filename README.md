@@ -31,8 +31,6 @@
 
 ## The Problem
 
-> _"I was tired of rewriting one-off data consumers for every integration."_
-
 In modern software development, data transformation is everywhere. Whether you're shaping API responses, processing ETL pipelines, or integrating third-party services, you inevitably face:
 
 - **Complex mapping logic** scattered across your codebase.
