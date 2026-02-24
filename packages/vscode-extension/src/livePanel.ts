@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { compile } from "@morphql/core";
 
 const SETTINGS_DIR = ".morphql-extension";
 const SETTINGS_FILE = "panel-settings.json";
@@ -43,10 +42,7 @@ export class MorphQLLivePanel {
 
   private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
     this.panel = panel;
-    this.panel.webview.html = this.getWebviewContent(
-      panel.webview,
-      extensionUri,
-    );
+    this.panel.webview.html = this.getWebviewContent(panel.webview, extensionUri);
 
     // Messages from WebView
     this.panel.webview.onDidReceiveMessage(
@@ -93,10 +89,7 @@ export class MorphQLLivePanel {
     // Re-run when the source file is saved inside VS Code
     this.disposables.push(
       vscode.workspace.onDidSaveTextDocument((document) => {
-        if (
-          this.sourceFilePath &&
-          document.fileName === this.sourceFilePath
-        ) {
+        if (this.sourceFilePath && document.fileName === this.sourceFilePath) {
           this.triggerUpdate();
         }
       }),
@@ -304,32 +297,14 @@ export class MorphQLLivePanel {
       }
     }
 
-    try {
-      const engine = await compile(query, { analyze: true } as any);
-      const output = (engine as any)(sourceData);
-      const result =
-        typeof output === "string" ? output : JSON.stringify(output, null, 2);
-
-      this.panel.webview.postMessage({
-        type: "update",
-        fileName,
-        sourceFileName,
-        result,
-        generatedCode: (engine as any).code ?? "",
-        error: null,
-        analysis: (engine as any).analysis ?? null,
-      });
-    } catch (err: any) {
-      this.panel.webview.postMessage({
-        type: "update",
-        fileName,
-        sourceFileName,
-        result: "",
-        generatedCode: "",
-        error: err.message ?? String(err),
-        analysis: null,
-      });
-    }
+    // Send raw data — the panel's bundled JS handles compilation and display
+    this.panel.webview.postMessage({
+      type: "data",
+      query,
+      sourceData,
+      fileName,
+      sourceFileName,
+    });
   }
 
   // ── WebView HTML ─────────────────────────────────────────────────────────
@@ -341,11 +316,8 @@ export class MorphQLLivePanel {
     const media = (file: string) =>
       webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, "media", file));
 
+    const panelJs = media("panel.iife.js");
     const prismCss = media("prism-tomorrow.min.css");
-    const prismJs = media("prism.js");
-    const prismJsLang = media("prism-javascript.js");
-    const prismJsonLang = media("prism-json.js");
-    const prismMarkupLang = media("prism-markup.js");
     const cspSource = webview.cspSource;
 
     return /* html */ `<!DOCTYPE html>
@@ -353,7 +325,7 @@ export class MorphQLLivePanel {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource} 'unsafe-inline'; script-src ${cspSource} 'unsafe-inline';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource} 'unsafe-inline'; script-src ${cspSource} 'unsafe-eval';">
   <link rel="stylesheet" href="${prismCss}">
   <title>MorphQL Live</title>
   <style>
@@ -592,188 +564,7 @@ export class MorphQLLivePanel {
     </div>
   </div>
 
-  <script>
-    const vscode = acquireVsCodeApi();
-
-    // ── Tab switching ──
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('pane-' + tab.dataset.pane).classList.add('active');
-      });
-    });
-
-    // ── Source file buttons ──
-    document.getElementById('btn-open-source').addEventListener('click', () => {
-      vscode.postMessage({ type: 'openSourceFile' });
-    });
-    document.getElementById('btn-change-source').addEventListener('click', () => {
-      vscode.postMessage({ type: 'selectSourceFile' });
-    });
-
-    // ── Messages from extension ──
-    window.addEventListener('message', ({ data: msg }) => {
-      if (msg.type === 'noQuery') {
-        document.getElementById('filename').textContent = 'No MorphQL file active';
-        setStatus('idle', 'Idle');
-        setSourceFile(null);
-        showEmpty();
-        resetCode();
-        renderStructure(null);
-        return;
-      }
-
-      if (msg.type === 'update') {
-        document.getElementById('filename').textContent = msg.fileName;
-        setSourceFile(msg.sourceFileName);
-
-        if (msg.error) {
-          setStatus('err', 'Error');
-          showError(msg.error);
-        } else {
-          setStatus('ok', 'OK');
-          showOutput(msg.result);
-        }
-
-        if (msg.generatedCode) {
-          document.getElementById('code-empty').style.display = 'none';
-          document.getElementById('code-output').style.display = 'block';
-          const codeInner = document.getElementById('code-code');
-          codeInner.textContent = msg.generatedCode;
-          Prism.highlightElement(codeInner);
-        } else {
-          resetCode();
-        }
-
-        renderStructure(msg.analysis);
-      }
-    });
-
-    function setSourceFile(name) {
-      const nameEl = document.getElementById('source-name');
-      const openBtn = document.getElementById('btn-open-source');
-      if (name) {
-        nameEl.textContent = name;
-        nameEl.classList.remove('none');
-        openBtn.style.display = '';
-      } else {
-        nameEl.textContent = 'no source file';
-        nameEl.classList.add('none');
-        openBtn.style.display = 'none';
-      }
-    }
-
-    function setStatus(cls, text) {
-      const el = document.getElementById('status');
-      el.className = 'status status-' + cls;
-      el.textContent = text;
-    }
-
-    function showEmpty() {
-      document.getElementById('result-empty').style.display = 'flex';
-      document.getElementById('result-output').style.display = 'none';
-      document.getElementById('result-error').style.display = 'none';
-    }
-
-    function detectLang(text) {
-      const t = text.trim();
-      if (t.startsWith('{') || t.startsWith('[')) return 'json';
-      if (t.startsWith('<')) return 'markup';
-      return 'plaintext';
-    }
-
-    function showOutput(text) {
-      document.getElementById('result-empty').style.display = 'none';
-      document.getElementById('result-output').style.display = 'block';
-      document.getElementById('result-error').style.display = 'none';
-      const codeEl = document.getElementById('result-code');
-      codeEl.textContent = text;
-      codeEl.className = 'language-' + detectLang(text);
-      Prism.highlightElement(codeEl);
-    }
-
-    function showError(msg) {
-      document.getElementById('result-empty').style.display = 'none';
-      document.getElementById('result-output').style.display = 'none';
-      document.getElementById('result-error').style.display = 'block';
-      document.getElementById('result-error-msg').textContent = msg;
-    }
-
-    function resetCode() {
-      document.getElementById('code-empty').style.display = 'flex';
-      document.getElementById('code-output').style.display = 'none';
-      document.getElementById('code-code').textContent = '';
-    }
-
-    // ── Structure tree ──
-    function renderStructure(analysis) {
-      const container = document.getElementById('structure-tree');
-      if (!analysis || (!analysis.source && !analysis.target)) {
-        container.innerHTML = '<div class="empty-state" style="padding:20px 0">No structure detected</div>';
-        return;
-      }
-      let html = '';
-      if (analysis.source) {
-        html += '<div class="tree-label">Input Structure</div>';
-        html += renderNode(analysis.source, null);
-      }
-      if (analysis.source && analysis.target) {
-        html += '<div class="tree-divider"></div>';
-      }
-      if (analysis.target) {
-        html += '<div class="tree-label">Output Structure</div>';
-        html += renderNode(analysis.target, null);
-      }
-      container.innerHTML = html;
-    }
-
-    function renderNode(node, name) {
-      if (!node) return '';
-      const hasProps = node.properties && Object.keys(node.properties).length > 0;
-      const hasItems = !!node.items;
-      const isLeaf = !hasProps && !hasItems;
-
-      const nameHtml = name != null
-        ? '<span class="fname">' + esc(name) + ':</span> '
-        : '';
-      const openBadge = node.isOpen ? '<span class="open-badge">(open)</span>' : '';
-      const typeHtml = '<span class="ftype t-' + esc(node.type || 'unknown') + '">'
-        + esc(node.type || 'unknown') + openBadge + '</span>';
-
-      if (isLeaf) {
-        return '<details class="leaf"><summary>'
-          + '<span class="leaf-spacer"></span>'
-          + nameHtml + typeHtml
-          + '</summary></details>';
-      }
-
-      let children = '';
-      if (hasProps) {
-        for (const [k, v] of Object.entries(node.properties)) {
-          children += renderNode(v, k);
-        }
-      }
-      if (hasItems) children += renderNode(node.items, 'items[]');
-
-      return '<details open><summary>'
-        + '<span class="chevron">▶</span>'
-        + nameHtml + typeHtml
-        + '</summary>' + children + '</details>';
-    }
-
-    function esc(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
-  </script>
-  <script src="${prismJs}"></script>
-  <script src="${prismMarkupLang}"></script>
-  <script src="${prismJsonLang}"></script>
-  <script src="${prismJsLang}"></script>
+  <script src="${panelJs}"></script>
 </body>
 </html>`;
   }

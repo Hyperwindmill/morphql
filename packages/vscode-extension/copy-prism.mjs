@@ -1,32 +1,39 @@
 /**
- * Copies the Prism.js files needed by the Live Panel WebView into media/.
- * Runs as part of the prebuild step so the files are available in the VSIX.
+ * Prebuild step for the VSCode extension.
+ *
+ * 1. Builds the shared @morphql/ide-panel bundle (panel.iife.js).
+ * 2. Copies panel.iife.js → media/
+ * 3. Copies Prism CSS theme → media/  (Prism JS is bundled inside panel.iife.js)
  */
 
 import { copyFile, mkdir } from "fs/promises";
 import { createRequire } from "module";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { execSync } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
-
-// Locate prismjs root (works in workspaces where it may be hoisted)
-const prismRoot = dirname(require.resolve("prismjs/package.json"));
 const mediaDir = join(__dirname, "media");
 
 await mkdir(mediaDir, { recursive: true });
 
-const files = [
-  ["prism.js", "prism.js"],
-  ["components/prism-javascript.js", "prism-javascript.js"],
-  ["components/prism-json.js", "prism-json.js"],
-  ["components/prism-markup.js", "prism-markup.js"],
-  ["themes/prism-tomorrow.min.css", "prism-tomorrow.min.css"],
-];
+// ── 1. Build ide-panel ────────────────────────────────────────────────
+const panelDir = join(__dirname, "../ide-panel");
+console.log("Building @morphql/ide-panel...");
+execSync("npm run build", { cwd: panelDir, stdio: "inherit" });
 
-for (const [src, dest] of files) {
-  await copyFile(join(prismRoot, src), join(mediaDir, dest));
-}
+// ── 2. Copy panel bundle ──────────────────────────────────────────────
+await copyFile(
+  join(panelDir, "dist/panel.iife.js"),
+  join(mediaDir, "panel.iife.js"),
+);
+console.log("✔ panel.iife.js copied to media/");
 
-console.log("✔ Prism files copied to media/");
+// ── 3. Copy Prism CSS only (JS is bundled inside panel.iife.js) ───────
+const prismRoot = dirname(require.resolve("prismjs/package.json"));
+await copyFile(
+  join(prismRoot, "themes/prism-tomorrow.min.css"),
+  join(mediaDir, "prism-tomorrow.min.css"),
+);
+console.log("✔ prism-tomorrow.min.css copied to media/");

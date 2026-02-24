@@ -141,8 +141,7 @@
   },
   "dependencies": {
     "@morphql/core": "file:../core",
-    "@morphql/language-definitions": "file:../language-definitions",
-    "prismjs": "^1.30.0"
+    "@morphql/language-definitions": "file:../language-definitions"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.0",

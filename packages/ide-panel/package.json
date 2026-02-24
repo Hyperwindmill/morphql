@@ -1,0 +1,19 @@
+{
+  "name": "@morphql/ide-panel",
+  "version": "0.1.28",
+  "private": true,
+  "type": "module",
+  "description": "Shared live-output panel for MorphQL IDE extensions (VSCode, JetBrains)",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@morphql/core": "file:../core",
+    "prismjs": "^1.30.0"
+  },
+  "devDependencies": {
+    "@types/prismjs": "^1.26.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.0.0"
+  }
+}
