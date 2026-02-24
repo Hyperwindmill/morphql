@@ -131,7 +131,7 @@
     }
   },
   "scripts": {
-    "prebuild": "npm run regenerate-grammar",
+    "prebuild": "node copy-prism.mjs && npm run regenerate-grammar",
     "vscode:prepublish": "npm run build",
     "build": "rollup -c",
     "compile": "rollup -c",
@@ -141,7 +141,8 @@
   },
   "dependencies": {
     "@morphql/core": "file:../core",
-    "@morphql/language-definitions": "file:../language-definitions"
+    "@morphql/language-definitions": "file:../language-definitions",
+    "prismjs": "^1.30.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.0",

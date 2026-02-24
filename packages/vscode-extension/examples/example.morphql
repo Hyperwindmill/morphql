@@ -1,5 +1,5 @@
 from json
-to xml("UserProfile")
+to object
 transform
   section profile(
     set customerId = id

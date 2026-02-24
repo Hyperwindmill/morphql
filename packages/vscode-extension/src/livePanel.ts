@@ -20,7 +20,7 @@ export class MorphQLLivePanel {
   private debounceTimer: NodeJS.Timeout | undefined;
   private disposables: vscode.Disposable[] = [];
 
-  static createOrShow(): void {
+  static createOrShow(extensionUri: vscode.Uri): void {
     if (MorphQLLivePanel.instance) {
       MorphQLLivePanel.instance.panel.reveal(vscode.ViewColumn.Beside);
       MorphQLLivePanel.instance.triggerUpdate();
@@ -31,15 +31,22 @@ export class MorphQLLivePanel {
       "morphqlLivePanel",
       "MorphQL Live",
       { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
-      { enableScripts: true, retainContextWhenHidden: true },
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+        localResourceRoots: [vscode.Uri.joinPath(extensionUri, "media")],
+      },
     );
 
-    MorphQLLivePanel.instance = new MorphQLLivePanel(panel);
+    MorphQLLivePanel.instance = new MorphQLLivePanel(panel, extensionUri);
   }
 
-  private constructor(panel: vscode.WebviewPanel) {
+  private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
     this.panel = panel;
-    this.panel.webview.html = this.getWebviewContent();
+    this.panel.webview.html = this.getWebviewContent(
+      panel.webview,
+      extensionUri,
+    );
 
     // Messages from WebView
     this.panel.webview.onDidReceiveMessage(
@@ -327,13 +334,27 @@ export class MorphQLLivePanel {
 
   // ── WebView HTML ─────────────────────────────────────────────────────────
 
-  private getWebviewContent(): string {
+  private getWebviewContent(
+    webview: vscode.Webview,
+    extensionUri: vscode.Uri,
+  ): string {
+    const media = (file: string) =>
+      webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, "media", file));
+
+    const prismCss = media("prism-tomorrow.min.css");
+    const prismJs = media("prism.js");
+    const prismJsLang = media("prism-javascript.js");
+    const prismJsonLang = media("prism-json.js");
+    const prismMarkupLang = media("prism-markup.js");
+    const cspSource = webview.cspSource;
+
     return /* html */ `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource} 'unsafe-inline'; script-src ${cspSource} 'unsafe-inline';">
+  <link rel="stylesheet" href="${prismCss}">
   <title>MorphQL Live</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -453,6 +474,15 @@ export class MorphQLLivePanel {
       word-break: break-all;
     }
 
+    /* Prism overrides — use VS Code background, no text shadows */
+    pre[class*="language-"],
+    code[class*="language-"] {
+      background: transparent !important;
+      text-shadow: none !important;
+      font-family: var(--vscode-editor-font-family, 'Consolas', monospace) !important;
+      font-size: 12px !important;
+    }
+
     .error-box {
       margin: 12px;
       padding: 10px 14px;
@@ -545,14 +575,15 @@ export class MorphQLLivePanel {
   <div class="content">
     <div class="pane active" id="pane-result">
       <div class="empty-state" id="result-empty">Open a .morphql file to see live output</div>
-      <pre id="result-output" style="display:none"></pre>
+      <pre id="result-output" style="display:none"><code id="result-code" class="language-plaintext"></code></pre>
       <div class="error-box" id="result-error" style="display:none">
         <div class="error-label">Compilation / Execution Error</div>
         <div id="result-error-msg"></div>
       </div>
     </div>
     <div class="pane" id="pane-code">
-      <pre id="code-output" style="opacity:0.45;font-style:italic">Successful compilation required.</pre>
+      <div class="empty-state" id="code-empty">Successful compilation required.</div>
+      <pre id="code-output" style="display:none"><code id="code-code" class="language-javascript"></code></pre>
     </div>
     <div class="pane" id="pane-structure">
       <div class="tree" id="structure-tree">
@@ -606,10 +637,12 @@ export class MorphQLLivePanel {
           showOutput(msg.result);
         }
 
-        const codeEl = document.getElementById('code-output');
         if (msg.generatedCode) {
-          codeEl.style.cssText = '';
-          codeEl.textContent = msg.generatedCode;
+          document.getElementById('code-empty').style.display = 'none';
+          document.getElementById('code-output').style.display = 'block';
+          const codeInner = document.getElementById('code-code');
+          codeInner.textContent = msg.generatedCode;
+          Prism.highlightElement(codeInner);
         } else {
           resetCode();
         }
@@ -644,11 +677,21 @@ export class MorphQLLivePanel {
       document.getElementById('result-error').style.display = 'none';
     }
 
+    function detectLang(text) {
+      const t = text.trim();
+      if (t.startsWith('{') || t.startsWith('[')) return 'json';
+      if (t.startsWith('<')) return 'markup';
+      return 'plaintext';
+    }
+
     function showOutput(text) {
       document.getElementById('result-empty').style.display = 'none';
       document.getElementById('result-output').style.display = 'block';
-      document.getElementById('result-output').textContent = text;
       document.getElementById('result-error').style.display = 'none';
+      const codeEl = document.getElementById('result-code');
+      codeEl.textContent = text;
+      codeEl.className = 'language-' + detectLang(text);
+      Prism.highlightElement(codeEl);
     }
 
     function showError(msg) {
@@ -659,9 +702,9 @@ export class MorphQLLivePanel {
     }
 
     function resetCode() {
-      const el = document.getElementById('code-output');
-      el.style.cssText = 'opacity:0.45;font-style:italic';
-      el.textContent = 'Successful compilation required.';
+      document.getElementById('code-empty').style.display = 'flex';
+      document.getElementById('code-output').style.display = 'none';
+      document.getElementById('code-code').textContent = '';
     }
 
     // ── Structure tree ──
@@ -727,6 +770,10 @@ export class MorphQLLivePanel {
         .replace(/>/g, '&gt;');
     }
   </script>
+  <script src="${prismJs}"></script>
+  <script src="${prismMarkupLang}"></script>
+  <script src="${prismJsonLang}"></script>
+  <script src="${prismJsLang}"></script>
 </body>
 </html>`;
   }

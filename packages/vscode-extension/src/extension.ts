@@ -139,7 +139,7 @@ export function activate(context: vscode.ExtensionContext) {
   // Register command: Open Live Panel
   const openLivePanel = vscode.commands.registerCommand(
     "morphql.openLivePanel",
-    () => MorphQLLivePanel.createOrShow(),
+    () => MorphQLLivePanel.createOrShow(context.extensionUri),
   );
 
   context.subscriptions.push(
