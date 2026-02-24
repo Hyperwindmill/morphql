@@ -1,3 +1,68 @@
 {
-    "customer":{"id":1}
+  "customer": {
+    "id": "CUST-001",
+    "name": "Jane Doe",
+    "isActive": true,
+    "contact": {
+      "email": "jane.doe@example.com",
+      "phone": "+1-555-0199"
+    },
+    "addresses": [
+      {
+        "type": "billing",
+        "street": "123 Main St",
+        "city": "Metropolis",
+        "zip": "10001",
+        "primary": true
+      },
+      {
+        "type": "shipping",
+        "street": "456 Ocean Dr",
+        "city": "Gotham",
+        "zip": "10200",
+        "primary": false
+      }
+    ],
+    "orders": [
+      {
+        "id": "ORD-2023-001",
+        "date": "2023-10-15",
+        "total": 150.5,
+        "status": "shipped",
+        "items": [
+          {
+            "sku": "WIDGET-A",
+            "qty": 2,
+            "price": 50
+          },
+          {
+            "sku": "GADGET-B",
+            "qty": 1,
+            "price": 50.5
+          }
+        ]
+      },
+      {
+        "id": "ORD-2023-009",
+        "date": "2023-11-01",
+        "total": 200,
+        "status": "pending",
+        "items": [
+          {
+            "sku": "LUX-ITEM",
+            "qty": 1,
+            "price": 200
+          }
+        ]
+      }
+    ],
+    "metrics": {
+      "visits": 42,
+      "lastLogin": "2023-11-05T10:00:00Z",
+      "tags": [
+        "vip",
+        "early-adopter"
+      ]
+    }
+  }
 }
