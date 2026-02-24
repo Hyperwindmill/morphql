@@ -2,7 +2,7 @@
   "name": "morphql-vscode",
   "displayName": "MorphQL",
   "description": "Syntax highlighting, diagnostics, hover documentation, and execution for Morph Query Language",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "publisher": "morphql",
   "icon": "icon.png",
   "engines": {
@@ -86,6 +86,11 @@
       {
         "command": "morphql.executeSelection",
         "title": "MorphQL: Execute Selection"
+      },
+      {
+        "command": "morphql.openLivePanel",
+        "title": "MorphQL: Open Live Panel",
+        "icon": "$(open-preview)"
       }
     ],
     "menus": {
@@ -93,6 +98,11 @@
         {
           "when": "resourceLangId == morphql",
           "command": "morphql.executeWithInput",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceLangId == morphql",
+          "command": "morphql.openLivePanel",
           "group": "navigation"
         }
       ],
@@ -111,6 +121,11 @@
           "when": "editorHasSelection && (resourceLangId == typescript || resourceLangId == javascript || resourceLangId == typescriptreact || resourceLangId == javascriptreact)",
           "command": "morphql.executeSelection",
           "group": "morphql@3"
+        },
+        {
+          "when": "resourceLangId == morphql",
+          "command": "morphql.openLivePanel",
+          "group": "morphql@4"
         }
       ]
     }

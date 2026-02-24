@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { compile } from "@morphql/core";
 import { MorphQLDiagnosticProvider } from "./diagnosticProvider";
 import { MorphQLHoverProvider } from "./hoverProvider";
+import { MorphQLLivePanel } from "./livePanel";
 
 let outputChannel: vscode.OutputChannel;
 
@@ -135,10 +136,17 @@ export function activate(context: vscode.ExtensionContext) {
     },
   );
 
+  // Register command: Open Live Panel
+  const openLivePanel = vscode.commands.registerCommand(
+    "morphql.openLivePanel",
+    () => MorphQLLivePanel.createOrShow(),
+  );
+
   context.subscriptions.push(
     executeWithInput,
     executeFromClipboard,
     executeSelection,
+    openLivePanel,
     outputChannel,
   );
 }
