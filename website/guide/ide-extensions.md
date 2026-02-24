@@ -41,7 +41,7 @@ To build from source, see the [Extension Distribution Guide](https://github.com/
 
 The Live Panel is the most convenient way to work with MorphQL. It opens a side panel that updates in real time as you type, showing the transformation output, the generated JavaScript, and the data structure analysis.
 
-![VSCode Live panel](./vscode.png)
+![VSCode Live panel](../public/vscode.png)
 
 #### Opening the Panel
 
