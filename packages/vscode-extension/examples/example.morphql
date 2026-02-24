@@ -1,38 +1,44 @@
-from json to xml("XPS")
-transform unsafe
-  // Basic field mapping
-  set fullName = firstName + " " + lastName
-  set age = number(ageString)
-  set isAdult = if(age >= 18, "yes", "no")
-  return fullName
-  // Using functions
-  set shortSku = xmlnode(sku, 0, 3)
-  set nameParts = split(fullName, " ")
-  set upperName = uppercase(firstName)
-  
-  // Nested section
-  section address(
-    set street = addressLine1
-    set city = cityName
-    set country = "IT"
-  )
-  
-  // Array mapping with multiple
-  section multiple items(
-    set sku = itemSku
-    set price = itemPrice * 1.2
-    set total = price * quantity
-    
-    // Conditional logic
-    if (quantity > 10) (
-      set discount = 0.1
+from json
+to xml("UserProfile")
+transform
+  section profile(
+    set customerId = id
+    set fullName = uppercase(name)
+    set status = if(isActive, "Active", "Inactive")
+
+    if (isActive) (
+       set accountTier = "Premium"
     ) else (
-      set discount = 0
+       set accountTier = "Standard"
     )
-  ) from products
-  
-  // Using define for reusable values
-  define taxRate = 0.22
-  set totalWithTax = total * (1 + taxRate)
-  
-  // Array index access
+
+    section contactInfo(
+      set primaryEmail = email
+      set phone = phone
+    ) from contact
+
+    section multiple addressBook(
+      set type = type
+      set fullAddress = street + ", " + city + " " + zip
+      set isPrimary = if(primary, "Yes", "No")
+    ) from addresses
+
+    section multiple orderHistory(
+      set orderRef = id
+      set value = total
+      set state = status
+
+      section multiple lineItems(
+        set productCode = sku
+        set quantity = qty
+        set unitPrice = price
+        set totalLine = if(qty > 5, price * qty * 0.9, price * qty)
+      ) from items
+    ) from orders
+
+    section stats(
+       set visitCount = visits
+       set accountType = if(visits > 40, "Frequent", "Casual")
+       set lastSeen = substring(lastLogin, 0, 10)
+    ) from metrics
+  ) from customer

@@ -6,6 +6,7 @@ export class MorphQLLivePanel {
 
   private panel: vscode.WebviewPanel;
   private sourceData: string = "{}";
+  private trackedDocument: vscode.TextDocument | undefined;
   private debounceTimer: NodeJS.Timeout | undefined;
   private disposables: vscode.Disposable[] = [];
 
@@ -42,23 +43,26 @@ export class MorphQLLivePanel {
       this.disposables,
     );
 
-    // Re-run when switching to a morphql editor
+    // Re-run when the user switches to a different morphql editor.
+    // Ignore undefined (WebView focus) and non-morphql files — keep showing
+    // the last tracked document so clicking inside the panel doesn't reset it.
     this.disposables.push(
       vscode.window.onDidChangeActiveTextEditor((editor) => {
         if (editor?.document.languageId === "morphql") {
+          this.trackedDocument = editor.document;
           this.triggerUpdate();
-        } else if (!editor || editor.document.languageId !== "morphql") {
-          this.panel.webview.postMessage({ type: "noQuery" });
         }
+        // editor === undefined  →  WebView or output panel gained focus: do nothing
+        // editor is non-morphql →  user is in another file: keep last result visible
       }),
     );
 
-    // Re-run on document edits (debounced)
+    // Re-run on document edits (debounced) — match against trackedDocument
     this.disposables.push(
       vscode.workspace.onDidChangeTextDocument((event) => {
         if (
           event.document.languageId === "morphql" &&
-          event.document === vscode.window.activeTextEditor?.document
+          event.document === this.trackedDocument
         ) {
           this.scheduleUpdate();
         }
@@ -76,6 +80,12 @@ export class MorphQLLivePanel {
       this.disposables,
     );
 
+    // Seed the tracked document from whatever is currently active
+    const active = vscode.window.activeTextEditor;
+    if (active?.document.languageId === "morphql") {
+      this.trackedDocument = active.document;
+    }
+
     this.triggerUpdate();
   }
 
@@ -85,15 +95,20 @@ export class MorphQLLivePanel {
   }
 
   private async triggerUpdate(): Promise<void> {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor || editor.document.languageId !== "morphql") {
+    // Prefer active morphql editor; fall back to the last tracked document
+    const activeEditor = vscode.window.activeTextEditor;
+    if (activeEditor?.document.languageId === "morphql") {
+      this.trackedDocument = activeEditor.document;
+    }
+
+    const doc = this.trackedDocument;
+    if (!doc) {
       this.panel.webview.postMessage({ type: "noQuery" });
       return;
     }
 
-    const query = editor.document.getText();
-    const fileName =
-      editor.document.fileName.split(/[\\/]/).pop() ?? "query.morphql";
+    const query = doc.getText();
+    const fileName = doc.fileName.split(/[\\/]/).pop() ?? "query.morphql";
 
     try {
       const engine = await compile(query, { analyze: true } as any);

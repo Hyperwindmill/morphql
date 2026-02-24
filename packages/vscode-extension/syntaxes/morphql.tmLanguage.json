@@ -58,7 +58,7 @@
       "patterns": [
         {
           "name": "entity.name.function.morphql",
-          "match": "\\b(substring|split|replace|text|number|uppercase|lowercase|extractnumber|xmlnode|to_base64|from_base64|aslist|spreadsheet|unpack|pack|list|array)(?=\\s*\\()"
+          "match": "\\b(substring|split|replace|text|number|uppercase|lowercase|extractnumber|xmlnode|to_base64|from_base64|aslist|spreadsheet|unpack|pack|list|array|floor|ceil|round|abs|fixed|min|max|trim|padstart|padend|indexof|startswith|endswith)(?=\\s*\\()"
         }
       ]
     },
