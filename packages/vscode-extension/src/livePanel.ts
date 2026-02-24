@@ -1,12 +1,22 @@
 import * as vscode from "vscode";
+import * as path from "path";
 import { compile } from "@morphql/core";
+
+const SETTINGS_DIR = ".morphql-extension";
+const SETTINGS_FILE = "panel-settings.json";
+
+interface PanelSettings {
+  // relative-to-workspace morphql path → relative-to-workspace source path
+  sourceFiles: Record<string, string>;
+}
 
 export class MorphQLLivePanel {
   private static instance: MorphQLLivePanel | undefined;
 
   private panel: vscode.WebviewPanel;
-  private sourceData: string = "{}";
   private trackedDocument: vscode.TextDocument | undefined;
+  private sourceFilePath: string | undefined;
+  private sourceWatcher: vscode.FileSystemWatcher | undefined;
   private debounceTimer: NodeJS.Timeout | undefined;
   private disposables: vscode.Disposable[] = [];
 
@@ -31,33 +41,37 @@ export class MorphQLLivePanel {
     this.panel = panel;
     this.panel.webview.html = this.getWebviewContent();
 
-    // Messages from WebView (source data changes)
+    // Messages from WebView
     this.panel.webview.onDidReceiveMessage(
-      (msg) => {
-        if (msg.type === "sourceDataChanged") {
-          this.sourceData = msg.sourceData;
-          this.triggerUpdate();
+      async (msg) => {
+        if (msg.type === "selectSourceFile") {
+          await this.selectSourceFile();
+        } else if (msg.type === "openSourceFile") {
+          if (this.sourceFilePath) {
+            await vscode.window.showTextDocument(
+              vscode.Uri.file(this.sourceFilePath),
+              { preview: false, preserveFocus: true },
+            );
+          }
         }
       },
       undefined,
       this.disposables,
     );
 
-    // Re-run when the user switches to a different morphql editor.
-    // Ignore undefined (WebView focus) and non-morphql files — keep showing
-    // the last tracked document so clicking inside the panel doesn't reset it.
+    // Re-run when switching to a different morphql editor
     this.disposables.push(
       vscode.window.onDidChangeActiveTextEditor((editor) => {
         if (editor?.document.languageId === "morphql") {
           this.trackedDocument = editor.document;
-          this.triggerUpdate();
+          this.onMorphqlFileChanged();
         }
-        // editor === undefined  →  WebView or output panel gained focus: do nothing
-        // editor is non-morphql →  user is in another file: keep last result visible
+        // editor === undefined → WebView/output focused: do nothing
+        // non-morphql editor  → keep last result visible
       }),
     );
 
-    // Re-run on document edits (debounced) — match against trackedDocument
+    // Re-run on morphql document edits (debounced)
     this.disposables.push(
       vscode.workspace.onDidChangeTextDocument((event) => {
         if (
@@ -69,10 +83,23 @@ export class MorphQLLivePanel {
       }),
     );
 
+    // Re-run when the source file is saved inside VS Code
+    this.disposables.push(
+      vscode.workspace.onDidSaveTextDocument((document) => {
+        if (
+          this.sourceFilePath &&
+          document.fileName === this.sourceFilePath
+        ) {
+          this.triggerUpdate();
+        }
+      }),
+    );
+
     // Cleanup
     this.panel.onDidDispose(
       () => {
         MorphQLLivePanel.instance = undefined;
+        this.sourceWatcher?.dispose();
         this.disposables.forEach((d) => d.dispose());
         if (this.debounceTimer) clearTimeout(this.debounceTimer);
       },
@@ -80,14 +107,159 @@ export class MorphQLLivePanel {
       this.disposables,
     );
 
-    // Seed the tracked document from whatever is currently active
+    // Seed from whatever is currently active
     const active = vscode.window.activeTextEditor;
     if (active?.document.languageId === "morphql") {
       this.trackedDocument = active.document;
     }
 
+    this.onMorphqlFileChanged();
+  }
+
+  // ── Source file management ───────────────────────────────────────────────
+
+  private async onMorphqlFileChanged(): Promise<void> {
+    if (!this.trackedDocument) {
+      this.panel.webview.postMessage({ type: "noQuery" });
+      return;
+    }
+    this.sourceFilePath = await this.resolveSourceFile(
+      this.trackedDocument.fileName,
+    );
+    this.watchSourceFile();
     this.triggerUpdate();
   }
+
+  private watchSourceFile(): void {
+    this.sourceWatcher?.dispose();
+    if (!this.sourceFilePath) return;
+
+    this.sourceWatcher = vscode.workspace.createFileSystemWatcher(
+      new vscode.RelativePattern(
+        vscode.Uri.file(path.dirname(this.sourceFilePath)),
+        path.basename(this.sourceFilePath),
+      ),
+    );
+    this.sourceWatcher.onDidChange(() => this.triggerUpdate());
+    this.sourceWatcher.onDidDelete(() => {
+      this.sourceFilePath = undefined;
+      this.triggerUpdate();
+    });
+  }
+
+  private async resolveSourceFile(
+    morphqlPath: string,
+  ): Promise<string | undefined> {
+    // 1. Check persisted user choice
+    const saved = await this.loadSettings();
+    const workspaceRoot = this.getWorkspaceRoot();
+    if (saved && workspaceRoot) {
+      const relMorphql = path.relative(workspaceRoot, morphqlPath);
+      const relSource = saved.sourceFiles[relMorphql];
+      if (relSource) {
+        return path.join(workspaceRoot, relSource);
+      }
+    }
+
+    // 2. Auto-detect: file with same basename but different extension
+    const dir = path.dirname(morphqlPath);
+    const baseName = path.basename(morphqlPath, ".morphql");
+    try {
+      const entries = await vscode.workspace.fs.readDirectory(
+        vscode.Uri.file(dir),
+      );
+      const match = entries
+        .filter(
+          ([name, type]) =>
+            type === vscode.FileType.File &&
+            !name.endsWith(".morphql") &&
+            path.basename(name, path.extname(name)) === baseName,
+        )
+        .sort(([a], [b]) => a.localeCompare(b))
+        .at(0);
+
+      if (match) {
+        return path.join(dir, match[0]);
+      }
+    } catch {
+      // unreadable directory — ignore
+    }
+
+    return undefined;
+  }
+
+  private async selectSourceFile(): Promise<void> {
+    const uris = await vscode.window.showOpenDialog({
+      canSelectMany: false,
+      openLabel: "Use as Source Data",
+      title: "Select source data file for MorphQL Live",
+    });
+    if (!uris || uris.length === 0) return;
+
+    this.sourceFilePath = uris[0].fsPath;
+    this.watchSourceFile();
+
+    if (this.trackedDocument) {
+      await this.saveSourceFileChoice(
+        this.trackedDocument.fileName,
+        this.sourceFilePath,
+      );
+    }
+
+    this.triggerUpdate();
+  }
+
+  // ── Settings persistence ─────────────────────────────────────────────────
+
+  private async saveSourceFileChoice(
+    morphqlPath: string,
+    sourcePath: string,
+  ): Promise<void> {
+    const workspaceRoot = this.getWorkspaceRoot();
+    if (!workspaceRoot) return;
+
+    const settings = (await this.loadSettings()) ?? { sourceFiles: {} };
+    settings.sourceFiles[path.relative(workspaceRoot, morphqlPath)] =
+      path.relative(workspaceRoot, sourcePath);
+
+    const settingsDir = vscode.Uri.file(
+      path.join(workspaceRoot, SETTINGS_DIR),
+    );
+    const settingsFile = vscode.Uri.file(
+      path.join(workspaceRoot, SETTINGS_DIR, SETTINGS_FILE),
+    );
+
+    try {
+      await vscode.workspace.fs.createDirectory(settingsDir);
+      await vscode.workspace.fs.writeFile(
+        settingsFile,
+        Buffer.from(JSON.stringify(settings, null, 2)),
+      );
+    } catch {
+      // silently ignore write failures
+    }
+  }
+
+  private async loadSettings(): Promise<PanelSettings | undefined> {
+    const workspaceRoot = this.getWorkspaceRoot();
+    if (!workspaceRoot) return undefined;
+
+    const settingsFile = vscode.Uri.file(
+      path.join(workspaceRoot, SETTINGS_DIR, SETTINGS_FILE),
+    );
+    try {
+      const raw = await vscode.workspace.fs.readFile(settingsFile);
+      return JSON.parse(Buffer.from(raw).toString("utf-8")) as PanelSettings;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private getWorkspaceRoot(): string | undefined {
+    return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  }
+
+  // ── Update logic ─────────────────────────────────────────────────────────
 
   private scheduleUpdate(): void {
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
@@ -95,7 +267,6 @@ export class MorphQLLivePanel {
   }
 
   private async triggerUpdate(): Promise<void> {
-    // Prefer active morphql editor; fall back to the last tracked document
     const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor?.document.languageId === "morphql") {
       this.trackedDocument = activeEditor.document;
@@ -110,15 +281,32 @@ export class MorphQLLivePanel {
     const query = doc.getText();
     const fileName = doc.fileName.split(/[\\/]/).pop() ?? "query.morphql";
 
+    // Read source data from file (fallback to empty object)
+    let sourceData = "{}";
+    let sourceFileName: string | null = null;
+
+    if (this.sourceFilePath) {
+      try {
+        const raw = await vscode.workspace.fs.readFile(
+          vscode.Uri.file(this.sourceFilePath),
+        );
+        sourceData = Buffer.from(raw).toString("utf-8");
+        sourceFileName = path.basename(this.sourceFilePath);
+      } catch {
+        sourceFileName = path.basename(this.sourceFilePath) + " (unreadable)";
+      }
+    }
+
     try {
       const engine = await compile(query, { analyze: true } as any);
-      const output = (engine as any)(this.sourceData);
+      const output = (engine as any)(sourceData);
       const result =
         typeof output === "string" ? output : JSON.stringify(output, null, 2);
 
       this.panel.webview.postMessage({
         type: "update",
         fileName,
+        sourceFileName,
         result,
         generatedCode: (engine as any).code ?? "",
         error: null,
@@ -128,6 +316,7 @@ export class MorphQLLivePanel {
       this.panel.webview.postMessage({
         type: "update",
         fileName,
+        sourceFileName,
         result: "",
         generatedCode: "",
         error: err.message ?? String(err),
@@ -135,6 +324,8 @@ export class MorphQLLivePanel {
       });
     }
   }
+
+  // ── WebView HTML ─────────────────────────────────────────────────────────
 
   private getWebviewContent(): string {
     return /* html */ `<!DOCTYPE html>
@@ -160,18 +351,30 @@ export class MorphQLLivePanel {
 
     /* ── Toolbar ── */
     .toolbar {
+      flex-shrink: 0;
+      background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+      border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+    }
+    .toolbar-main {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 5px 12px;
-      background: var(--vscode-sideBar-background, var(--vscode-editor-background));
-      border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
-      flex-shrink: 0;
     }
+    .toolbar-source {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 12px 5px;
+      border-top: 1px solid var(--vscode-panel-border, #3c3c3c);
+      opacity: 0.7;
+    }
+    .toolbar-source:hover { opacity: 1; }
+
     .filename {
       font-size: 11px;
       font-weight: 600;
-      opacity: 0.75;
+      opacity: 0.8;
       font-family: var(--vscode-editor-font-family, monospace);
     }
     .status {
@@ -180,50 +383,36 @@ export class MorphQLLivePanel {
       padding: 2px 8px;
       border-radius: 10px;
       letter-spacing: 0.04em;
+      flex-shrink: 0;
     }
     .status-ok   { background: rgba(74,222,128,0.15); color: #4ade80; }
     .status-err  { background: rgba(248,113,113,0.15); color: #f87171; }
     .status-idle { background: var(--vscode-badge-background, #3c3c3c); color: var(--vscode-badge-foreground, #ccc); }
 
-    /* ── Source data section ── */
-    .source-section {
-      flex-shrink: 0;
-      border-bottom: 1px solid var(--vscode-panel-border, #3c3c3c);
+    .source-arrow { font-size: 10px; opacity: 0.4; flex-shrink: 0; }
+    .source-name {
+      font-size: 11px;
+      font-family: var(--vscode-editor-font-family, monospace);
+      font-weight: 500;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .source-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 5px 12px;
-      background: var(--vscode-sideBar-background, var(--vscode-editor-background));
-      cursor: pointer;
-      user-select: none;
+    .source-name.none { font-style: italic; opacity: 0.45; }
+    .source-btn {
       font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      opacity: 0.6;
-    }
-    .source-header:hover { opacity: 1; }
-    .source-body { padding: 6px 8px 8px; }
-    .source-body.hidden { display: none; }
-
-    textarea {
-      width: 100%;
-      background: var(--vscode-input-background);
-      color: var(--vscode-input-foreground);
-      border: 1px solid var(--vscode-input-border, transparent);
+      padding: 1px 6px;
+      border: 1px solid var(--vscode-input-border, #555);
       border-radius: 3px;
-      padding: 6px 8px;
-      font-family: var(--vscode-editor-font-family, 'Consolas', monospace);
-      font-size: 12px;
-      resize: vertical;
-      min-height: 72px;
-      max-height: 220px;
-      outline: none;
-      line-height: 1.5;
+      background: none;
+      color: var(--vscode-editor-foreground);
+      cursor: pointer;
+      opacity: 0.55;
+      flex-shrink: 0;
     }
-    textarea:focus { border-color: var(--vscode-focusBorder, #007acc); }
+    .source-btn:hover { opacity: 1; background: var(--vscode-list-hoverBackground, rgba(255,255,255,0.05)); }
 
     /* ── Tabs ── */
     .tabs {
@@ -251,7 +440,6 @@ export class MorphQLLivePanel {
 
     /* ── Content ── */
     .content { flex: 1; overflow: auto; position: relative; }
-
     .pane { display: none; min-height: 100%; }
     .pane.active { display: block; }
 
@@ -336,17 +524,15 @@ export class MorphQLLivePanel {
 <body>
 
   <div class="toolbar">
-    <span class="filename" id="filename">No MorphQL file active</span>
-    <span class="status status-idle" id="status">Idle</span>
-  </div>
-
-  <div class="source-section">
-    <div class="source-header" id="source-toggle">
-      <span id="source-toggle-label">▶ Source Data</span>
-      <span style="opacity:0.45; font-weight:400; text-transform:none; letter-spacing:0; font-size:10px">JSON · XML · CSV</span>
+    <div class="toolbar-main">
+      <span class="filename" id="filename">No MorphQL file active</span>
+      <span class="status status-idle" id="status">Idle</span>
     </div>
-    <div class="source-body hidden" id="source-body">
-      <textarea id="source-input" placeholder='{"key": "value"}  or  &lt;root&gt;...&lt;/root&gt;' spellcheck="false">{}</textarea>
+    <div class="toolbar-source">
+      <span class="source-arrow">←</span>
+      <span class="source-name none" id="source-name">no source file</span>
+      <button class="source-btn" id="btn-open-source" title="Open source file in editor" style="display:none">open</button>
+      <button class="source-btn" id="btn-change-source">change</button>
     </div>
   </div>
 
@@ -388,22 +574,12 @@ export class MorphQLLivePanel {
       });
     });
 
-    // ── Source section toggle ──
-    let sourceOpen = false;
-    document.getElementById('source-toggle').addEventListener('click', () => {
-      sourceOpen = !sourceOpen;
-      document.getElementById('source-body').classList.toggle('hidden', !sourceOpen);
-      document.getElementById('source-toggle-label').textContent =
-        (sourceOpen ? '▼' : '▶') + ' Source Data';
+    // ── Source file buttons ──
+    document.getElementById('btn-open-source').addEventListener('click', () => {
+      vscode.postMessage({ type: 'openSourceFile' });
     });
-
-    // ── Source data → extension ──
-    let sourceDebounce;
-    document.getElementById('source-input').addEventListener('input', (e) => {
-      clearTimeout(sourceDebounce);
-      sourceDebounce = setTimeout(() => {
-        vscode.postMessage({ type: 'sourceDataChanged', sourceData: e.target.value });
-      }, 350);
+    document.getElementById('btn-change-source').addEventListener('click', () => {
+      vscode.postMessage({ type: 'selectSourceFile' });
     });
 
     // ── Messages from extension ──
@@ -411,16 +587,16 @@ export class MorphQLLivePanel {
       if (msg.type === 'noQuery') {
         document.getElementById('filename').textContent = 'No MorphQL file active';
         setStatus('idle', 'Idle');
+        setSourceFile(null);
         showEmpty();
-        document.getElementById('code-output').textContent = '';
-        document.getElementById('code-output').style.cssText = 'opacity:0.45;font-style:italic';
-        document.getElementById('code-output').textContent = 'Successful compilation required.';
+        resetCode();
         renderStructure(null);
         return;
       }
 
       if (msg.type === 'update') {
         document.getElementById('filename').textContent = msg.fileName;
+        setSourceFile(msg.sourceFileName);
 
         if (msg.error) {
           setStatus('err', 'Error');
@@ -430,19 +606,31 @@ export class MorphQLLivePanel {
           showOutput(msg.result);
         }
 
-        // Generated JS tab
         const codeEl = document.getElementById('code-output');
         if (msg.generatedCode) {
           codeEl.style.cssText = '';
           codeEl.textContent = msg.generatedCode;
         } else {
-          codeEl.style.cssText = 'opacity:0.45;font-style:italic';
-          codeEl.textContent = 'Successful compilation required.';
+          resetCode();
         }
 
         renderStructure(msg.analysis);
       }
     });
+
+    function setSourceFile(name) {
+      const nameEl = document.getElementById('source-name');
+      const openBtn = document.getElementById('btn-open-source');
+      if (name) {
+        nameEl.textContent = name;
+        nameEl.classList.remove('none');
+        openBtn.style.display = '';
+      } else {
+        nameEl.textContent = 'no source file';
+        nameEl.classList.add('none');
+        openBtn.style.display = 'none';
+      }
+    }
 
     function setStatus(cls, text) {
       const el = document.getElementById('status');
@@ -468,6 +656,12 @@ export class MorphQLLivePanel {
       document.getElementById('result-output').style.display = 'none';
       document.getElementById('result-error').style.display = 'block';
       document.getElementById('result-error-msg').textContent = msg;
+    }
+
+    function resetCode() {
+      const el = document.getElementById('code-output');
+      el.style.cssText = 'opacity:0.45;font-style:italic';
+      el.textContent = 'Successful compilation required.';
     }
 
     // ── Structure tree ──
@@ -501,9 +695,7 @@ export class MorphQLLivePanel {
       const nameHtml = name != null
         ? '<span class="fname">' + esc(name) + ':</span> '
         : '';
-      const openBadge = node.isOpen
-        ? '<span class="open-badge">(open)</span>'
-        : '';
+      const openBadge = node.isOpen ? '<span class="open-badge">(open)</span>' : '';
       const typeHtml = '<span class="ftype t-' + esc(node.type || 'unknown') + '">'
         + esc(node.type || 'unknown') + openBadge + '</span>';
 
@@ -520,9 +712,7 @@ export class MorphQLLivePanel {
           children += renderNode(v, k);
         }
       }
-      if (hasItems) {
-        children += renderNode(node.items, 'items[]');
-      }
+      if (hasItems) children += renderNode(node.items, 'items[]');
 
       return '<details open><summary>'
         + '<span class="chevron">▶</span>'
