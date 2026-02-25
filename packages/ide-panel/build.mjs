@@ -1,5 +1,8 @@
 import { build } from "esbuild";
-import { mkdir } from "fs/promises";
+import { copyFile, mkdir } from "fs/promises";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
 
 await mkdir("dist", { recursive: true });
 
@@ -19,3 +22,8 @@ await build({
 });
 
 console.log("✔ ide-panel built → dist/panel.iife.js");
+
+// Copy Prism CSS theme to dist/ so JetBrains Gradle can pick it up alongside panel.iife.js
+const prismTheme = require.resolve("prismjs/themes/prism-tomorrow.min.css");
+await copyFile(prismTheme, "dist/prism-tomorrow.min.css");
+console.log("✔ prism-tomorrow.min.css copied to dist/");

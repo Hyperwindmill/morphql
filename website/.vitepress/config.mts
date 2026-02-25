@@ -84,7 +84,14 @@ export default defineConfig({
           { text: "Server", link: "/guide/server" },
           { text: "PHP Library", link: "/guide/php" },
           { text: "Symfony Bundle", link: "/guide/symfony" },
-          { text: "IDE Extensions", link: "/guide/ide-extensions" },
+          {
+            text: "IDE Extensions",
+            collapsed: false,
+            items: [
+              { text: "VSCode", link: "/guide/vscode-extension" },
+              { text: "JetBrains", link: "/guide/jetbrains-extension" },
+            ],
+          },
         ],
       },
     ],

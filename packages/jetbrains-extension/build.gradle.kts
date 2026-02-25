@@ -30,6 +30,29 @@ changelog {
     repositoryUrl.set("https://github.com/Hyperwindmill/morphql")
 }
 
+// ── Panel resource tasks ──────────────────────────────────────────────────────
+
+tasks.register<Exec>("buildIdePanel") {
+    description = "Builds the shared @morphql/ide-panel bundle (panel.iife.js + prism CSS)"
+    workingDir("../ide-panel")
+    commandLine("npm", "run", "build")
+}
+
+tasks.register<Copy>("copyPanelResources") {
+    description = "Copies ide-panel dist files into plugin resources"
+    dependsOn("buildIdePanel")
+    from("../ide-panel/dist") {
+        include("panel.iife.js", "prism-tomorrow.min.css")
+    }
+    into("src/main/resources/morphql-panel")
+}
+
+tasks.named("processResources") {
+    dependsOn("copyPanelResources")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {

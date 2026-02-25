@@ -7,18 +7,16 @@
  */
 
 import { copyFile, mkdir } from "fs/promises";
-import { createRequire } from "module";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const require = createRequire(import.meta.url);
 const mediaDir = join(__dirname, "media");
 
 await mkdir(mediaDir, { recursive: true });
 
-// ── 1. Build ide-panel ────────────────────────────────────────────────
+// ── 1. Build ide-panel (also outputs prism-tomorrow.min.css to dist/) ─
 const panelDir = join(__dirname, "../ide-panel");
 console.log("Building @morphql/ide-panel...");
 execSync("npm run build", { cwd: panelDir, stdio: "inherit" });
@@ -30,10 +28,9 @@ await copyFile(
 );
 console.log("✔ panel.iife.js copied to media/");
 
-// ── 3. Copy Prism CSS only (JS is bundled inside panel.iife.js) ───────
-const prismRoot = dirname(require.resolve("prismjs/package.json"));
+// ── 3. Copy Prism CSS — taken from ide-panel/dist/ (single source) ───
 await copyFile(
-  join(prismRoot, "themes/prism-tomorrow.min.css"),
+  join(panelDir, "dist/prism-tomorrow.min.css"),
   join(mediaDir, "prism-tomorrow.min.css"),
 );
 console.log("✔ prism-tomorrow.min.css copied to media/");

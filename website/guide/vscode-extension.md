@@ -1,27 +1,21 @@
-# IDE Extensions
-
-MorphQL provides first-class support for both VSCode and JetBrains IDEs, offering syntax highlighting, live output preview, code execution, and documentation lookup to enhance your development workflow.
-
-::: info Download
-Extensions are available for download on [GitHub Releases](https://github.com/Hyperwindmill/morphql/releases). They are not yet published to official marketplaces (VSCode Marketplace, JetBrains Plugin Repository).
-:::
-
-## VSCode Extension
+# VSCode Extension
 
 Full language support for Visual Studio Code.
 
-### Features
+::: info Download
+The extension is available for download on [GitHub Releases](https://github.com/Hyperwindmill/morphql/releases). It is not yet published to the VSCode Marketplace.
+:::
 
-- 🖥️ **Live Panel**: Real-time output preview as you type your query, with syntax-highlighted results.
-- 🎨 **Syntax Highlighting**: Complete highlighting for `.morphql` files and `morphQL` tagged templates in JS/TS.
-- 🔍 **Diagnostics**: Real-time syntax error detection underlined in the editor.
-- 📖 **Hover Documentation**: Hover over keywords and functions to see usage details inline.
-- ▶️ **Execute Queries**: Run transformations directly within the editor.
-- 🚀 **Snippets**: Type `morphql-` to access common patterns.
+## Features
 
-### Installation
+- **Live Panel**: Real-time output preview as you type, with syntax-highlighted results, generated JS, and structure analysis.
+- **Syntax Highlighting**: Complete highlighting for `.morphql` files and `morphQL` tagged templates in JS/TS.
+- **Diagnostics**: Real-time syntax error detection underlined directly in the editor.
+- **Hover Documentation**: Hover over keywords and functions to see usage details inline.
+- **Execute Queries**: Run transformations directly within the editor.
+- **Snippets**: Type `morphql-` to access common patterns.
 
-**Download the latest release:**
+## Installation
 
 👉 **[Download from GitHub Releases](https://github.com/Hyperwindmill/morphql/releases)**
 
@@ -31,19 +25,15 @@ Full language support for Visual Studio Code.
 4. Run: **Extensions: Install from VSIX...**
 5. Select the downloaded `.vsix` file
 
-::: tip Build from source
-To build from source, see the [Extension Distribution Guide](https://github.com/Hyperwindmill/morphql/blob/main/docs/extension-distribution.md).
-:::
-
 ---
 
-### Live Panel
+## Live Panel
 
 The Live Panel is the most convenient way to work with MorphQL. It opens a side panel that updates in real time as you type, showing the transformation output, the generated JavaScript, and the data structure analysis.
 
 ![VSCode Live panel](../public/vscode.png)
 
-#### Opening the Panel
+### Opening the Panel
 
 You can open the Live Panel in three ways:
 
@@ -53,21 +43,21 @@ You can open the Live Panel in three ways:
 
 The panel opens to the side and stays in sync with the active `.morphql` file automatically. Switching between `.morphql` files updates the panel; switching to other file types leaves the last result visible.
 
-#### Source Data File
+### Source Data File
 
 The Live Panel reads source data from a **companion file** — a file with the same base name as your `.morphql` query but a different extension (e.g. `invoice.json` for `invoice.morphql`).
 
-**Auto-detection**: when you open a `.morphql` file, the panel automatically looks for a file with the same name in the same directory and uses it as source data. If multiple files match (e.g. `invoice.json` and `invoice.xml`), the first one alphabetically is used.
+**Auto-detection**: when you open a `.morphql` file, the panel automatically looks for a matching file in the same directory. If multiple files match (e.g. `invoice.json` and `invoice.xml`), the first one alphabetically is used.
 
 **Changing the source file**: use the **change** button in the panel toolbar to open a file picker and select any file. Your choice is saved in `.morphql-extension/panel-settings.json` in the workspace root and restored on next open.
 
-**Opening the source file**: click the **open** button next to the source file name to open it in a native VS Code editor tab. Edits saved there are reflected in the panel immediately.
+**Opening the source file**: click the **open** button next to the source file name to open it in a standard editor tab. Edits saved there are reflected in the panel immediately.
 
 ::: tip Working without a source file
 If no source file is found, the panel runs the query against an empty object `{}`. You can still observe the generated JavaScript and the output structure.
 :::
 
-#### Panel Tabs
+### Tabs
 
 | Tab | Contents |
 |---|---|
@@ -75,7 +65,7 @@ If no source file is found, the panel runs the query against an empty object `{}
 | **Generated JS** | The JavaScript function compiled from your query, with syntax highlighting |
 | **Structure** | An expandable tree showing the inferred input and output data structures |
 
-#### Status Indicators
+### Status Indicators
 
 The toolbar shows the current query file name and a status badge:
 
@@ -85,15 +75,15 @@ The toolbar shows the current query file name and a status badge:
 
 ---
 
-### Diagnostics
+## Diagnostics
 
 Syntax errors in your `.morphql` file are detected in real time and shown as red underlines directly in the editor, just like TypeScript errors. Hover over the underlined text to read the error message.
 
-### Hover Documentation
+## Hover Documentation
 
 Hover over any MorphQL keyword or function to see a description and usage example in a tooltip. This works both in `.morphql` files and inside `morphQL` tagged template literals in TypeScript/JavaScript.
 
-### Execute Commands
+## Execute Commands
 
 For quick one-off runs without the Live Panel, three execution commands are available from the right-click context menu or the command palette:
 
@@ -105,7 +95,7 @@ For quick one-off runs without the Live Panel, three execution commands are avai
 
 Results are shown in the **MorphQL Output** panel at the bottom of the editor, including compile time, execution time, and the formatted output.
 
-### Snippets
+## Snippets
 
 Type `morphql-` in a `.morphql` file (or in a JS/TS file for embedded queries) to trigger snippets:
 
@@ -115,7 +105,7 @@ Type `morphql-` in a `.morphql` file (or in a JS/TS file for embedded queries) t
 | `morphql-section` | `section` block skeleton |
 | `morphql-if` | `if / else` conditional block |
 
-### Embedded Queries in JS/TS
+## Embedded Queries in JS/TS
 
 The extension also highlights MorphQL syntax inside tagged template literals:
 
@@ -130,33 +120,3 @@ const query = morphQL`
 ```
 
 The `morphQL` tag is a no-op at runtime — it exists purely to let the extension identify and highlight the embedded query. Diagnostics and hover docs work inside these templates too.
-
----
-
-## JetBrains Extension
-
-Native support for IntelliJ IDEA, WebStorm, PhpStorm, and other JetBrains IDEs.
-
-### Features
-
-- 🎨 **Syntax Highlighting**: Full color coding for keywords, functions, and operators.
-- 💉 **Language Injection**: Automatically highlights `morphQL` template strings in TypeScript/JavaScript.
-- 📄 **Documentation**: Hover over keywords and functions to see usage details.
-- 🖼️ **File Icons**: Dedicated icons for `.morphql` files.
-
-### Installation
-
-**Download the latest release:**
-
-👉 **[Download from GitHub Releases](https://github.com/Hyperwindmill/morphql/releases)**
-
-1. Download `morphql-jetbrains-{version}.zip` from the latest release
-2. Open your JetBrains IDE (IntelliJ IDEA, WebStorm, etc.)
-3. Go to **Settings/Preferences** → **Plugins**
-4. Click the ⚙️ gear icon → **Install Plugin from Disk...**
-5. Select the downloaded `.zip` file
-6. Restart your IDE
-
-::: tip Build from source
-To build from source, see the [Extension Distribution Guide](https://github.com/Hyperwindmill/morphql/blob/main/docs/extension-distribution.md).
-:::

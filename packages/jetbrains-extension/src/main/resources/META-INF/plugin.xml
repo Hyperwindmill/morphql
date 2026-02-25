@@ -24,5 +24,10 @@
                                    implementationClass="org.morphql.jetbrains.MorphQLDocumentationProvider" />
 
         <multiHostInjector implementationClass="org.morphql.jetbrains.MorphQLInjector" />
+
+        <toolWindow id="MorphQL Live"
+                    factoryClass="org.morphql.jetbrains.MorphQLLivePanelFactory"
+                    anchor="right"
+                    icon="icons/morphql.png" />
     </extensions>
 </idea-plugin>
