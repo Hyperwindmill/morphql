@@ -1,5 +1,6 @@
 package org.morphql.jetbrains
 
+import com.google.gson.Gson
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -17,8 +18,11 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import java.io.File
+import java.nio.file.Paths
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.JBColor
 import com.intellij.ui.jcef.JBCefBrowser
@@ -35,6 +39,9 @@ import java.util.Timer
 import java.util.TimerTask
 import javax.swing.JComponent
 
+private const val SETTINGS_DIR = ".morphql-extension"
+private const val SETTINGS_FILE = "panel-settings.json"
+
 class MorphQLLivePanelContent(
     private val project: Project,
     @Suppress("UNUSED_PARAMETER") toolWindow: ToolWindow,
@@ -43,6 +50,7 @@ class MorphQLLivePanelContent(
     private val browser = JBCefBrowser()
     val component: JComponent = browser.component
 
+    private val gson = Gson()
     private val jsQuery: JBCefJSQuery
     private val connection = project.messageBus.connect()
 
@@ -108,7 +116,7 @@ class MorphQLLivePanelContent(
     private fun setCurrentFile(file: VirtualFile) {
         removeDocListener()
         currentFile = file
-        sourceFile = autoDetectSourceFile(file)
+        sourceFile = resolveSourceFile(file)
 
         val listener = object : DocumentListener {
             override fun documentChanged(event: DocumentEvent) {
@@ -126,6 +134,20 @@ class MorphQLLivePanelContent(
         val file = currentFile ?: return
         FileDocumentManager.getInstance().getDocument(file)?.removeDocumentListener(listener)
         docListener = null
+    }
+
+    private fun resolveSourceFile(morphqlFile: VirtualFile): VirtualFile? {
+        val basePath = project.basePath
+        if (basePath != null) {
+            val relMorphql = toRelative(basePath, morphqlFile.path)
+            val relSource = loadSettings()?.get(relMorphql)
+            if (relSource != null) {
+                val absSource = Paths.get(basePath).resolve(relSource).toString()
+                val vf = LocalFileSystem.getInstance().findFileByPath(absSource)
+                if (vf != null && vf.exists()) return vf
+            }
+        }
+        return autoDetectSourceFile(morphqlFile)
     }
 
     private fun autoDetectSourceFile(morphqlFile: VirtualFile): VirtualFile? {
@@ -232,9 +254,57 @@ class MorphQLLivePanelContent(
             .withTitle("Select Source Data File for MorphQL Live")
         FileChooser.chooseFile(descriptor, project, sourceFile) { file ->
             sourceFile = file
+            currentFile?.let { saveSettings(it.path, file.path) }
             triggerUpdate()
         }
     }
+
+    // ── Settings persistence ─────────────────────────────────────────────────
+    //
+    // Same format as the VSCode extension: .morphql-extension/panel-settings.json
+    // with a "sourceFiles" map of relative morphql path → relative source path.
+    // This makes the choice cross-IDE compatible.
+
+    private fun loadSettings(): Map<String, String>? {
+        val basePath = project.basePath ?: return null
+        val file = File(basePath, "$SETTINGS_DIR/$SETTINGS_FILE")
+        if (!file.exists()) return null
+        return try {
+            val obj = JsonParser.parseString(file.readText(Charsets.UTF_8))
+                .asJsonObject
+                .getAsJsonObject("sourceFiles")
+                ?: return null
+            obj.entrySet().associate { (k, v) -> k to v.asString }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun saveSettings(morphqlAbsPath: String, sourceAbsPath: String) {
+        val basePath = project.basePath ?: return
+        val relMorphql = toRelative(basePath, morphqlAbsPath)
+        val relSource = toRelative(basePath, sourceAbsPath)
+
+        val existing = loadSettings()?.toMutableMap() ?: mutableMapOf()
+        existing[relMorphql] = relSource
+
+        val sourceFilesObj = JsonObject()
+        existing.forEach { (k, v) -> sourceFilesObj.addProperty(k, v) }
+        val root = JsonObject().apply { add("sourceFiles", sourceFilesObj) }
+
+        try {
+            val dir = File(basePath, SETTINGS_DIR).also { it.mkdirs() }
+            File(dir, SETTINGS_FILE).writeText(gson.toJson(root), Charsets.UTF_8)
+        } catch (_: Exception) {
+            // silently ignore write failures
+        }
+    }
+
+    /** Returns a forward-slash relative path, matching the VSCode convention. */
+    private fun toRelative(base: String, absolute: String): String =
+        Paths.get(base).relativize(Paths.get(absolute))
+            .toString()
+            .replace(File.separatorChar, '/')
 
     // ── HTML assembly ────────────────────────────────────────────────────────
 

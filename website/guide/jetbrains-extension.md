@@ -45,9 +45,13 @@ The panel reads source data from a **companion file** — a file with the same b
 
 **Auto-detection**: when you switch to a `.morphql` file, the panel looks for a matching file in the same directory. If multiple files match, the first one alphabetically is used.
 
-**Changing the source file**: use the **change** button in the panel toolbar to open the IDE file chooser and select any file.
+**Changing the source file**: use the **change** button in the panel toolbar to open the IDE file chooser and select any file. Your choice is saved in `.morphql-extension/panel-settings.json` in the project root and restored on next open.
 
 **Opening the source file**: click the **open** button next to the source file name to open it in a standard editor tab. Edits saved there are reflected in the panel immediately.
+
+::: tip Cross-IDE compatibility
+The settings file format is identical to the one used by the VSCode extension. If you use both IDEs on the same project, the source file choice is automatically shared.
+:::
 
 ::: tip Working without a source file
 If no source file is found, the panel runs the query against an empty object `{}`. You can still observe the generated JavaScript and the output structure.
