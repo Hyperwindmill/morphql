@@ -31,6 +31,8 @@ The plugin is available for download on [GitHub Releases](https://github.com/Hyp
 
 The Live Panel opens a dedicated tool window that updates in real time as you edit your query, showing the transformation output, the generated JavaScript, and the data structure analysis — the same panel used by the VSCode extension.
 
+![JetBrains Live panel](../public/jb.png)
+
 ### Opening the Panel
 
 The **MorphQL Live** tool window appears in the right sidebar after installing the plugin. You can also open it via:
