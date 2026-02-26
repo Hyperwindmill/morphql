@@ -220,6 +220,18 @@ substring("Hello World", -5)     // "World"</pre>
             <b>Parameters:</b><ul><li><b>values:</b> Values to include in the array</li></ul>
             <b>Example:</b><pre>array(1, 2, 3)  // [1, 2, 3]</pre>
         """.trimIndent(),
+        "groupby" to """
+            <b>groupby(array, keyExpression)</b><br/>
+            Groups an array of items by a key expression evaluated per item. Returns an array of `{ key, items }` objects in insertion order. Typically used as the `from` source of a `section multiple`.<br/><br/>
+            <b>Parameters:</b><ul><li><b>array:</b> The array to group</li><li><b>keyExpression:</b> Expression evaluated for each item to compute the group key. Bare field names resolve against each item.</li></ul>
+            <b>Example:</b><pre>section multiple byCategory(
+  set category = key
+  set count = length(items)
+  section multiple products(
+    set name = name
+  ) from items
+) from groupby(products, category)</pre>
+        """.trimIndent(),
         "floor" to """
             <b>floor(value)</b><br/>
             Rounds a number down to the nearest integer.<br/><br/>

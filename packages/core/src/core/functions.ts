@@ -193,6 +193,16 @@ export const functionRegistry: Record<string, FunctionHandler> = {
   concat: (args: string[], _compiler) => {
     return `env.functions.concat(${args.join(', ')})`;
   },
+  groupby: (args: string[], compiler) => {
+    if (args.length !== 2) {
+      throw new Error('groupby() requires exactly 2 arguments (array, keyExpression)');
+    }
+    const [arr, keyExpr] = args;
+    // The key expression is evaluated per item, same technique used by where clauses:
+    // rebind `source` to each item inside the lambda so bare field names resolve correctly.
+    const lambda = `(item) => { const source = _safeSource(item); return ${keyExpr}; }`;
+    return `env.functions.groupby(${arr}, ${lambda})`;
+  },
   transpose: (args: string[], _compiler) => {
     if (args.length < 2) {
       throw new Error('transpose() requires at least 2 arguments (source, key1, [key2, ...])');

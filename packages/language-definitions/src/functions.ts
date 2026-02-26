@@ -234,6 +234,25 @@ export const FUNCTIONS: FunctionDef[] = [
       example: "array(1, 2, 3)  // [1, 2, 3]",
     },
   },
+  {
+    name: "groupby",
+    doc: {
+      signature: "groupby(array, keyExpression)",
+      description:
+        "Groups an array of items by a key expression evaluated per item. Returns an array of `{ key, items }` objects in insertion order. Typically used as the `from` source of a `section multiple`.",
+      parameters: [
+        { name: "array", description: "The array to group" },
+        {
+          name: "keyExpression",
+          description:
+            "Expression evaluated for each item to compute the group key. Bare field names resolve against each item.",
+        },
+      ],
+      returns: "array of { key, items }",
+      example:
+        'section multiple byCategory(\n  set category = key\n  set count = length(items)\n  section multiple products(\n    set name = name\n  ) from items\n) from groupby(products, category)',
+    },
+  },
 
   // ── Math functions ────────────────────────────────────────────────────────
   {

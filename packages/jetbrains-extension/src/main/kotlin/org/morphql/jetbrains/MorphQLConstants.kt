@@ -41,6 +41,7 @@ object MorphQLConstants {
         "pack",
         "list",
         "array",
+        "groupby",
         "floor",
         "ceil",
         "round",

@@ -149,6 +149,24 @@ export const runtimeFunctions = {
   },
 
   /**
+   * Groups an array of items by a key computed per item.
+   * Returns an array of { key, items } objects in insertion order.
+   */
+  groupby: (arr: any[], keyFn: (item: any) => any): Array<{ key: any; items: any[] }> => {
+    if (!Array.isArray(arr)) return [];
+    const map = new Map<string, { key: any; items: any[] }>();
+    for (const item of arr) {
+      const k = keyFn(item);
+      const sk = String(k);
+      if (!map.has(sk)) {
+        map.set(sk, { key: k, items: [] });
+      }
+      map.get(sk)!.items.push(item);
+    }
+    return Array.from(map.values());
+  },
+
+  /**
    * Concatenates two or more arrays.
    */
   concat: (...args: any[]) => {
