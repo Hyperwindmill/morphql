@@ -235,6 +235,25 @@ export const FUNCTIONS: FunctionDef[] = [
     },
   },
   {
+    name: "sum",
+    doc: {
+      signature: "sum(array, valueExpression)",
+      description:
+        "Sums a numeric expression evaluated per item across an array. null, undefined and non-numeric values are treated as 0.",
+      parameters: [
+        { name: "array", description: "The array to sum over" },
+        {
+          name: "valueExpression",
+          description:
+            "Expression evaluated for each item to extract the numeric value. Bare field names resolve against each item.",
+        },
+      ],
+      returns: "number",
+      example:
+        "set total = sum(orders, amount)\nset discounted = sum(items, price * quantity)",
+    },
+  },
+  {
     name: "groupby",
     doc: {
       signature: "groupby(array, keyExpression)",

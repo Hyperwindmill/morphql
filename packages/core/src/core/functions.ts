@@ -193,6 +193,14 @@ export const functionRegistry: Record<string, FunctionHandler> = {
   concat: (args: string[], _compiler) => {
     return `env.functions.concat(${args.join(', ')})`;
   },
+  sum: (args: string[], compiler) => {
+    if (args.length !== 2) {
+      throw new Error('sum() requires exactly 2 arguments (array, valueExpression)');
+    }
+    const [arr, valExpr] = args;
+    const lambda = `(item) => { const source = _safeSource(item); return ${valExpr}; }`;
+    return `env.functions.sum(${arr}, ${lambda})`;
+  },
   groupby: (args: string[], compiler) => {
     if (args.length !== 2) {
       throw new Error('groupby() requires exactly 2 arguments (array, keyExpression)');

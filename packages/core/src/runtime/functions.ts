@@ -149,6 +149,18 @@ export const runtimeFunctions = {
   },
 
   /**
+   * Sums a numeric expression evaluated per item across an array.
+   * null, undefined and non-numeric values are treated as 0.
+   */
+  sum: (arr: any[], valFn: (item: any) => any): number => {
+    if (!Array.isArray(arr)) return 0;
+    return arr.reduce((acc, item) => {
+      const n = Number(valFn(item));
+      return acc + (isNaN(n) ? 0 : n);
+    }, 0);
+  },
+
+  /**
    * Groups an array of items by a key computed per item.
    * Returns an array of { key, items } objects in insertion order.
    */

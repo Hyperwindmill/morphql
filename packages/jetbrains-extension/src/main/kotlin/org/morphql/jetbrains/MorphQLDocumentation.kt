@@ -220,6 +220,13 @@ substring("Hello World", -5)     // "World"</pre>
             <b>Parameters:</b><ul><li><b>values:</b> Values to include in the array</li></ul>
             <b>Example:</b><pre>array(1, 2, 3)  // [1, 2, 3]</pre>
         """.trimIndent(),
+        "sum" to """
+            <b>sum(array, valueExpression)</b><br/>
+            Sums a numeric expression evaluated per item across an array. null, undefined and non-numeric values are treated as 0.<br/><br/>
+            <b>Parameters:</b><ul><li><b>array:</b> The array to sum over</li><li><b>valueExpression:</b> Expression evaluated for each item to extract the numeric value. Bare field names resolve against each item.</li></ul>
+            <b>Example:</b><pre>set total = sum(orders, amount)
+set discounted = sum(items, price * quantity)</pre>
+        """.trimIndent(),
         "groupby" to """
             <b>groupby(array, keyExpression)</b><br/>
             Groups an array of items by a key expression evaluated per item. Returns an array of `{ key, items }` objects in insertion order. Typically used as the `from` source of a `section multiple`.<br/><br/>
