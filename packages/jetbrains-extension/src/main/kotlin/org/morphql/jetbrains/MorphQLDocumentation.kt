@@ -220,6 +220,45 @@ substring("Hello World", -5)     // "World"</pre>
             <b>Parameters:</b><ul><li><b>values:</b> Values to include in the array</li></ul>
             <b>Example:</b><pre>array(1, 2, 3)  // [1, 2, 3]</pre>
         """.trimIndent(),
+        "avg" to """
+            <b>avg(array, valueExpression)</b><br/>
+            Returns the average of a numeric expression evaluated per item. Only non-NaN values contribute. Returns 0 for empty or null arrays.<br/><br/>
+            <b>Parameters:</b><ul><li><b>array:</b> The array to average over</li><li><b>valueExpression:</b> Expression evaluated for each item to extract the numeric value. Bare field names resolve against each item.</li></ul>
+            <b>Example:</b><pre>set avgPrice = avg(items, price)</pre>
+        """.trimIndent(),
+        "minof" to """
+            <b>minof(array, valueExpression)</b><br/>
+            Returns the minimum of a numeric expression evaluated per item. Skips non-numeric values. Returns null for empty or null arrays.<br/><br/>
+            <b>Parameters:</b><ul><li><b>array:</b> The array to find the minimum in</li><li><b>valueExpression:</b> Expression evaluated for each item. Bare field names resolve against each item.</li></ul>
+            <b>Example:</b><pre>set cheapest = minof(products, price)</pre>
+        """.trimIndent(),
+        "maxof" to """
+            <b>maxof(array, valueExpression)</b><br/>
+            Returns the maximum of a numeric expression evaluated per item. Skips non-numeric values. Returns null for empty or null arrays.<br/><br/>
+            <b>Parameters:</b><ul><li><b>array:</b> The array to find the maximum in</li><li><b>valueExpression:</b> Expression evaluated for each item. Bare field names resolve against each item.</li></ul>
+            <b>Example:</b><pre>set mostExpensive = maxof(products, price)</pre>
+        """.trimIndent(),
+        "every" to """
+            <b>every(array, conditionExpression)</b><br/>
+            Returns true if a condition expression is truthy for every item in the array. Returns true for empty or null arrays (vacuously true).<br/><br/>
+            <b>Parameters:</b><ul><li><b>array:</b> The array to test</li><li><b>conditionExpression:</b> Boolean expression evaluated for each item. Bare field names resolve against each item.</li></ul>
+            <b>Example:</b><pre>set allPaid = every(orders, status == "paid")
+set valid = every(items, amount > 0)</pre>
+        """.trimIndent(),
+        "some" to """
+            <b>some(array, conditionExpression)</b><br/>
+            Returns true if a condition expression is truthy for at least one item. Returns false for empty or null arrays.<br/><br/>
+            <b>Parameters:</b><ul><li><b>array:</b> The array to test</li><li><b>conditionExpression:</b> Boolean expression evaluated for each item. Bare field names resolve against each item.</li></ul>
+            <b>Example:</b><pre>set hasOverdue = some(invoices, daysOverdue > 0)
+set hasDiscount = some(items, discount > 0)</pre>
+        """.trimIndent(),
+        "distinct" to """
+            <b>distinct(array, valueExpression)</b><br/>
+            Returns an array of distinct values of an expression across the array, preserving first-seen order. Deduplication is based on String() coercion.<br/><br/>
+            <b>Parameters:</b><ul><li><b>array:</b> The array to extract distinct values from</li><li><b>valueExpression:</b> Expression evaluated for each item. Bare field names resolve against each item.</li></ul>
+            <b>Example:</b><pre>set categories = distinct(products, category)
+set statuses = distinct(orders, status)</pre>
+        """.trimIndent(),
         "sum" to """
             <b>sum(array, valueExpression)</b><br/>
             Sums a numeric expression evaluated per item across an array. null, undefined and non-numeric values are treated as 0.<br/><br/>

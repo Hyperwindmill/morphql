@@ -43,6 +43,7 @@ export default defineConfig({
         items: [
           { text: "Library (Core)", link: "/guide/library" },
           { text: "Language Reference", link: "/guide/language-reference" },
+          { text: "Functions Reference", link: "/guide/functions" },
           {
             text: "Adapters",
             collapsed: false,

@@ -235,6 +235,117 @@ export const FUNCTIONS: FunctionDef[] = [
     },
   },
   {
+    name: "avg",
+    doc: {
+      signature: "avg(array, valueExpression)",
+      description:
+        "Returns the average of a numeric expression evaluated per item. Only non-NaN values contribute. Returns 0 for empty or null arrays.",
+      parameters: [
+        { name: "array", description: "The array to average over" },
+        {
+          name: "valueExpression",
+          description:
+            "Expression evaluated for each item to extract the numeric value. Bare field names resolve against each item.",
+        },
+      ],
+      returns: "number",
+      example: "set avgPrice = avg(items, price)",
+    },
+  },
+  {
+    name: "minof",
+    doc: {
+      signature: "minof(array, valueExpression)",
+      description:
+        "Returns the minimum of a numeric expression evaluated per item. Skips non-numeric values. Returns null for empty or null arrays.",
+      parameters: [
+        { name: "array", description: "The array to find the minimum in" },
+        {
+          name: "valueExpression",
+          description:
+            "Expression evaluated for each item. Bare field names resolve against each item.",
+        },
+      ],
+      returns: "number | null",
+      example: "set cheapest = minof(products, price)",
+    },
+  },
+  {
+    name: "maxof",
+    doc: {
+      signature: "maxof(array, valueExpression)",
+      description:
+        "Returns the maximum of a numeric expression evaluated per item. Skips non-numeric values. Returns null for empty or null arrays.",
+      parameters: [
+        { name: "array", description: "The array to find the maximum in" },
+        {
+          name: "valueExpression",
+          description:
+            "Expression evaluated for each item. Bare field names resolve against each item.",
+        },
+      ],
+      returns: "number | null",
+      example: "set mostExpensive = maxof(products, price)",
+    },
+  },
+  {
+    name: "every",
+    doc: {
+      signature: "every(array, conditionExpression)",
+      description:
+        "Returns true if a condition expression is truthy for every item in the array. Returns true for empty or null arrays (vacuously true).",
+      parameters: [
+        { name: "array", description: "The array to test" },
+        {
+          name: "conditionExpression",
+          description:
+            "Boolean expression evaluated for each item. Bare field names resolve against each item.",
+        },
+      ],
+      returns: "boolean",
+      example:
+        "set allPaid = every(orders, status == \"paid\")\nset valid = every(items, amount > 0)",
+    },
+  },
+  {
+    name: "some",
+    doc: {
+      signature: "some(array, conditionExpression)",
+      description:
+        "Returns true if a condition expression is truthy for at least one item. Returns false for empty or null arrays.",
+      parameters: [
+        { name: "array", description: "The array to test" },
+        {
+          name: "conditionExpression",
+          description:
+            "Boolean expression evaluated for each item. Bare field names resolve against each item.",
+        },
+      ],
+      returns: "boolean",
+      example:
+        "set hasOverdue = some(invoices, daysOverdue > 0)\nset hasDiscount = some(items, discount > 0)",
+    },
+  },
+  {
+    name: "distinct",
+    doc: {
+      signature: "distinct(array, valueExpression)",
+      description:
+        "Returns an array of distinct values of an expression across the array, preserving first-seen order. Deduplication is based on String() coercion.",
+      parameters: [
+        { name: "array", description: "The array to extract distinct values from" },
+        {
+          name: "valueExpression",
+          description:
+            "Expression evaluated for each item. Bare field names resolve against each item.",
+        },
+      ],
+      returns: "array",
+      example:
+        "set categories = distinct(products, category)\nset statuses = distinct(orders, status)",
+    },
+  },
+  {
     name: "sum",
     doc: {
       signature: "sum(array, valueExpression)",

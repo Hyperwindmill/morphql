@@ -161,6 +161,96 @@ export const runtimeFunctions = {
   },
 
   /**
+   * Returns the average of a numeric expression evaluated per item.
+   * Only non-NaN values contribute to both the sum and the count.
+   * Returns 0 for empty or null arrays.
+   */
+  avg: (arr: any[], valFn: (item: any) => any): number => {
+    if (!Array.isArray(arr) || arr.length === 0) return 0;
+    let sum = 0;
+    let count = 0;
+    for (const item of arr) {
+      const v = valFn(item);
+      if (v == null) continue; // skip null and undefined
+      const n = Number(v);
+      if (!isNaN(n)) {
+        sum += n;
+        count++;
+      }
+    }
+    return count === 0 ? 0 : sum / count;
+  },
+
+  /**
+   * Returns the minimum of a numeric expression across an array.
+   * Returns null for empty or null arrays, and skips null/undefined/non-numeric values.
+   */
+  minof: (arr: any[], valFn: (item: any) => any): number | null => {
+    if (!Array.isArray(arr)) return null;
+    let result: number | null = null;
+    for (const item of arr) {
+      const v = valFn(item);
+      if (v == null) continue;
+      const n = Number(v);
+      if (!isNaN(n) && (result === null || n < result)) result = n;
+    }
+    return result;
+  },
+
+  /**
+   * Returns the maximum of a numeric expression across an array.
+   * Returns null for empty or null arrays, and skips null/undefined/non-numeric values.
+   */
+  maxof: (arr: any[], valFn: (item: any) => any): number | null => {
+    if (!Array.isArray(arr)) return null;
+    let result: number | null = null;
+    for (const item of arr) {
+      const v = valFn(item);
+      if (v == null) continue;
+      const n = Number(v);
+      if (!isNaN(n) && (result === null || n > result)) result = n;
+    }
+    return result;
+  },
+
+  /**
+   * Returns true if a condition expression is truthy for every item in the array.
+   * Returns true for empty or null arrays (vacuously true).
+   */
+  every: (arr: any[], condFn: (item: any) => any): boolean => {
+    if (!Array.isArray(arr)) return true;
+    return arr.every((item) => !!condFn(item));
+  },
+
+  /**
+   * Returns true if a condition expression is truthy for at least one item.
+   * Returns false for empty or null arrays.
+   */
+  some: (arr: any[], condFn: (item: any) => any): boolean => {
+    if (!Array.isArray(arr)) return false;
+    return arr.some((item) => !!condFn(item));
+  },
+
+  /**
+   * Returns an array of distinct values of an expression across an array,
+   * preserving first-seen order. Deduplication is based on String() coercion.
+   */
+  distinct: (arr: any[], valFn: (item: any) => any): any[] => {
+    if (!Array.isArray(arr)) return [];
+    const seen = new Set<string>();
+    const result: any[] = [];
+    for (const item of arr) {
+      const v = valFn(item);
+      const sk = String(v);
+      if (!seen.has(sk)) {
+        seen.add(sk);
+        result.push(v);
+      }
+    }
+    return result;
+  },
+
+  /**
    * Groups an array of items by a key computed per item.
    * Returns an array of { key, items } objects in insertion order.
    */

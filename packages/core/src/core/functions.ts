@@ -193,6 +193,54 @@ export const functionRegistry: Record<string, FunctionHandler> = {
   concat: (args: string[], _compiler) => {
     return `env.functions.concat(${args.join(', ')})`;
   },
+  avg: (args: string[], _compiler) => {
+    if (args.length !== 2) {
+      throw new Error('avg() requires exactly 2 arguments (array, valueExpression)');
+    }
+    const [arr, valExpr] = args;
+    const lambda = `(item) => { const source = _safeSource(item); return ${valExpr}; }`;
+    return `env.functions.avg(${arr}, ${lambda})`;
+  },
+  minof: (args: string[], _compiler) => {
+    if (args.length !== 2) {
+      throw new Error('minof() requires exactly 2 arguments (array, valueExpression)');
+    }
+    const [arr, valExpr] = args;
+    const lambda = `(item) => { const source = _safeSource(item); return ${valExpr}; }`;
+    return `env.functions.minof(${arr}, ${lambda})`;
+  },
+  maxof: (args: string[], _compiler) => {
+    if (args.length !== 2) {
+      throw new Error('maxof() requires exactly 2 arguments (array, valueExpression)');
+    }
+    const [arr, valExpr] = args;
+    const lambda = `(item) => { const source = _safeSource(item); return ${valExpr}; }`;
+    return `env.functions.maxof(${arr}, ${lambda})`;
+  },
+  every: (args: string[], _compiler) => {
+    if (args.length !== 2) {
+      throw new Error('every() requires exactly 2 arguments (array, conditionExpression)');
+    }
+    const [arr, condExpr] = args;
+    const lambda = `(item) => { const source = _safeSource(item); return ${condExpr}; }`;
+    return `env.functions.every(${arr}, ${lambda})`;
+  },
+  some: (args: string[], _compiler) => {
+    if (args.length !== 2) {
+      throw new Error('some() requires exactly 2 arguments (array, conditionExpression)');
+    }
+    const [arr, condExpr] = args;
+    const lambda = `(item) => { const source = _safeSource(item); return ${condExpr}; }`;
+    return `env.functions.some(${arr}, ${lambda})`;
+  },
+  distinct: (args: string[], _compiler) => {
+    if (args.length !== 2) {
+      throw new Error('distinct() requires exactly 2 arguments (array, valueExpression)');
+    }
+    const [arr, valExpr] = args;
+    const lambda = `(item) => { const source = _safeSource(item); return ${valExpr}; }`;
+    return `env.functions.distinct(${arr}, ${lambda})`;
+  },
   sum: (args: string[], compiler) => {
     if (args.length !== 2) {
       throw new Error('sum() requires exactly 2 arguments (array, valueExpression)');
