@@ -313,4 +313,33 @@ transform
       2,
     ),
   },
+  {
+    name: "Order Analytics (groupby + sum)",
+    query: morphQL`from json to json
+transform
+  section multiple byStatus(
+    set status = key
+    set orderCount = items.length
+    set totalRevenue = sum(items, amount)
+    section multiple orders(
+      set id = id
+      set product = product
+      set amount = amount
+    ) from items
+  ) from groupby(orders, status)`,
+    source: JSON.stringify(
+      {
+        orders: [
+          { id: "ORD-001", status: "shipped", amount: 120.5, product: "Laptop" },
+          { id: "ORD-002", status: "pending", amount: 45.0, product: "Book" },
+          { id: "ORD-003", status: "shipped", amount: 89.9, product: "Phone Case" },
+          { id: "ORD-004", status: "cancelled", amount: 200.0, product: "Monitor" },
+          { id: "ORD-005", status: "pending", amount: 35.0, product: "Cable" },
+          { id: "ORD-006", status: "shipped", amount: 55.0, product: "Keyboard" },
+        ],
+      },
+      null,
+      2,
+    ),
+  },
 ];

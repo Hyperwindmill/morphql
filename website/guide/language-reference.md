@@ -322,6 +322,8 @@ Functions are used within expressions to calculate or transform values.
 | `extract(obj, spec...)`               | Extracts fields from an object. Spec: `"key"` or `"target:source"`.                                                | `extract(src, "id", "name:fullName")`    |
 | `pack(obj, spec...)`                  | Encodes object to fixed-length string. Spec pattern: `name:start:len[:left]`.                                      | `pack(target, "id:0:5:left")`            |
 | `concat(arg1, arg2...)`               | Concatenates two or more arrays into one.                                                                          | `concat(list1, list2)`                   |
+| `sum(array, expr)`                    | Sums a numeric expression evaluated per item across an array. null and non-numeric values count as 0.              | `sum(orders, amount)`                    |
+| `groupby(array, expr)`                | Groups an array by a key expression evaluated per item. Returns `[{ key, items }]` in insertion order.             | `groupby(orders, status)`                |
 
 ---
 
