@@ -1,11 +1,26 @@
 import { MorphLexer } from './core/lexer.js';
 import { parser } from './core/parser.js';
 import { compiler } from './core/compiler.js';
+import { astVisitor } from './core/ast-visitor.js';
 import { getAdapter, registerAdapter, DataAdapter } from './runtime/adapters.js';
 import { MorphQLCache } from './runtime/cache.js';
 import { runtimeFunctions } from './runtime/functions.js';
+import type { ParsedQuery } from './core/parse-types.js';
 
 import { AnalyzeResult, SchemaNode, MorphType } from './core/mapping-tracker.js';
+
+export type {
+  ParsedQuery,
+  ParsedAction,
+  ParsedSetAction,
+  ParsedModifyAction,
+  ParsedDeleteAction,
+  ParsedDefineAction,
+  ParsedCloneAction,
+  ParsedSectionAction,
+  ParsedIfAction,
+  ParsedReturnAction,
+} from './core/parse-types.js';
 
 export {
   MorphQLCache,
@@ -101,6 +116,47 @@ function createEngine<Source, Target>(code: string): MorphEngine<Source, Target>
 
   engine.code = code;
   return engine;
+}
+
+/**
+ * Parse a MorphQL query string and return a simplified, JSON-serializable AST.
+ *
+ * Only the Lexer and Parser phases are executed — no JavaScript is generated.
+ * Useful for tools that need to inspect or round-trip a
+ * query without executing it.
+ *
+ * Throws an Error with a human-readable message on any syntax error,
+ * consistent with the behaviour of compile().
+ *
+ * @example
+ * ```typescript
+ * import { parse } from "@morphql/core";
+ *
+ * const ast = parse(`
+ *   from json to object
+ *   transform
+ *     set name = firstName
+ * `);
+ * // ast.from   → "json"
+ * // ast.to     → "object"
+ * // ast.actions[0] → { type: "set", target: "name", expression: "firstName" }
+ * ```
+ */
+export function parse(queryString: string): ParsedQuery {
+  const lexResult = MorphLexer.tokenize(queryString);
+
+  if (lexResult.errors.length > 0) {
+    throw new Error(`Lexing errors: ${lexResult.errors[0].message}`);
+  }
+
+  parser.input = lexResult.tokens;
+  const cst = parser.query();
+
+  if (parser.errors.length > 0) {
+    throw new Error(`Parsing errors: ${parser.errors[0].message}`);
+  }
+
+  return astVisitor.visit(cst) as ParsedQuery;
 }
 
 /**

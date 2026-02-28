@@ -1,6 +1,6 @@
 {
   "name": "@morphql/ide-panel",
-  "version": "0.1.30",
+  "version": "0.1.31",
   "private": true,
   "type": "module",
   "description": "Shared live-output panel for MorphQL IDE extensions (VSCode, JetBrains)",
