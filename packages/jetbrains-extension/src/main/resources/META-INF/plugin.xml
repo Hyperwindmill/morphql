@@ -28,6 +28,6 @@
         <toolWindow id="MorphQL Live"
                     factoryClass="org.morphql.jetbrains.MorphQLLivePanelFactory"
                     anchor="right"
-                    icon="icons/morphql.png" />
+                    icon="icons/toolwindow.svg" />
     </extensions>
 </idea-plugin>
