@@ -1,6 +1,6 @@
 {
   "name": "@morphql/language-definitions",
-  "version": "0.1.31",
+  "version": "0.1.32",
   "description": "Shared language definitions for MorphQL across VSCode, Monaco, and documentation",
   "type": "module",
   "publishConfig": {

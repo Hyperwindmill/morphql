@@ -2,7 +2,7 @@ import { MorphLexer } from './core/lexer.js';
 import { parser } from './core/parser.js';
 import { compiler } from './core/compiler.js';
 import { astVisitor } from './core/ast-visitor.js';
-import { getAdapter, registerAdapter, DataAdapter } from './runtime/adapters.js';
+import { getAdapter, registerAdapter, getRegisteredFormats, DataAdapter } from './runtime/adapters.js';
 import { MorphQLCache } from './runtime/cache.js';
 import { runtimeFunctions } from './runtime/functions.js';
 import type { ParsedQuery } from './core/parse-types.js';
@@ -29,6 +29,7 @@ export {
   MorphType,
   registerAdapter,
   getAdapter,
+  getRegisteredFormats,
   DataAdapter,
 };
 import beautify from 'js-beautify';

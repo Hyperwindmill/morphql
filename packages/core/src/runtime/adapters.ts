@@ -12,6 +12,10 @@ export function registerAdapter(name: string, adapter: DataAdapter) {
   adapters[name.toLowerCase()] = adapter;
 }
 
+export function getRegisteredFormats(): string[] {
+  return Object.keys(adapters);
+}
+
 export function getAdapter(name: string): DataAdapter {
   const adapter = adapters[name.toLowerCase()];
   if (!adapter) {
