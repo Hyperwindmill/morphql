@@ -2,7 +2,7 @@
   "name": "morphql-vscode",
   "displayName": "MorphQL",
   "description": "Syntax highlighting, diagnostics, hover documentation, and execution for Morph Query Language",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "publisher": "morphql",
   "icon": "icon.png",
   "engines": {

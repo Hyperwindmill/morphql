@@ -1,6 +1,6 @@
 {
   "name": "@morphql/playground",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "Interactive playground for morphql - Test MorphQL queries in real-time.",
   "type": "module",
   "publishConfig": {
