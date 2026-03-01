@@ -180,3 +180,55 @@ return function(input, env) {
 - `readFrom` tracks source vs target context per expression
 - `scopeStack` manages nested section format contexts
 - Safe mode: replaces `.` with `?.` and `[` with `?.[` in property access
+
+## Examples
+
+```
+from json
+to xml("UserProfile")
+transform
+  section profile(
+    set customerId = id
+    set fullName = uppercase(name)
+    set status = if(isActive, "Active", "Inactive")
+
+    if (isActive) (
+       set accountTier = "Premium"
+    ) else (
+       set accountTier = "Standard"
+    )
+
+    section contactInfo(
+      set primaryEmail = email
+      set phone = phone
+    ) from contact
+  ) from customer
+```
+---
+```
+from edifact to object
+transform
+  set invoiceNumber = BGM[0][1]
+  set invoiceDate = DTM[0][0][1]
+  
+  section buyer(
+    set id = source[1][0]
+    set name = source[3]
+    set address = source[4] + ", " + source[5]
+  ) from NAD where source[0] == "BY"
+  
+  section seller(
+    set id = source[1][0]
+    set name = source[3]
+    set address = source[4] + ", " + source[5]
+  ) from NAD where source[0] == "SE"
+  
+  section multiple items(
+    set lineNo = LIN[0]
+    set productId = LIN[2][0]
+    set quantity = number(QTY[0][1])
+    set unit = QTY[0][2]
+    set amount = number(MOA[0][1])
+    set currency = MOA[0][2]
+  ) from transpose(_source, "LIN", "QTY", "MOA")
+```
