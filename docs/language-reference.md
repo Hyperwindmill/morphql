@@ -665,17 +665,136 @@ Output:   {"byStatus": [
 
 ---
 
-## 8. Formats & Adapters
+## 8. Format Selection Guide (CRITICAL — READ THIS FIRST)
 
-| Format      | Description                                                        | Options                                     |
-| :---------- | :----------------------------------------------------------------- | :------------------------------------------ |
-| `json`      | JSON parse/serialize.                                              | —                                           |
-| `xml`       | Attributes prefixed `$`, text content key `_`.                     | `to xml("rootTag")` sets root element name. |
-| `csv`       | Rows keyed A,B,C...AA,AB. Result: `{rows: [{A:..., B:...}, ...]}`. | `from csv(";")` custom delimiter.           |
-| `plaintext` | Lines as array. Result: `{rows: [line1, line2, ...]}`.             | `from plaintext("\n")` custom separator.    |
-| `edifact`   | UN/EDIFACT segments. `{TAG: [elements], ...}`.                     | —                                           |
-| `object`    | Identity pass-through (no parsing). Tries `JSON.parse` on strings. | —                                           |
-| Custom      | Register via `registerAdapter(name, {parse, serialize})`.          | —                                           |
+**The `from` and `to` formats MUST match the actual input/output data types.** This is the most common mistake.
+
+### Decision Rule
+
+| Your input data is...                           | Use `from`       |
+| :---------------------------------------------- | :--------------- |
+| A JSON string like `{"name": "Alice"}`          | `from json`      |
+| An XML string like `<root>...</root>`           | `from xml`       |
+| A CSV string like `id,name\n1,Alice`            | `from csv`       |
+| A plain text / fixed-width file (lines of text) | `from plaintext` |
+| An EDIFACT message                              | `from edifact`   |
+| A JavaScript object already in memory           | `from object`    |
+
+| Your output should be...                        | Use `to`                        |
+| :---------------------------------------------- | :------------------------------ |
+| A JSON string                                   | `to json`                       |
+| An XML string                                   | `to xml` or `to xml("rootTag")` |
+| A CSV string                                    | `to csv`                        |
+| A plain text / fixed-width file (lines of text) | `to plaintext`                  |
+| An EDIFACT message                              | `to edifact`                    |
+| A JavaScript object in memory                   | `to object`                     |
+
+### Format Details
+
+| Format      | Description                                                               | Options                                     |
+| :---------- | :------------------------------------------------------------------------ | :------------------------------------------ |
+| `json`      | JSON parse/serialize.                                                     | —                                           |
+| `xml`       | Attributes prefixed `$`, text content key `_`.                            | `to xml("rootTag")` sets root element name. |
+| `csv`       | Rows keyed A,B,C...AA,AB. Result: `{rows: [{A:..., B:...}, ...]}`.        | `from csv(";")` custom delimiter.           |
+| `plaintext` | Splits into lines on read (`{rows: [...strings]}`), joins lines on write. | `from plaintext(";")` custom separator.     |
+| `edifact`   | UN/EDIFACT segments. `{TAG: [elements], ...}`.                            | —                                           |
+| `object`    | Identity pass-through (no parsing). Tries `JSON.parse` on strings.        | —                                           |
+| Custom      | Register via `registerAdapter(name, {parse, serialize})`.                 | —                                           |
+
+### Plaintext Adapter — How It Works (IMPORTANT)
+
+The `plaintext` adapter is specifically designed for line-based text files (logs, fixed-width records, etc.).
+
+**Reading (`from plaintext`):**
+
+- The input string is split into lines → `{rows: ["line1", "line2", ...]}`
+- Each element in `rows` is a raw string (one line)
+- Use `unpack()` to extract fields from each line
+
+**Writing (`to plaintext`):**
+
+- The engine expects `target.rows` to be an array of strings
+- Each string becomes one line in the output, joined by `\n`
+- Use `pack()` or `return` inside `section multiple rows(...)` to produce each line
+
+```
+// Reading plaintext:
+Query:   from plaintext to object
+         transform
+           section multiple records(
+             set data = unpack(source, "name:0:10", "age:10:3")
+           ) from rows
+
+Input:   "Alice     025\nBob       030"
+Output:  {"records": [
+           {"data": {"name": "Alice", "age": "025"}},
+           {"data": {"name": "Bob", "age": "030"}}
+         ]}
+```
+
+```
+// Writing plaintext:
+Query:   from object to plaintext
+         transform
+           section multiple rows(
+             return pack(source, "name:0:10", "age:10:3:left")
+           ) from users
+
+Input:   {"users": [{"name": "Alice", "age": "25"}, {"name": "Bob", "age": "30"}]}
+Output:  "Alice      25\nBob        30"
+// pack() builds a fixed-width string. return replaces the target object with the string.
+// The plaintext adapter joins all rows with \n.
+```
+
+### CSV Adapter — How It Works (IMPORTANT)
+
+The `csv` adapter parses CSV into **column-keyed rows**: columns are named `A`, `B`, `C`, ..., `AA`, `AB`, etc. (NOT by header names).
+
+**Reading (`from csv`):**
+
+- Result: `{rows: [{A: "val", B: "val", ...}, ...]}`
+- **The first row is treated as data, NOT as headers** by default
+- If your CSV has a header row, you MUST use `spreadsheet()` to convert column keys to header names
+
+**If the CSV has headers**, use `spreadsheet()`:
+
+```
+Query:
+  from csv to json
+  transform
+    section multiple items(
+      set productName = Name
+      set productPrice = number(Price)
+    ) from spreadsheet(rows)
+
+Input:   "Name,Price\nWidget,29.99\nGadget,19.99"
+Output:  {"items": [
+           {"productName": "Widget", "productPrice": 29.99},
+           {"productName": "Gadget", "productPrice": 19.99}
+         ]}
+// spreadsheet() takes the rows array, uses the FIRST row as header names,
+// and returns the remaining rows as objects keyed by those headers.
+// Without spreadsheet(), you would have to use A, B, C as keys.
+```
+
+**If the CSV has NO headers**, use column letters directly:
+
+```
+Query:
+  from csv to json
+  transform
+    section multiple items(
+      set name = A
+      set price = number(B)
+    ) from rows
+
+Input:   "Widget,29.99\nGadget,19.99"
+Output:  {"items": [
+           {"name": "Widget", "price": 29.99},
+           {"name": "Gadget", "price": 19.99}
+         ]}
+// No headers → use A for first column, B for second, etc.
+```
 
 ---
 
@@ -819,4 +938,140 @@ Query:
 // whose first element is "BY". Without "multiple", it returns a single object.
 // transpose(_source, "LIN", "QTY", "MOA") zips the LIN, QTY, and MOA segment arrays
 // from the root source so each iteration gets {LIN: [...], QTY: [...], MOA: [...]}.
+```
+
+### Example 4: JSON to Fixed-Width Plaintext
+
+```
+Query:
+  from json to plaintext
+  transform
+    section multiple rows(
+      return pack(source, "id:0:5:left", "name:5:20", "dept:25:10")
+    ) from employees
+
+Input:
+  {"employees": [
+    {"id": "42", "name": "Alice Smith", "dept": "IT"},
+    {"id": "7", "name": "Bob Jones", "dept": "Finance"}
+  ]}
+
+Output:
+  "   42Alice Smith          IT        \n    7Bob Jones            Finance   "
+
+// CRITICAL: "to plaintext" is required (NOT "to json").
+// pack() builds each fixed-width line. return makes it the row value.
+// The plaintext adapter joins rows with \n.
+```
+
+### Example 5: Fixed-Width Plaintext to JSON
+
+```
+Query:
+  from plaintext to json
+  transform
+    section multiple employees(
+      define parsed = unpack(source, "id:0:5", "name:5:20", "dept:25:10")
+      set id = number(parsed.id)
+      set name = parsed.name
+      set department = parsed.dept
+    ) from rows
+
+Input:   "   42Alice Smith          IT        \n    7Bob Jones            Finance   "
+Output:  {"employees": [
+           {"id": 42, "name": "Alice Smith", "department": "IT"},
+           {"id": 7, "name": "Bob Jones", "department": "Finance"}
+         ]}
+
+// "from plaintext" splits into lines → rows = ["   42Alice...", "    7Bob..."]
+// unpack() extracts fields by position. Whitespace is trimmed by default.
+```
+
+---
+
+## 11. Common Mistakes and Anti-Patterns
+
+These are errors that are commonly made when writing MorphQL queries.
+
+### ❌ WRONG: Using `to json` when output should be plaintext/CSV/XML
+
+```
+// WRONG — output is a JSON string, not a text file
+from json to json
+transform
+  set line = padstart(id, 5, "0") + padend(name, 20)
+```
+
+```
+// CORRECT — use "to plaintext" and pack()
+from json to plaintext
+transform
+  section multiple rows(
+    return pack(source, "id:0:5:left", "name:5:20")
+  ) from records
+```
+
+**Rule: If the final output is a text file with lines, use `to plaintext`. If it's XML, use `to xml`. Always match the format.**
+
+### ❌ WRONG: Using padstart/padend to manually build fixed-width strings
+
+```
+// WRONG — manual padding is error-prone and verbose
+from object to object
+transform
+  set line = padstart(text(id), 5, "0") + padend(name, 20, " ") + padend(dept, 10, " ")
+```
+
+```
+// CORRECT — use pack() which handles padding, truncation, and alignment
+from object to plaintext
+transform
+  section multiple rows(
+    return pack(source, "id:0:5:left", "name:5:20", "dept:25:10")
+  ) from records
+```
+
+**Rule: `pack()` is the ONLY correct way to produce fixed-width text. `unpack()` is the ONLY correct way to read fixed-width text. Never use padstart/padend for fixed-width formatting.**
+
+### ❌ WRONG: Using `section` without understanding scope
+
+```
+// WRONG — "items" inside section summary reads from source.summary.items (which doesn't exist)
+from json to json
+transform
+  section summary(
+    set count = items.length
+  )
+```
+
+```
+// CORRECT — use _source to access root-level fields from inside a section
+from json to json
+transform
+  section summary(
+    set count = _source.items.length
+  )
+
+// OR — compute at root level where items is directly accessible
+from json to json
+transform
+  set count = items.length
+```
+
+### ❌ WRONG: Forgetting that `modify` reads from target, not source
+
+```
+// WRONG — trying to modify a value but writing it as if reading from source
+from object to object
+transform
+  set price = rawPrice
+  set price = price * 1.1    // This OVERWRITES price with source.price * 1.1, not target.price * 1.1
+```
+
+```
+// CORRECT — use modify to read from target
+from object to object
+transform
+  set price = rawPrice
+  modify price = price * 1.1  // Reads target.price (the value we just set) and multiplies
 ```
