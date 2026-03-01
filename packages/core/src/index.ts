@@ -2,7 +2,12 @@ import { MorphLexer } from './core/lexer.js';
 import { parser } from './core/parser.js';
 import { compiler } from './core/compiler.js';
 import { astVisitor } from './core/ast-visitor.js';
-import { getAdapter, registerAdapter, getRegisteredFormats, DataAdapter } from './runtime/adapters.js';
+import {
+  getAdapter,
+  registerAdapter,
+  getRegisteredFormats,
+  DataAdapter,
+} from './runtime/adapters.js';
 import { MorphQLCache } from './runtime/cache.js';
 import { runtimeFunctions } from './runtime/functions.js';
 import type { ParsedQuery } from './core/parse-types.js';
@@ -184,3 +189,5 @@ export function morphQL(strings: TemplateStringsArray, ...values: any[]): string
 export function greet(name: string): string {
   return `Hello, ${name}! The Morph engine is ready.`;
 }
+
+export { languageReference, getSystemPrompt } from './language-reference.js';

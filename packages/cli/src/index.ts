@@ -1,4 +1,4 @@
-import { compile } from "@morphql/core";
+import { compile, languageReference, getSystemPrompt } from "@morphql/core";
 import { MorphQLFileCache } from "./file-cache.js";
 import { Command } from "commander";
 import * as fs from "node:fs/promises";
@@ -74,7 +74,25 @@ program
   .option("--log-format <format>", "Log output format: text or json", "text")
   .action(watchAction);
 
-// --- 3. Default Command (Single File) ---
+// --- 3. Docs Subcommand ---
+program
+  .command("docs")
+  .description(
+    "Print the MorphQL language reference to stdout (for LLM system prompts)",
+  )
+  .option(
+    "--prompt",
+    "Include LLM system prompt wrapper with role instructions and verification rules",
+  )
+  .action((options) => {
+    if (options.prompt) {
+      process.stdout.write(getSystemPrompt());
+    } else {
+      process.stdout.write(languageReference);
+    }
+  });
+
+// --- 4. Default Command (Single File) ---
 program
   .option("-f, --from <path>", "Path to the source file")
   .option("-i, --input <string>", "Raw source content as string")

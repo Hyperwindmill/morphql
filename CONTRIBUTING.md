@@ -38,14 +38,14 @@ npm run build:all
 
 MorphQL is a monorepo. The most relevant packages for core contributions are:
 
-| Package | Description |
-|---|---|
-| `packages/core` | Main engine: lexer, parser, compiler, adapters |
+| Package                         | Description                                                                |
+| ------------------------------- | -------------------------------------------------------------------------- |
+| `packages/core`                 | Main engine: lexer, parser, compiler, adapters                             |
 | `packages/language-definitions` | **Single source of truth** for language keywords, functions, and operators |
-| `packages/cli` | Command-line interface |
-| `packages/server` | NestJS REST API |
-| `packages/vscode-extension` | VSCode extension |
-| `packages/playground` | Interactive web editor |
+| `packages/cli`                  | Command-line interface                                                     |
+| `packages/server`               | NestJS REST API                                                            |
+| `packages/vscode-extension`     | VSCode extension                                                           |
+| `packages/playground`           | Interactive web editor                                                     |
 
 ### Adding or modifying language features
 
@@ -59,6 +59,12 @@ After changes:
 cd packages/language-definitions && npm run build
 cd packages/core && npm run build
 ```
+
+### Maintaining the Language Reference
+
+`docs/language-reference.md` is the **single source of truth** for the MorphQL language specification. It is bundled into `@morphql/core` at build time and exported as `languageReference` and `getSystemPrompt()`. It is also exposed via `morphql docs` in the CLI.
+
+When adding or modifying language features, **you must update this file**. It is designed for AI/LLM consumption, so every action and function must include concrete **Input → Output** examples. The prebuild step (`node scripts/generate-language-reference.mjs`) regenerates the TypeScript source automatically when you run `npm run build` in `packages/core`.
 
 ---
 
@@ -75,7 +81,7 @@ cd packages/core && npm run build
 ## Submitting Changes
 
 - Open a pull request against the `main` branch.
-- Provide a clear description of *what* changed and *why*.
+- Provide a clear description of _what_ changed and _why_.
 - Reference any related issue with `Closes #<issue-number>` where applicable.
 - Be prepared for review feedback; iterations are normal and expected.
 
