@@ -3,6 +3,7 @@ import Prism from "prismjs";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-json";
 import "prismjs/components/prism-markup";
+import "prismjs/components/prism-yaml";
 
 // ── Host bridge ───────────────────────────────────────────────────────
 //
@@ -143,6 +144,8 @@ function detectLang(text: string): string {
   const t = text.trim();
   if (t.startsWith("{") || t.startsWith("[")) return "json";
   if (t.startsWith("<")) return "markup";
+  const firstLine = t.split("\n")[0];
+  if (/^\s*\w[\w\s.-]*\s*:/.test(firstLine) || /^\s*-\s/.test(firstLine)) return "yaml";
   return "plaintext";
 }
 

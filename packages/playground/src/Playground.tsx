@@ -52,6 +52,8 @@ export function Playground({
     const trimmed = data.trim();
     if (trimmed.startsWith("<")) return "xml";
     if (trimmed.startsWith("{") || trimmed.startsWith("[")) return "json";
+    const firstLine = trimmed.split("\n")[0];
+    if (/^\s*\w[\w\s.-]*\s*:/.test(firstLine) || /^\s*-\s/.test(firstLine)) return "yaml";
     return "plaintext";
   };
 
