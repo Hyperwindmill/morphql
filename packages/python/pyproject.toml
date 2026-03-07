@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "morphql"
+version = "0.1.0"
+description = "Python client for MorphQL — transform data with declarative queries."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+dependencies = []
+keywords = ["morphql", "transform", "query", "json", "xml", "edi", "dsl"]
+authors = [{ name = "Hyperwindmill" }]
+
+[project.urls]
+Homepage = "https://github.com/Hyperwindmill/morphql"
+Repository = "https://github.com/Hyperwindmill/morphql"
+Issues = "https://github.com/Hyperwindmill/morphql/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -8,3 +8,14 @@ node_modules
 .env
 .env.*
 *.generated.ts
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+.pytest_cache/
+htmlcov/
+.mypy_cache/
