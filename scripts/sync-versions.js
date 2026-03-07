@@ -82,6 +82,15 @@ if (fs.existsSync(playgroundPath)) {
   fs.writeFileSync(playgroundPath, content);
 }
 
+// 6. Update Python package (pyproject.toml)
+const pyprojectPath = path.join(packagesDir, 'python', 'pyproject.toml');
+if (fs.existsSync(pyprojectPath)) {
+  console.log(`Updating ${pyprojectPath}`);
+  let content = fs.readFileSync(pyprojectPath, 'utf8');
+  content = content.replace(/^version = "[^"]+"/m, `version = "${targetVersion}"`);
+  fs.writeFileSync(pyprojectPath, content);
+}
+
 console.log('Version synchronization complete!');
 
 console.log('\x1b[33m%s\x1b[0m', 'IMPORTANT: Remember to run "npm install" at the root to update the lockfile.');
