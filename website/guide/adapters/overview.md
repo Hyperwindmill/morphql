@@ -10,6 +10,7 @@ Adapters are responsible for parsing input data and serializing the transformed 
 | **XML**       | `xml`       | Fast XML parsing and serialization.           |
 | **CSV**       | `csv`       | CSV parsing and serialization via PapaParse.  |
 | **Plaintext** | `plaintext` | Splits input into raw lines.                  |
+| **YAML**      | `yaml`      | YAML parsing and serialization via js-yaml.   |
 | **EDIFACT**   | `edifact`   | UN/EDIFACT message parsing and serialization. |
 | **Object**    | `object`    | Working with in-memory JS objects.            |
 

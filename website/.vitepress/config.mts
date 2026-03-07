@@ -53,6 +53,7 @@ export default defineConfig({
               { text: "XML", link: "/guide/adapters/xml" },
               { text: "CSV", link: "/guide/adapters/csv" },
               { text: "Plaintext", link: "/guide/adapters/plaintext" },
+              { text: "YAML", link: "/guide/adapters/yaml" },
               { text: "EDIFACT", link: "/guide/adapters/edifact" },
               { text: "Custom Adapters", link: "/guide/adapters/custom" },
             ],
