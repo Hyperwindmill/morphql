@@ -1,5 +1,6 @@
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import Papa from 'papaparse';
+import yaml from 'js-yaml';
 
 export interface DataAdapter {
   parse(content: string, options?: any): any;
@@ -257,6 +258,17 @@ registerAdapter('edifact', {
     }
 
     return result;
+  },
+});
+
+// YAML Adapter
+registerAdapter('yaml', {
+  parse: (content: string, options?: any) => {
+    if (typeof content !== 'string') return content;
+    return yaml.load(content, options);
+  },
+  serialize: (data: any, options?: any) => {
+    return yaml.dump(data, options);
   },
 });
 

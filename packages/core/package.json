@@ -61,6 +61,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/js-beautify": "^1.14.3",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.2.0",
     "@types/papaparse": "^5.5.2",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
@@ -78,6 +79,7 @@
     "chevrotain": "^11.1.1",
     "fast-xml-parser": "^5.3.6",
     "js-beautify": "^1.15.4",
+    "js-yaml": "^4.1.0",
     "papaparse": "^5.5.3"
   },
   "peerDependencies": {
