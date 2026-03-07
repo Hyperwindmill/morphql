@@ -147,6 +147,122 @@ class TestCliErrorPaths(unittest.TestCase):
         self.assertIn("stdout only", str(ctx.exception))
 
 
+class TestQjsRuntime(unittest.TestCase):
+    """Tests for the QuickJS runtime path."""
+
+    @patch("subprocess.run")
+    @patch("os.path.isfile")
+    def test_qjs_command_uses_qjs_bin_and_bundle(self, mock_isfile, mock_run):
+        """When runtime=qjs and qjs_path is set, command must be [qjs_bin, --std, -m, bundle]."""
+        mock_run.return_value = _make_result("ok")
+        # Make isfile return True for the bundle path so it doesn't raise
+        mock_isfile.return_value = True
+
+        MorphQL.execute(
+            "from json to json transform set x = x",
+            "{}",
+            runtime="qjs",
+            qjs_path="/usr/bin/qjs",
+        )
+
+        args = mock_run.call_args[0][0]
+        self.assertEqual(args[0], "/usr/bin/qjs")
+        self.assertIn("--std", args)
+        self.assertIn("-m", args)
+
+    @patch("subprocess.run")
+    @patch("os.path.isfile")
+    def test_qjs_command_raises_if_bundle_not_found(self, mock_isfile, mock_run):
+        """RuntimeError raised when neither monorepo nor distributed bundle exists."""
+        mock_isfile.return_value = False
+
+        with self.assertRaises(RuntimeError) as ctx:
+            MorphQL.execute(
+                "from json to json transform set x = x",
+                "{}",
+                runtime="qjs",
+                qjs_path="/usr/bin/qjs",
+            )
+        self.assertIn("bundle not found", str(ctx.exception))
+
+    @patch("subprocess.run")
+    @patch("os.path.isfile")
+    @patch("platform.system", return_value="Linux")
+    @patch("platform.machine", return_value="x86_64")
+    def test_qjs_resolves_linux_binary_suffix(self, mock_machine, mock_system, mock_isfile, mock_run):
+        """On Linux, the bundled binary name must include -linux-x86_64."""
+        # First isfile call (bundled qjs bin) → True so it returns that path
+        # Second isfile call onwards (bundle .js) → True
+        def isfile_side_effect(path):
+            return True
+        mock_isfile.side_effect = isfile_side_effect
+        mock_run.return_value = _make_result("ok")
+
+        MorphQL.execute(
+            "from json to json transform set x = x",
+            "{}",
+            runtime="qjs",
+            # no qjs_path → must auto-resolve
+        )
+
+        args = mock_run.call_args[0][0]
+        # The resolved qjs binary path should contain the linux suffix
+        self.assertTrue(
+            any("linux-x86_64" in str(a) for a in args),
+            f"Expected linux-x86_64 in args: {args}",
+        )
+
+    @patch("morphql.morphql.MorphQL._download_file")
+    @patch("os.chmod")
+    @patch("os.makedirs")
+    @patch("os.path.isfile", return_value=False)
+    @patch("platform.system", return_value="Linux")
+    @patch("platform.machine", return_value="x86_64")
+    def test_qjs_falls_back_to_system_qjs_on_download_failure(
+        self, mock_machine, mock_system, mock_isfile, mock_makedirs, mock_chmod, mock_download
+    ):
+        """If download raises, _maybe_install_qjs must fall back to 'qjs'."""
+        mock_download.side_effect = RuntimeError("network error")
+
+        result = MorphQL._maybe_install_qjs({"cache_dir": None})
+        self.assertEqual(result, "qjs")
+
+    @patch("morphql.morphql.MorphQL._download_file")
+    @patch("os.chmod")
+    @patch("os.makedirs")
+    @patch("os.path.isfile", return_value=False)
+    @patch("platform.system", return_value="Linux")
+    @patch("platform.machine", return_value="x86_64")
+    def test_qjs_download_called_when_not_cached(
+        self, mock_machine, mock_system, mock_isfile, mock_makedirs, mock_chmod, mock_download
+    ):
+        """_download_file must be called with a GitHub URL when no local binary exists."""
+        MorphQL._maybe_install_qjs({"cache_dir": "/tmp/morphql-test"})
+        self.assertTrue(mock_download.called)
+        url = mock_download.call_args[0][0]
+        self.assertIn("quickjs-ng", url)
+        self.assertIn("linux-x86_64", url)
+
+    @patch("urllib.request.urlopen")
+    def test_download_file_raises_on_small_response(self, mock_urlopen):
+        """_download_file must raise RuntimeError if downloaded content is < 1000 bytes."""
+        m = MagicMock()
+        m.read.return_value = b"tiny"
+        m.__enter__ = lambda s: s
+        m.__exit__ = MagicMock(return_value=False)
+        mock_urlopen.return_value = m
+
+        import tempfile, os
+        with tempfile.NamedTemporaryFile(delete=False) as f:
+            target = f.name
+        try:
+            with self.assertRaises(RuntimeError) as ctx:
+                MorphQL._download_file("https://example.com/qjs", target)
+            self.assertIn("too small", str(ctx.exception))
+        finally:
+            os.unlink(target)
+
+
 class TestConfigResolution(unittest.TestCase):
     @patch("subprocess.run")
     def test_env_var_used_as_fallback(self, mock_run):
