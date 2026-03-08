@@ -29,11 +29,10 @@ Options are forwarded directly to the underlying `js-yaml` functions.
 
 ### Parse options (`yaml.load`)
 
-| Option      | Type      | Description                                             |
-| :---------- | :-------- | :------------------------------------------------------ |
-| `schema`    | `Schema`  | YAML schema to use (default: `DEFAULT_SCHEMA`)          |
-| `json`      | `boolean` | Allow duplicate keys (last value wins, like JSON)       |
-| `onWarning` | `function`| Callback for YAML warnings                              |
+| Option   | Type      | Description                                       |
+| :------- | :-------- | :------------------------------------------------ |
+| `schema` | `string`  | YAML schema to use (default: `DEFAULT_SCHEMA`)    |
+| `json`   | `boolean` | Allow duplicate keys (last value wins, like JSON) |
 
 ### Serialize options (`yaml.dump`)
 
