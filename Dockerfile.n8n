@@ -6,9 +6,8 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Install dependencies and build the node
-# We use --workspace to build only what's needed or build everything
 RUN npm install
-RUN npm run build -w n8n-nodes-morphql
+RUN npm run build:all
 
 FROM n8nio/n8n:latest
 
