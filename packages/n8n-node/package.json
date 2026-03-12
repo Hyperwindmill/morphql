@@ -1,0 +1,33 @@
+{
+  "name": "@morphql/n8n-node",
+  "version": "0.1.35",
+  "description": "n8n node for MorphQL declarative transformations",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --watch",
+    "lint": "eslint src/**/*.ts"
+  },
+  "keywords": [
+    "n8n-community-node-package",
+    "morphql",
+    "transform"
+  ],
+  "author": "Hyperwindmill",
+  "license": "MIT",
+  "dependencies": {
+    "@morphql/core": "^0.1.35"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.0",
+    "n8n-workflow": "^1.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "n8n": {
+    "nodes": [
+      "dist/MorphQL.node.js"
+    ]
+  }
+}
