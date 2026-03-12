@@ -1,0 +1,27 @@
+FROM node:24-alpine AS builder
+
+WORKDIR /usr/src/app
+
+# Copy the entire monorepo to handle internal dependencies
+COPY . .
+
+# Install dependencies and build the node
+# We use --workspace to build only what's needed or build everything
+RUN npm install
+RUN npm run build -w n8n-nodes-morphql
+
+FROM n8nio/n8n:latest
+
+USER root
+RUN mkdir -p /home/node/.n8n/nodes && chown -R node:node /home/node/.n8n
+
+USER node
+WORKDIR /home/node/.n8n/nodes
+
+# Copy the built node from the builder stage
+COPY --from=builder /usr/src/app/packages/n8n-node/dist ./node_modules/n8n-nodes-morphql/dist
+COPY --from=builder /usr/src/app/packages/n8n-node/package.json ./node_modules/n8n-nodes-morphql/package.json
+COPY --from=builder /usr/src/app/packages/n8n-node/node_modules ./node_modules/n8n-nodes-morphql/node_modules
+
+# Ensure the custom node is recognized by n8n
+# n8n automatically loads nodes from ~/.n8n/nodes/node_modules

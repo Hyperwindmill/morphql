@@ -1,25 +1,15 @@
 services:
-  n8n-init:
-    image: alpine
-    user: root
-    command: sh -c "mkdir -p /home/node/.n8n/nodes && chown -R 1000:1000 /home/node/.n8n"
-    volumes:
-      - n8n_data:/home/node/.n8n
-
   n8n:
-    image: n8nio/n8n:latest
+    build:
+      context: ../..
+      dockerfile: Dockerfile.n8n
     container_name: n8n-morphql-dev
-    depends_on:
-      n8n-init:
-        condition: service_completed_successfully
     ports:
       - "5678:5678"
     environment:
       - N8N_LOG_LEVEL=debug
     volumes:
       - n8n_data:/home/node/.n8n
-      # Map to the nodes/node_modules directory as expected by n8n
-      - .:/home/node/.n8n/nodes/node_modules/n8n-nodes-morphql
 
 volumes:
   n8n_data:
