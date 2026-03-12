@@ -34,9 +34,7 @@ describe("MorphQL Node", () => {
     const node = new MorphQLTransform();
     expect(node.description.credentials).toBeDefined();
     expect(node.description.credentials!).toHaveLength(1);
-    expect(node.description.credentials![0].name).toBe(
-      "MorphQLServerCredentials",
-    );
+    expect(node.description.credentials![0].name).toBe("morphqlServerApi");
   });
 
   it("should generate output schema for local mode", async () => {
