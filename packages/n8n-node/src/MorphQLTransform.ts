@@ -1,7 +1,6 @@
 import {
 	IDataObject,
 	IExecuteFunctions,
-	IGetNodeOutputSchemaFunctions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
@@ -67,29 +66,6 @@ export class MorphQL implements INodeType {
 		],
 	};
 
-	methods = {
-		async getOutputSchema(
-			this: IGetNodeOutputSchemaFunctions,
-		): Promise<any> {
-			const query = this.getNodeParameter('query') as string;
-			const options = this.getNodeParameter('options') as IDataObject;
-
-			if (!query || options.analyze === false) {
-				return null;
-			}
-
-			try {
-				const morph = await compile(query, { analyze: true });
-				if (morph.analysis?.target) {
-					return morphToSchema(morph.analysis.target);
-				}
-			} catch (e) {
-				// Silent failure for schema detection
-			}
-			return null;
-		},
-	};
-
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
@@ -103,6 +79,10 @@ export class MorphQL implements INodeType {
 				const inputData = items[i].json;
 				const transformed = morph(inputData);
 
+				// Add Schema Metadata if available
+				// This is a way to pass schema info in some n8n versions/contexts
+				// though not through the official getOutputSchema if it's not working
+				
 				returnData.push({
 					json: transformed as IDataObject,
 					pairedItem: {

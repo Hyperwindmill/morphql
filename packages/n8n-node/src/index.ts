@@ -1,1 +1,1 @@
-export * from './MorphQL.node';
+export * from './MorphQLTransform';
