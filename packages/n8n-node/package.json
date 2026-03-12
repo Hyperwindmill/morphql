@@ -29,6 +29,7 @@
     "vitest": "^4.0.18"
   },
   "n8n": {
+    "n8nNodesApiVersion": 1,
     "nodes": [
       "dist/MorphQLTransform.js"
     ]
