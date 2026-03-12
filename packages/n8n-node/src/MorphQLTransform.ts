@@ -102,7 +102,7 @@ export class MorphQLTransform implements INodeType {
     outputs: ["main"],
     credentials: [
       {
-        name: "MorphQLServerCredentials",
+        name: "morphqlServerApi",
         required: true,
         displayOptions: {
           show: {
@@ -196,6 +196,11 @@ export class MorphQLTransform implements INodeType {
         type: "collection",
         placeholder: "Add Option",
         default: {},
+        displayOptions: {
+          show: {
+            mode: ["local"],
+          },
+        },
         options: [
           {
             displayName: "Analyze Schema",
@@ -203,11 +208,6 @@ export class MorphQLTransform implements INodeType {
             type: "boolean",
             default: true,
             description: "Whether to analyze the query schema for hinting",
-            displayOptions: {
-              show: {
-                mode: ["local"],
-              },
-            },
           },
         ],
       },
@@ -248,7 +248,7 @@ export class MorphQLTransform implements INodeType {
       const queryType = this.getNodeParameter("queryType", 0) as
         | "inline"
         | "staged";
-      const credentials = await this.getCredentials("MorphQLServerCredentials");
+      const credentials = await this.getCredentials("morphqlServerApi");
       const serverUrl = credentials.serverUrl as string;
       const apiKey = credentials.apiKey as string | undefined;
 

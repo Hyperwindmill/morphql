@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/MorphQLTransform.ts src/MorphQLServerCredentials.credentials.ts src/index.ts --format cjs,esm --dts --clean && cp src/morphql.svg dist/",
-    "dev": "tsup src/MorphQLTransform.ts src/index.ts --format cjs,esm --watch",
+    "dev": "tsup src/MorphQLTransform.ts src/MorphQLServerCredentials.credentials.ts src/index.ts --format cjs,esm --watch",
     "lint": "eslint src/**/*.ts",
     "test": "vitest run"
   },
