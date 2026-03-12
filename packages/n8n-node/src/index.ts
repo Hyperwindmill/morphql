@@ -1,1 +1,1 @@
-export * from './MorphQLTransform';
+export { MorphQLTransform as MorphQL } from './MorphQLTransform';

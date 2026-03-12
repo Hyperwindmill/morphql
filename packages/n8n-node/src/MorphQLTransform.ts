@@ -21,7 +21,7 @@ function morphToSchema(node: SchemaNode): any {
 	return schema;
 }
 
-export class MorphQL implements INodeType {
+export class MorphQLTransform implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'MorphQL',
 		name: 'morphQL',
