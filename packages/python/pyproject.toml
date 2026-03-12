@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "morphql"
-version = "0.1.35"
+version = "0.1.36"
 description = "Python client for MorphQL — transform data with declarative queries."
 readme = "README.md"
 license = { text = "MIT" }

@@ -91,6 +91,15 @@ if (fs.existsSync(pyprojectPath)) {
   fs.writeFileSync(pyprojectPath, content);
 }
 
+// 7. Update n8n node version (packages/n8n-node/src/MorphQLTransform.ts)
+const n8nNodePath = path.join(packagesDir, 'n8n-node', 'src', 'MorphQLTransform.ts');
+if (fs.existsSync(n8nNodePath)) {
+  console.log(`Updating ${n8nNodePath}`);
+  let content = fs.readFileSync(n8nNodePath, 'utf8');
+  content = content.replace(/const VERSION = "[^"]+"/, `const VERSION = "${targetVersion}"`);
+  fs.writeFileSync(n8nNodePath, content);
+}
+
 console.log('Version synchronization complete!');
 
 console.log('\x1b[33m%s\x1b[0m', 'IMPORTANT: Remember to run "npm install" at the root to update the lockfile.');
