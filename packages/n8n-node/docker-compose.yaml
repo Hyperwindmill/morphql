@@ -8,8 +8,8 @@ services:
       - N8N_LOG_LEVEL=debug
     volumes:
       - n8n_data:/home/node/.n8n
-      # Map the local node package for live development
-      - .:/home/node/.n8n/nodes/node_modules/n8n-nodes-morphql
+      # Map to the custom directory which is less restrictive in some n8n versions
+      - .:/home/node/.n8n/custom/node_modules/n8n-nodes-morphql
 
 volumes:
   n8n_data:
