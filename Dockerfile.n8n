@@ -12,10 +12,10 @@ RUN npm run build:all
 FROM n8nio/n8n:latest
 
 USER root
-RUN mkdir -p /home/node/.n8n/nodes && chown -R node:node /home/node/.n8n
+RUN mkdir -p /opt/n8n-custom && chown -R node:node /opt/n8n-custom
 
 USER node
-WORKDIR /home/node/.n8n/nodes
+WORKDIR /opt/n8n-custom
 
 # Copy the built node from the builder stage
 COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/dist ./node_modules/n8n-nodes-morphql/dist
