@@ -66,23 +66,52 @@ export class MorphQL implements INodeType {
 		],
 	};
 
+	async getOutputSchema(this: IExecuteFunctions): Promise<any> {
+		const query = this.getNodeParameter('query', 0) as string;
+		const options = this.getNodeParameter('options', 0) as IDataObject;
+
+		if (options.analyze === false) {
+			return null;
+		}
+
+		try {
+			const engine = await compile(query, { analyze: true });
+			if (engine.analysis?.target) {
+				return morphToSchema(engine.analysis.target);
+			}
+		} catch (e) {
+			// If compilation fails for schema analysis, we just don't return a schema
+			return null;
+		}
+		return null;
+	}
+
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
 		const query = this.getNodeParameter('query', 0) as string;
 		const options = this.getNodeParameter('options', 0) as IDataObject;
 
-		const morph = await compile(query, { analyze: options.analyze as boolean });
+		let morph: any;
+		try {
+			morph = await compile(query, { analyze: options.analyze as boolean });
+		} catch (error: any) {
+			if (this.continueOnFail()) {
+				returnData.push({
+					json: {
+						error: `Compilation error: ${error.message}`,
+					},
+				});
+				return [returnData];
+			}
+			throw error;
+		}
 
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const inputData = items[i].json;
 				const transformed = morph(inputData);
 
-				// Add Schema Metadata if available
-				// This is a way to pass schema info in some n8n versions/contexts
-				// though not through the official getOutputSchema if it's not working
-				
 				returnData.push({
 					json: transformed as IDataObject,
 					pairedItem: {
@@ -93,7 +122,7 @@ export class MorphQL implements INodeType {
 				if (this.continueOnFail()) {
 					returnData.push({
 						json: {
-							error: (error as Error).message,
+							error: `Execution error at item ${i}: ${error.message}`,
 						},
 						pairedItem: {
 							item: i,
