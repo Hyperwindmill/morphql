@@ -29,6 +29,7 @@ export class MorphQLTransform implements INodeType {
 		group: ['transform'],
 		version: 1,
 		description: 'Transform data using MorphQL declarative queries',
+		subtitle: 'Data Transformation',
 		defaults: {
 			name: 'MorphQL',
 		},

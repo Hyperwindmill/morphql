@@ -13,7 +13,8 @@
   "keywords": [
     "n8n-community-node-package",
     "morphql",
-    "transform"
+    "transform",
+    "Data Transformation"
   ],
   "author": "Hyperwindmill",
   "license": "MIT",
