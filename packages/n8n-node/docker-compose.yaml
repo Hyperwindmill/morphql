@@ -8,7 +8,7 @@ services:
       - "5678:5678"
     environment:
       - N8N_LOG_LEVEL=debug
-      - N8N_CUSTOM_EXTENSIONS=/opt/n8n-custom/node_modules/n8n-nodes-morphql
+      - N8N_CUSTOM_EXTENSIONS=/opt/n8n-custom/n8n-nodes-morphql
     volumes:
       - n8n_data:/home/node/.n8n
 

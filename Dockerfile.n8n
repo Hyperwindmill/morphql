@@ -12,20 +12,22 @@ RUN npm run build:all
 FROM n8nio/n8n:latest
 
 USER root
-RUN mkdir -p /opt/n8n-custom && chown -R node:node /opt/n8n-custom
+RUN mkdir -p /opt/n8n-custom/n8n-nodes-morphql && chown -R node:node /opt/n8n-custom
 
 USER node
-WORKDIR /opt/n8n-custom
+WORKDIR /opt/n8n-custom/n8n-nodes-morphql
 
 # Copy the built node from the builder stage
-COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/dist ./node_modules/n8n-nodes-morphql/dist
-COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/package.json ./node_modules/n8n-nodes-morphql/package.json
+COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/dist ./dist
+COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/package.json .
+
+# Install production dependencies for the node
+RUN npm install --omit=dev
+
+# Ensure @morphql/core uses the local built version from the monorepo
+RUN mkdir -p node_modules/@morphql/core
 COPY --chown=node:node --from=builder /usr/src/app/packages/core/dist ./node_modules/@morphql/core/dist
 COPY --chown=node:node --from=builder /usr/src/app/packages/core/package.json ./node_modules/@morphql/core/package.json
-
-# Install only production dependencies for the node
-# We do this in the final image to ensure they are available in the expected path
-RUN cd node_modules/n8n-nodes-morphql && npm install --omit=dev
 
 # Ensure the custom node is recognized by n8n
 # n8n automatically loads nodes from ~/.n8n/nodes/node_modules
