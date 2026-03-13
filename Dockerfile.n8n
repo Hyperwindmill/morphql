@@ -12,22 +12,28 @@ RUN npm run build:all
 FROM n8nio/n8n:latest
 
 USER root
-RUN mkdir -p /opt/n8n-custom/n8n-nodes-morphql && chown -R node:node /opt/n8n-custom
+
+# Create the custom extensions directory
+RUN mkdir -p /opt/n8n-custom/node_modules && \
+    chown -R node:node /opt/n8n-custom
+
+# Copy the built node package and its internal dependency core
+# We place them inside node_modules so they can be discovered
+COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/dist /opt/n8n-custom/node_modules/n8n-nodes-morphql/dist
+COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/package.json /opt/n8n-custom/node_modules/n8n-nodes-morphql/package.json
+COPY --chown=node:node --from=builder /usr/src/app/packages/core/dist /opt/n8n-custom/node_modules/@morphql/core/dist
+COPY --chown=node:node --from=builder /usr/src/app/packages/core/package.json /opt/n8n-custom/node_modules/@morphql/core/package.json
+
+# Copy our custom entrypoint
+COPY packages/n8n-node/entrypoint.sh /docker-custom-entrypoint.sh
+RUN chmod +x /docker-custom-entrypoint.sh && \
+    chown node:node /docker-custom-entrypoint.sh
 
 USER node
-WORKDIR /opt/n8n-custom/n8n-nodes-morphql
-
-# Copy the built node from the builder stage
-COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/dist ./dist
-COPY --chown=node:node --from=builder /usr/src/app/packages/n8n-node/package.json .
+WORKDIR /home/node
 
 # Install production dependencies for the node
-RUN npm install --omit=dev
+# We do this in the final image to ensure they are available
+RUN cd /opt/n8n-custom/node_modules/n8n-nodes-morphql && npm install --omit=dev
 
-# Ensure @morphql/core uses the local built version from the monorepo
-RUN mkdir -p node_modules/@morphql/core
-COPY --chown=node:node --from=builder /usr/src/app/packages/core/dist ./node_modules/@morphql/core/dist
-COPY --chown=node:node --from=builder /usr/src/app/packages/core/package.json ./node_modules/@morphql/core/package.json
-
-# Ensure the custom node is recognized by n8n
-# n8n automatically loads nodes from ~/.n8n/nodes/node_modules
+ENTRYPOINT ["tini", "--", "/docker-custom-entrypoint.sh"]
