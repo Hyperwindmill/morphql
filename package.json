@@ -14,7 +14,8 @@
     "test:all": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "playground": "npm run dev -w @morphql/playground",
-    "server": "npm run start:dev -w @morphql/server-instance"
+    "server": "npm run start:dev -w @morphql/server-instance",
+    "n8n": "npm run build -w n8n-nodes-morphql && docker compose -f docker-compose.n8n.yml up --build"
   },
   "keywords": [
     "morphql",

@@ -1,0 +1,23 @@
+FROM n8nio/n8n:latest
+
+USER root
+
+# Stage the custom node in a path that won't be overlapped by volumes
+RUN mkdir -p /opt/n8n-custom/n8n-nodes-morphql
+COPY packages/n8n-node/package.json /opt/n8n-custom/n8n-nodes-morphql/
+COPY packages/n8n-node/dist/ /opt/n8n-custom/n8n-nodes-morphql/dist/
+
+# Install production dependencies
+WORKDIR /opt/n8n-custom/n8n-nodes-morphql
+RUN npm install --omit=dev --ignore-scripts
+
+# Copy entrypoint script
+COPY docker/n8n-entrypoint.sh /usr/local/bin/n8n-entrypoint.sh
+RUN chmod +x /usr/local/bin/n8n-entrypoint.sh
+
+RUN chown -R node:node /opt/n8n-custom
+
+USER node
+WORKDIR /home/node
+
+ENTRYPOINT ["n8n-entrypoint.sh"]
