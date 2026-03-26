@@ -1,5 +1,5 @@
 import { compile, languageReference, getSystemPrompt } from "@morphql/core";
-import { MorphQLFileCache } from "./file-cache.js";
+import { MorphQLFileCache } from "@morphql/core/node";
 import { Command } from "commander";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";

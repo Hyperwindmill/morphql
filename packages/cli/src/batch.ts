@@ -2,7 +2,7 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { existsSync } from "node:fs";
 import { compile } from "@morphql/core";
-import { MorphQLFileCache } from "./file-cache.js";
+import { MorphQLFileCache } from "@morphql/core/node";
 import { createLogger, LogFormat } from "./logger.js";
 import {
   extractTargetFormat,
