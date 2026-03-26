@@ -536,8 +536,16 @@ Function names are **case-insensitive**.
 | Function                      | Description                          | Example                     |
 | :---------------------------- | :----------------------------------- | :-------------------------- |
 | `if(cond, trueVal, falseVal)` | Inline ternary. All 3 args required. | `if(isActive, "Yes", "No")` |
+| `lookup(val, "k:v", ...)`     | Dictionary lookup, returns mapped value or `null`. | `lookup(code, "1:open", "2:done")` |
 
 > **Note:** `if(cond, trueVal, falseVal)` is an inline expression function (returns a value). `if (cond) ( actions ) else ( actions )` is a block action (executes actions). They are different constructs.
+
+### Date Functions
+
+| Function | Description | Example |
+| :--- | :--- | :--- |
+| `fromUnix(timestamp)` | Convert Unix timestamp string to ISO 8601 string. | `fromUnix("1711468800")` &rarr; `"2024-03-26T16:00:00.000Z"` |
+| `toUnix(isoString)` | Convert ISO 8601 string to Unix timestamp string. | `toUnix("2024-03-26T16:00:00.000Z")` &rarr; `"1711468800"` |
 
 ### Array / Collection Functions
 
@@ -1074,4 +1082,24 @@ from object to object
 transform
   set price = rawPrice
   modify price = price * 1.1  // Reads target.price (the value we just set) and multiplies
+```
+
+## 12. Custom Functions (API)
+
+You can register custom Javascript functions to be called inside MorphQL queries using the `registerFunction` API from `@morphql/core`.
+
+```typescript
+import { compile, registerFunction } from '@morphql/core';
+
+// Registers a custom function using a standard Javascript closure
+registerFunction('greet', (name, greeting) => {
+  return `${greeting || 'Hello'}, ${name}!`;
+});
+
+// The custom function can now be used in any MorphQL query
+const query = `
+  from object to object
+  transform
+    set message = greet("Alice", "Hi")
+`;
 ```

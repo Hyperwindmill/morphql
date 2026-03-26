@@ -309,6 +309,9 @@ Functions are used within expressions to calculate or transform values. For full
 | `fixed(val, [decimals], [mode])` | Formats to fixed decimal places. Returns a string. |
 | `min(a, b, ...)` / `max(a, b, ...)` | Smallest/largest of scalar values. |
 | `if(cond, trueVal, falseVal)` | Inline ternary expression. |
+| `lookup(val, "k:v", ...)` | Dictionary lookup, returning mapped value or `null`. |
+| `fromUnix(timestamp)` | Converts Unix timestamp string to ISO 8601 string. |
+| `toUnix(isoString)` | Converts ISO 8601 string to Unix timestamp string. |
 | `list(v1, ...)` / `array(v1, ...)` | Creates an array literal. |
 | `aslist(val)` | Ensures a value is an array. |
 | `concat(arr1, arr2, ...)` | Concatenates arrays. |

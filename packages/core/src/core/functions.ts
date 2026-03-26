@@ -346,4 +346,41 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     if (args.length !== 2) throw new Error('endswith() requires exactly 2 arguments (str, suffix)');
     return `String(${args[0]}).endsWith(${args[1]})`;
   },
+
+  // ── Date / Timestamp functions ───────────────────────────────────────────────
+  fromunix: (args: string[], _compiler) => {
+    if (args.length !== 1) throw new Error('fromUnix() requires exactly 1 argument (unix timestamp string)');
+    return `env.functions.fromunix(${args[0]})`;
+  },
+  tounix: (args: string[], _compiler) => {
+    if (args.length !== 1) throw new Error('toUnix() requires exactly 1 argument (ISO 8601 string)');
+    return `env.functions.tounix(${args[0]})`;
+  },
+
+  // ── Lookup function ──────────────────────────────────────────────────────────
+  lookup: (args: string[], _compiler) => {
+    if (args.length < 2) {
+      throw new Error('lookup() requires at least 2 arguments (value, "key1:val1", "key2:val2", ...)');
+    }
+    const [value, ...pairs] = args;
+
+    // Validate each pair spec at compile time and build the inlined JS object literal.
+    // Each pair must be a string literal of the form "key:value".
+    const entries: string[] = pairs.map((pair) => {
+      // Strip surrounding quotes to inspect the raw spec string.
+      const raw = pair.replace(/^["']|["']$/g, '');
+      const colonIdx = raw.indexOf(':');
+      if (colonIdx === -1) {
+        throw new Error(
+          `Invalid lookup() spec: ${pair}. Expected "key:value" format (e.g. "1:open").`
+        );
+      }
+      const key = JSON.stringify(raw.substring(0, colonIdx));
+      const val = JSON.stringify(raw.substring(colonIdx + 1));
+      return `${key}: ${val}`;
+    });
+
+    // Inline as: ({...})[value] ?? null
+    return `(({${entries.join(', ')}})[(${value})] ?? null)`;
+  },
 };

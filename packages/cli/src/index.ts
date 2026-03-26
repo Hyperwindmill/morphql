@@ -1,5 +1,5 @@
 import { compile, languageReference, getSystemPrompt } from "@morphql/core";
-import { MorphQLFileCache } from "./file-cache.js";
+import { MorphQLFileCache } from "@morphql/core/node";
 import { Command } from "commander";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
@@ -27,7 +27,7 @@ program
   .description(
     "CLI tool for morphql - transform structural data from the command line.",
   )
-  .version("0.1.37");
+  .version("0.1.38");
 
 // --- 1. Batch Subcommand ---
 program
