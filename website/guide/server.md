@@ -47,14 +47,174 @@ const dynamicResult = await morph.execute(
 );
 ```
 
-### OpenAPI Integration
+### OpenAPI Builder
 
-The server core can generate OpenAPI specification fragments for your staged queries, making it easy to integrate into your existing documentation.
+MorphQL can generate a complete OpenAPI 3.0 specification from your transformation queries. This is especially useful when using MorphQL as a **gateway / mapping layer** in front of backend APIs — you define your endpoints, attach input and output transformations, and the library produces the OpenAPI document for you.
+
+#### Quick Start
 
 ```typescript
-const fragments = await morph.getOpenAPIFragments();
-// Merge these into your Swagger/OpenAPI definition
+import { createMorphAPI } from "@morphql/server";
+
+const spec = await createMorphAPI()
+  .title("My Gateway API")
+  .version("2.0.0")
+  .description("API gateway with MorphQL transformations")
+  .loadDirectory("./queries")
+  .endpoint("/users", "get", { outputQuery: "list-users" })
+  .endpoint("/users", "post", {
+    inputQuery: "create-user-request",
+    outputQuery: "create-user-response",
+  })
+  .generateSpecs();
+
+// spec is a valid OpenAPI 3.0 document, ready for Swagger UI
 ```
+
+Every method is chainable. The builder loads queries from multiple sources and generates the document at the end.
+
+#### Defining Endpoints
+
+Each `.endpoint()` call maps a path and HTTP method to one or two MorphQL queries:
+
+| Parameter     | Description                                      |
+| :------------ | :----------------------------------------------- |
+| `inputQuery`  | Transforms the **request body** (source schema → requestBody). Optional for GET/DELETE. |
+| `outputQuery` | Transforms the **response** (target schema → response 200). |
+| `summary`     | Custom summary for the operation.                |
+| `tags`        | OpenAPI tags array.                              |
+| `operationId` | Custom operationId (auto-generated if omitted).  |
+
+```typescript
+.endpoint("/orders/{id}", "get", {
+  outputQuery: "get-order-response",
+  summary: "Get order by ID",
+  tags: ["Orders"],
+})
+```
+
+Multiple methods on the same path are aggregated automatically:
+
+```typescript
+.endpoint("/users", "get", { outputQuery: "list-users" })
+.endpoint("/users", "post", { inputQuery: "create-user-input", outputQuery: "create-user-output" })
+// → /users: { get: { ... }, post: { ... } }
+```
+
+#### Query Sources
+
+Queries can come from **files**, **inline definitions**, or **both**:
+
+```typescript
+// From a directory of .morphql files
+createMorphAPI()
+  .loadDirectory("./queries")
+  .endpoint("/users", "get", { outputQuery: "list-users" })  // resolved by filename
+
+// Inline definition (no files needed)
+createMorphAPI()
+  .addQuery("transform-out", {
+    query: "from json to json transform set id = userId set name = fullName",
+    meta: { userId: { description: "User identifier", example: 42 } },
+  })
+  .endpoint("/users", "get", { outputQuery: "transform-out" })
+
+// Anonymous inline (directly in the endpoint)
+createMorphAPI()
+  .endpoint("/items", "get", {
+    outputQuery: {
+      query: "from json to json transform set name = rawName",
+    },
+  })
+
+// Mix: directory + inline overrides
+createMorphAPI()
+  .loadDirectory("./queries")
+  .addQuery("custom-transform", { query: "..." })
+  .endpoint("/data", "post", {
+    inputQuery: "file-based-query",        // from directory
+    outputQuery: "custom-transform",       // inline, registered by name
+  })
+```
+
+#### Single Endpoint Fragments
+
+If you have your own OpenAPI document and want to generate fragments to merge manually:
+
+```typescript
+const builder = createMorphAPI().loadDirectory("./queries");
+
+const fragment = await builder.generateEndpointSpec("/users", "get", {
+  outputQuery: "list-users",
+});
+
+// fragment = { path: "/users", method: "get", spec: { ... } }
+// Merge into your existing document:
+myOpenAPIDoc.paths[fragment.path] = {
+  ...myOpenAPIDoc.paths[fragment.path],
+  [fragment.method]: fragment.spec,
+};
+```
+
+#### Schema Derivation
+
+Schemas are derived automatically from the MorphQL query analysis:
+
+| Query Role    | Schema Used                | Maps To                                      |
+| :------------ | :------------------------- | :------------------------------------------- |
+| `inputQuery`  | Source schema (`from` side) | `requestBody.content.{mime}.schema`          |
+| `outputQuery` | Target schema (`to` side)  | `responses.200.content.{mime}.schema`        |
+
+Content types are inferred from the query format: `json` → `application/json`, `xml` → `application/xml`, otherwise `text/plain`.
+
+Response **examples** are generated automatically by running the query engine with sample data. If execution fails, the schema is still generated without the example.
+
+#### Metadata Enrichment
+
+Use `.meta.yaml` or `.meta.json` files alongside your `.morphql` files to add descriptions, types and examples to the generated schemas:
+
+```yaml
+# queries/list-users.meta.yaml
+"users.userId":
+  type: "number"
+  description: "Internal user ID"
+  example: 123
+"users.fullName":
+  description: "Display name"
+```
+
+These annotations are applied using path-based lookups and appear in the generated OpenAPI schemas.
+
+#### Gateway Pattern
+
+A common pattern is using MorphQL as a transformation layer between your public API and backend services. Even if a query is not actually executed at runtime, you can use it purely to **describe the API contract**:
+
+```typescript
+const spec = await createMorphAPI()
+  .title("Public API")
+  .version("1.0.0")
+  // Input transformation: what the client sends → what the backend expects
+  .addQuery("create-user-in", {
+    query: `from json to json transform
+      set internal_id = externalId
+      set full_name = firstName + " " + lastName`,
+  })
+  // Output transformation: what the backend returns → what the client sees
+  .addQuery("create-user-out", {
+    query: `from json to json transform
+      set id = internal_id
+      set displayName = full_name
+      set status = if (is_active, "active", "inactive")`,
+  })
+  .endpoint("/users", "post", {
+    inputQuery: "create-user-in",
+    outputQuery: "create-user-out",
+    tags: ["Users"],
+  })
+  .generateSpecs();
+```
+
+The generated spec describes your **public-facing** contract: the client sends `{ externalId, firstName, lastName }` and receives `{ id, displayName, status }`. The internal backend format stays hidden.
 
 ---
 
@@ -210,22 +370,9 @@ Staged queries allow you to pre-define and name transformations, which are then 
 2.  The server automatically compiles and caches it on startup.
 3.  Access it via `POST /v1/q/user-profiles`.
 
-### Advanced Documentation (Metadata)
+### Metadata
 
-You can manually refine the auto-generated Swagger documentation by providing a parallel metadata file (`.meta.yaml` or `.meta.json`).
-
-**Example `queries/user-profiles.meta.yaml`:**
-
-```yaml
-"users.userId":
-  type: "number"
-  description: "Internal user ID"
-  example: 123
-"profiles.fullName":
-  description: "Display name"
-```
-
-The system uses path-based lookups (ignoring array indices) to apply these overrides to the generated schema.
+You can refine the auto-generated schemas with `.meta.yaml` or `.meta.json` files alongside your queries. See [Metadata Enrichment](#metadata-enrichment) in the OpenAPI Builder section for details.
 
 ## CLI Tools
 
