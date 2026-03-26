@@ -10,6 +10,7 @@ import {
 } from './runtime/adapters.js';
 import { MorphQLCache } from './runtime/cache.js';
 import { runtimeFunctions } from './runtime/functions.js';
+import { functionRegistry, type FunctionHandler } from './core/functions.js';
 import type { ParsedQuery } from './core/parse-types.js';
 
 import { AnalyzeResult, SchemaNode, MorphType } from './core/mapping-tracker.js';
@@ -37,6 +38,29 @@ export {
   getRegisteredFormats,
   DataAdapter,
 };
+
+export type { FunctionHandler };
+
+/**
+ * Registers a custom function for use in MorphQL queries.
+ *
+ * @param name The name of the function as it will be called in MorphQL.
+ * @param handler A standard JavaScript function that implements the logic.
+ */
+export function registerFunction(
+  name: string,
+  handler: (...args: any[]) => any
+): void {
+  const normalizedName = name.toLowerCase();
+  
+  // Auto-generate the compile handler to call the runtime function
+  functionRegistry[normalizedName] = (args: string[]) => {
+    return `env.functions.${normalizedName}(${args.join(', ')})`;
+  };
+  
+  // Register the runtime implementation
+  (runtimeFunctions as any)[normalizedName] = handler;
+}
 import beautify from 'js-beautify';
 
 export interface MorphEngine<Source = any, Target = any> {

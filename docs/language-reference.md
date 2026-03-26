@@ -1083,3 +1083,23 @@ transform
   set price = rawPrice
   modify price = price * 1.1  // Reads target.price (the value we just set) and multiplies
 ```
+
+## 12. Custom Functions (API)
+
+You can register custom Javascript functions to be called inside MorphQL queries using the `registerFunction` API from `@morphql/core`.
+
+```typescript
+import { compile, registerFunction } from '@morphql/core';
+
+// Registers a custom function using a standard Javascript closure
+registerFunction('greet', (name, greeting) => {
+  return `${greeting || 'Hello'}, ${name}!`;
+});
+
+// The custom function can now be used in any MorphQL query
+const query = `
+  from object to object
+  transform
+    set message = greet("Alice", "Hi")
+`;
+```

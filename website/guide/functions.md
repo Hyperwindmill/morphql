@@ -425,3 +425,23 @@ Wraps a value with XML attributes for the XML adapter. Pairs of `attrKey, attrVa
 set product = xmlnode(name, "id", productId, "type", "physical")
 // serializes as: <product id="123" type="physical">Widget</product>
 ```
+
+## Custom Functions (API)
+
+You can register custom Javascript functions to be called inside MorphQL queries using the `registerFunction` API from `@morphql/core`.
+
+```typescript
+import { compile, registerFunction } from '@morphql/core';
+
+// Registers a custom function using a standard Javascript closure
+registerFunction('greet', (name, greeting) => {
+  return `${greeting || 'Hello'}, ${name}!`;
+});
+
+// The custom function can now be used in any MorphQL query
+const query = `
+  from object to object
+  transform
+    set message = greet("Alice", "Hi")
+`;
+```
