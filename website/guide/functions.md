@@ -204,6 +204,36 @@ set amount = if(discount > 0, price * (1 - discount), price)
 
 > For multi-action branching, use the [`if` action](/guide/language-reference#if-else).
 
+---
+
+### `lookup(value, "key:val", ...)`
+
+Looks up a value in a dictionary of colon-separated key-value pairs. Returns the mapped value or `null` if the key is not found. The lookup is optimized into a JavaScript object literal at compile time.
+
+```morphql
+set statusName = lookup(statusCode, "1:Draft", "2:Published", "3:Archived")
+```
+
+## Date
+
+### `fromUnix(timestamp)`
+
+Converts a Unix timestamp string (seconds since epoch) into an ISO 8601 string. Returns `null` if invalid.
+
+```morphql
+set createdAt = fromUnix("1711468800")  // "2024-03-26T16:00:00.000Z"
+```
+
+---
+
+### `toUnix(isoString)`
+
+Converts an ISO 8601 string into a Unix timestamp string (seconds since epoch). Returns `null` if invalid.
+
+```morphql
+set timestamp = toUnix("2024-03-26T16:00:00.000Z")  // "1711468800"
+```
+
 ## Array / Collection
 
 ### `list(v1, [v2, ...])` / `array(v1, [v2, ...])`
