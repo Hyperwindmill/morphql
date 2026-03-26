@@ -59,11 +59,13 @@ export class MorphAPIBuilder {
 
   loadDirectory(dir: string): this {
     this.pendingDirs.push({ dir });
+    this.registry = null;
     return this;
   }
 
   addQuery(name: string, def: InlineQueryDef): this {
     this.pendingQueries.push({ name, def });
+    this.registry = null;
     return this;
   }
 
@@ -157,9 +159,10 @@ export class MorphAPIBuilder {
     registry: QueryRegistry,
     ref: QueryRef,
   ): Promise<StagedQuery> {
-    const result = registry.resolve(ref);
-    if (result instanceof Promise) return result;
-    return result;
+    if (typeof ref === 'string') {
+      return registry.resolve(ref);
+    }
+    return registry.resolve(ref);
   }
 
   private generateOperationId(method: string, path: string): string {
