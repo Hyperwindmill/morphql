@@ -384,6 +384,44 @@ export const FUNCTIONS: FunctionDef[] = [
     },
   },
 
+  {
+    name: "lookup",
+    doc: {
+      signature: "lookup(value, \"key:val\", ...)",
+      description: "Looks up a value in a dictionary of key-value pairs (colon-separated strings). Returns null if not found.",
+      parameters: [
+        { name: "value", description: "The value to look up (coerced to string for matching)" },
+        { name: "mappings", description: "Variable number of \"key:value\" string arguments" },
+      ],
+      returns: "any | null",
+      example: 'lookup(status, "1:open", "2:closed")',
+    },
+  },
+  {
+    name: "fromUnix",
+    doc: {
+      signature: "fromUnix(timestamp)",
+      description: "Converts a Unix timestamp string (seconds since epoch) to an ISO 8601 string.",
+      parameters: [
+        { name: "timestamp", description: "Unix timestamp as a string or number" },
+      ],
+      returns: "string | null",
+      example: 'fromUnix("1711468800")  // "2024-03-26T16:00:00.000Z"',
+    },
+  },
+  {
+    name: "toUnix",
+    doc: {
+      signature: "toUnix(isoString)",
+      description: "Converts an ISO 8601 string to a Unix timestamp string (seconds since epoch).",
+      parameters: [
+        { name: "isoString", description: "ISO 8601 date string" },
+      ],
+      returns: "string | null",
+      example: 'toUnix("2024-03-26T16:00:00.000Z")  // "1711468800"',
+    },
+  },
+
   // ── Math functions ────────────────────────────────────────────────────────
   {
     name: "floor",

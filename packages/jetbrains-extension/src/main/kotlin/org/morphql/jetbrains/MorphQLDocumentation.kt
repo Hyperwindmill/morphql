@@ -278,6 +278,24 @@ set discounted = sum(items, price * quantity)</pre>
   ) from items
 ) from groupby(products, category)</pre>
         """.trimIndent(),
+        "lookup" to """
+            <b>lookup(value, "key:val", ...)</b><br/>
+            Looks up a value in a dictionary of key-value pairs (colon-separated strings). Returns null if not found.<br/><br/>
+            <b>Parameters:</b><ul><li><b>value:</b> The value to look up (coerced to string for matching)</li><li><b>mappings:</b> Variable number of "key:value" string arguments</li></ul>
+            <b>Example:</b><pre>lookup(status, "1:open", "2:closed")</pre>
+        """.trimIndent(),
+        "fromUnix" to """
+            <b>fromUnix(timestamp)</b><br/>
+            Converts a Unix timestamp string (seconds since epoch) to an ISO 8601 string.<br/><br/>
+            <b>Parameters:</b><ul><li><b>timestamp:</b> Unix timestamp as a string or number</li></ul>
+            <b>Example:</b><pre>fromUnix("1711468800")  // "2024-03-26T16:00:00.000Z"</pre>
+        """.trimIndent(),
+        "toUnix" to """
+            <b>toUnix(isoString)</b><br/>
+            Converts an ISO 8601 string to a Unix timestamp string (seconds since epoch).<br/><br/>
+            <b>Parameters:</b><ul><li><b>isoString:</b> ISO 8601 date string</li></ul>
+            <b>Example:</b><pre>toUnix("2024-03-26T16:00:00.000Z")  // "1711468800"</pre>
+        """.trimIndent(),
         "floor" to """
             <b>floor(value)</b><br/>
             Rounds a number down to the nearest integer.<br/><br/>

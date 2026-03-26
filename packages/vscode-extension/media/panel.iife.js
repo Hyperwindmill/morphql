@@ -19980,13 +19980,13 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
   // ../core/dist/index.js
   var import_js_beautify = __toESM(require_js(), 1);
   var Oe = createToken({ name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED });
-  var $e = createToken({ name: "LineComment", pattern: /\/\/[^\n\r]*/, group: Lexer.SKIPPED });
-  var Ie = createToken({ name: "BlockComment", pattern: /\/\*[\s\S]*?\*\//, group: Lexer.SKIPPED });
+  var Ie = createToken({ name: "LineComment", pattern: /\/\/[^\n\r]*/, group: Lexer.SKIPPED });
+  var $e = createToken({ name: "BlockComment", pattern: /\/\*[\s\S]*?\*\//, group: Lexer.SKIPPED });
   var d = createToken({ name: "Identifier", pattern: /[a-zA-Z_$][a-zA-Z0-9_.[\]]*/ });
   var j = createToken({ name: "QuotedIdentifier", pattern: /`([^`\\]|\\.)*`/ });
   var x = createToken({ name: "From", pattern: /from/i, longer_alt: d });
-  var $ = createToken({ name: "To", pattern: /to/i, longer_alt: d });
-  var I = createToken({ name: "Transform", pattern: /transform/i, longer_alt: d });
+  var I = createToken({ name: "To", pattern: /to/i, longer_alt: d });
+  var $ = createToken({ name: "Transform", pattern: /transform/i, longer_alt: d });
   var M = createToken({ name: "Set", pattern: /set/i, longer_alt: d });
   var P = createToken({ name: "Section", pattern: /section/i, longer_alt: d });
   var _ = createToken({ name: "Multiple", pattern: /multiple/i, longer_alt: d });
@@ -20024,14 +20024,14 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
   var T = createToken({ name: "Comma", pattern: /,/ });
   var pe = createToken({ name: "StringLiteral", pattern: /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/ });
   var me = createToken({ name: "NumericLiteral", pattern: /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/ });
-  var fe = [Oe, $e, Ie, x, $, I, M, P, _, B, q, F, D, U, W, z, Q, V, Y, G, J, H, X, K, Z, ee, te, ne, ie, w, re, se, oe, ae, C, ue, le, ce, A, v, T, pe, me, j, d];
+  var fe = [Oe, Ie, $e, x, I, $, M, P, _, B, q, F, D, U, W, z, Q, V, Y, G, J, H, X, K, Z, ee, te, ne, ie, w, re, se, oe, ae, C, ue, le, ce, A, v, T, pe, me, j, d];
   var he = new Lexer(fe);
   var de = class extends CstParser {
     constructor() {
       super(fe);
       __publicField(this, "query", this.RULE("query", () => {
-        this.CONSUME(x), this.SUBRULE(this.typeFormat, { LABEL: "sourceType" }), this.CONSUME($), this.SUBRULE1(this.typeFormat, { LABEL: "targetType" }), this.OPTION(() => {
-          this.CONSUME(I), this.OPTION1(() => {
+        this.CONSUME(x), this.SUBRULE(this.typeFormat, { LABEL: "sourceType" }), this.CONSUME(I), this.SUBRULE1(this.typeFormat, { LABEL: "targetType" }), this.OPTION(() => {
+          this.CONSUME($), this.OPTION1(() => {
             this.CONSUME(G);
           }), this.MANY(() => {
             this.SUBRULE(this.action);
@@ -20135,8 +20135,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
         this.CONSUME(P), this.OPTION(() => {
           this.CONSUME(_);
         }), this.SUBRULE(this.anyIdentifier, { LABEL: "sectionName" }), this.CONSUME(A), this.OPTION1(() => {
-          this.CONSUME(x, { LABEL: "subqueryFrom" }), this.SUBRULE(this.typeFormat, { LABEL: "subquerySourceType" }), this.CONSUME($, { LABEL: "subqueryTo" }), this.SUBRULE1(this.typeFormat, { LABEL: "subqueryTargetType" }), this.OPTION2(() => {
-            this.CONSUME(I, { LABEL: "subqueryTransform" });
+          this.CONSUME(x, { LABEL: "subqueryFrom" }), this.SUBRULE(this.typeFormat, { LABEL: "subquerySourceType" }), this.CONSUME(I, { LABEL: "subqueryTo" }), this.SUBRULE1(this.typeFormat, { LABEL: "subqueryTargetType" }), this.OPTION2(() => {
+            this.CONSUME($, { LABEL: "subqueryTransform" });
           });
         }), this.MANY(() => {
           this.SUBRULE(this.action);
