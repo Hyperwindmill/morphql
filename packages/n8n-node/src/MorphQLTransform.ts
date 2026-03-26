@@ -7,7 +7,7 @@ import {
 } from "n8n-workflow";
 import { compile, SchemaNode } from "@morphql/core";
 
-const VERSION = "0.1.37";
+const VERSION = "0.1.38";
 
 function morphToSchema(node: SchemaNode): any {
   const schema: any = { type: node.type === "any" ? "object" : node.type };
