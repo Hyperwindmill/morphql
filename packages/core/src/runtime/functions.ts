@@ -395,4 +395,32 @@ export const runtimeFunctions = {
     }
     return r.toFixed(d);
   },
+
+  // ── Date / Timestamp helpers ─────────────────────────────────────────────────
+
+  /**
+   * Converts a Unix timestamp string (seconds since epoch) to an ISO 8601 string.
+   * fromunix("0")              → "1970-01-01T00:00:00.000Z"
+   * fromunix("1711468800")     → "2024-03-26T20:00:00.000Z"
+   * Null/undefined handling is left to the query via if().
+   */
+  fromunix: (value: any): string | null => {
+    if (value == null) return null;
+    const ms = Number(value) * 1000;
+    if (isNaN(ms)) return null;
+    return new Date(ms).toISOString();
+  },
+
+  /**
+   * Converts an ISO 8601 string to a Unix timestamp string (seconds since epoch).
+   * tounix("1970-01-01T00:00:00.000Z") → "0"
+   * tounix("2024-03-26T20:00:00.000Z") → "1711468800"
+   * Null/undefined handling is left to the query via if().
+   */
+  tounix: (value: any): string | null => {
+    if (value == null) return null;
+    const ms = new Date(String(value)).getTime();
+    if (isNaN(ms)) return null;
+    return String(Math.floor(ms / 1000));
+  },
 };
