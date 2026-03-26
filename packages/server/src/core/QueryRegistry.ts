@@ -20,8 +20,8 @@ export class QueryRegistry {
     await this.manager.loadFromArray([{ name, query: def.query, meta: def.meta }]);
   }
 
-  resolve(ref: QueryRef): StagedQuery;
-  resolve(ref: QueryRef): StagedQuery | Promise<StagedQuery>;
+  resolve(ref: string): StagedQuery;
+  resolve(ref: InlineQueryDef): Promise<StagedQuery>;
   resolve(ref: QueryRef): StagedQuery | Promise<StagedQuery> {
     if (typeof ref === 'string') {
       return this.resolveByName(ref);
