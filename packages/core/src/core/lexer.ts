@@ -59,6 +59,10 @@ export const Null = createToken({ name: 'Null', pattern: /null/i, longer_alt: Id
 export const Return = createToken({ name: 'Return', pattern: /return/i, longer_alt: Identifier });
 export const Unsafe = createToken({ name: 'Unsafe', pattern: /unsafe/i, longer_alt: Identifier });
 export const Where = createToken({ name: 'Where', pattern: /where/i, longer_alt: Identifier });
+export const OrderBy = createToken({ name: 'OrderBy', pattern: /orderby/i, longer_alt: Identifier });
+export const Asc = createToken({ name: 'Asc', pattern: /asc/i, longer_alt: Identifier });
+export const Desc = createToken({ name: 'Desc', pattern: /desc/i, longer_alt: Identifier });
+export const Limit = createToken({ name: 'Limit', pattern: /limit/i, longer_alt: Identifier });
 
 // Comparison operators (must come before single-char operators)
 export const EqualsEquals = createToken({ name: 'EqualsEquals', pattern: /==/ });
@@ -117,6 +121,10 @@ export const allTokens = [
   Return,
   Unsafe,
   Where,
+  OrderBy,
+  Asc,
+  Desc,
+  Limit,
 
   // Multi-character operators
   EqualsEqualsEquals,

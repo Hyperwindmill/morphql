@@ -277,6 +277,20 @@ export class MorphParser extends CstParser {
       this.CONSUME(t.Where, { LABEL: 'whereClause' });
       this.SUBRULE1(this.expression, { LABEL: 'whereExpr' });
     });
+    this.OPTION5(() => {
+      this.CONSUME(t.OrderBy, { LABEL: 'orderByClause' });
+      this.SUBRULE2(this.expression, { LABEL: 'orderByExpr' });
+      this.OPTION6(() => {
+        this.OR([
+          { ALT: () => this.CONSUME(t.Asc, { LABEL: 'orderDirAsc' }) },
+          { ALT: () => this.CONSUME(t.Desc, { LABEL: 'orderDirDesc' }) }
+        ]);
+      });
+    });
+    this.OPTION7(() => {
+      this.CONSUME(t.Limit, { LABEL: 'limitClause' });
+      this.SUBRULE3(this.expression, { LABEL: 'limitExpr' });
+    });
   });
 
   private defineRule = this.RULE('defineRule', () => {
