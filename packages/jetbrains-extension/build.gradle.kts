@@ -65,7 +65,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("232")
-        untilBuild.set("253.*")
+        untilBuild.set("999.*")
         changeNotes.set(provider { 
             changelog.getUnreleased().toHTML()
         })
