@@ -597,6 +597,20 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       whereCondition = this.visit(ctx.whereExpr);
     }
 
+    const hasOrderBy = !!ctx.orderByExpr;
+    let orderByExpr = '';
+    let isDesc = false;
+    if (hasOrderBy) {
+      orderByExpr = this.visit(ctx.orderByExpr);
+      isDesc = !!ctx.orderDirDesc;
+    }
+
+    const hasLimit = !!ctx.limitExpr;
+    let limitExpr = '';
+    if (hasLimit) {
+      limitExpr = this.visit(ctx.limitExpr);
+    }
+
     // Check if this is a subquery section
     const isSubquery = !!ctx.subqueryFrom;
 
@@ -631,13 +645,21 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           sourceVar === '_sectionSource' ? `const _sectionSource = ${sourceAccess};\n` : '';
 
         if (isMultiple) {
-          const filterPart = hasWhere
-            ? `.filter((item, index) => { const source = item; const _key = index; return ${whereCondition}; })`
-            : '';
+          let arrayExpr = sourceVar;
+          if (hasWhere) {
+            arrayExpr += `.filter((item, index) => { const source = item; const _key = index; return ${whereCondition}; })`;
+          }
+          if (hasOrderBy) {
+            arrayExpr = `env.functions._sortBy(${arrayExpr}, (item) => { const source = item; return ${orderByExpr}; }, ${isDesc})`;
+          }
+          if (hasLimit) {
+            arrayExpr += `.slice(0, ${limitExpr})`;
+          }
+
           return `
         {
           ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-            ${sectionAccess} = ${sourceVar}${filterPart}.map((item, index) => {
+            ${sectionAccess} = ${arrayExpr}.map((item, index) => {
               const subSource = env.parse('${subSourceType.name}', item, ${subSourceOptions});
               const source = _safeSource(subSource);
               const _key = index;
@@ -649,12 +671,20 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
         }
         `;
         } else {
-          // Single subquery section with where = find first match
-          if (hasWhere) {
+          // Single subquery section with where or orderby = find first match
+          if (hasWhere || hasOrderBy) {
+            let arrayExpr = sourceVar;
+            if (hasWhere) {
+              arrayExpr += `.filter((item, index) => { const source = item; const _key = index; return ${whereCondition}; })`;
+            }
+            if (hasOrderBy) {
+              arrayExpr = `env.functions._sortBy(${arrayExpr}, (item) => { const source = item; return ${orderByExpr}; }, ${isDesc})`;
+            }
+
             return `
         {
           ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-            const _filtered = ${sourceVar}.find((item, index) => { const source = item; const _key = index; return ${whereCondition}; });
+            const _filtered = ${arrayExpr}[0];
             if (_filtered) {
               ${sectionAccess} = (function(innerSource, innerIndex) {
                 const subSource = env.parse('${subSourceType.name}', innerSource, ${subSourceOptions});
@@ -728,13 +758,21 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
           sourceVar === '_sectionSource' ? `const _sectionSource = ${sourceAccess};\n` : '';
 
         if (isMultiple) {
-          const filterPart = hasWhere
-            ? `.filter((item, index) => { const source = _safeSource(item); const _key = index; return ${whereCondition}; })`
-            : '';
+          let arrayExpr = sourceVar;
+          if (hasWhere) {
+            arrayExpr += `.filter((item, index) => { const source = _safeSource(item); const _key = index; return ${whereCondition}; })`;
+          }
+          if (hasOrderBy) {
+            arrayExpr = `env.functions._sortBy(${arrayExpr}, (item) => { const source = _safeSource(item); return ${orderByExpr}; }, ${isDesc})`;
+          }
+          if (hasLimit) {
+            arrayExpr += `.slice(0, ${limitExpr})`;
+          }
+
           return `
       {
         ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-          ${sectionAccess} = ${sourceVar}${filterPart}.map((item, index) => {
+          ${sectionAccess} = ${arrayExpr}.map((item, index) => {
             const source = _safeSource(item);
             const _key = index;
             const target = {};
@@ -745,12 +783,20 @@ export class MorphCompiler extends (BaseCstVisitor as any) {
       }
       `;
         } else {
-          // Single section with where = find first match
-          if (hasWhere) {
+          // Single section with where or orderby = find first match
+          if (hasWhere || hasOrderBy) {
+            let arrayExpr = sourceVar;
+            if (hasWhere) {
+              arrayExpr += `.filter((item, index) => { const source = _safeSource(item); const _key = index; return ${whereCondition}; })`;
+            }
+            if (hasOrderBy) {
+              arrayExpr = `env.functions._sortBy(${arrayExpr}, (item) => { const source = _safeSource(item); return ${orderByExpr}; }, ${isDesc})`;
+            }
+
             return `
       {
         ${sourceInit}if (${sourceVar} && Array.isArray(${sourceVar})) {
-          const _filtered = ${sourceVar}.find((item, index) => { const source = _safeSource(item); const _key = index; return ${whereCondition}; });
+          const _filtered = ${arrayExpr}[0];
           if (_filtered) {
             ${sectionAccess} = (function(innerSource, innerIndex) {
               const source = _safeSource(innerSource);

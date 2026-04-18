@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { morphQL } from '../index.js';
 
 describe('morphQL tagged template helper', () => {
