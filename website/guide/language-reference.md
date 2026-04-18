@@ -154,7 +154,7 @@ Creates a nested object or array. Supports optional format conversion via subque
 **Syntax:**
 
 ```morphql
-section [multiple] <name>( [subquery] <actions> ) [from <path>] [where <condition>]
+section [multiple] <name>( [subquery] <actions> ) [from <path>] [where <condition>] [orderby <expr> [asc|desc]] [limit <count>]
 ```
 
 **Parameters:**
@@ -163,6 +163,8 @@ section [multiple] <name>( [subquery] <actions> ) [from <path>] [where <conditio
 - `subquery`: Optional nested query for format conversion
 - `from <expression>`: Shifts the context to a specific source data source. Can be a path, the `parent` keyword, or a function call (e.g., `spreadsheet(source)`).
 - `where <condition>`: Filters the source data before transformation. For `multiple` sections, only matching items are included. For single sections, the first matching item is used. You can use `_key` here to filter by index.
+- `orderby <expr> [asc|desc]`: Sorts the source data based on an expression. Default direction is ascending (`asc`). Can be combined with `desc` for descending order.
+- `limit <count>`: Restricts the maximum number of items processed in the section. Can be combined with `orderby` to take top-N items.
 
 **Examples:**
 
@@ -184,6 +186,12 @@ section multiple activeUsers(
   set name = userName
   set email = userEmail
 ) from users where status == "active"
+
+// Sorting and limiting
+section multiple topProducts(
+  set name = title
+  set rating = stars
+) from products orderby stars desc limit 5
 
 // Single section with where (find first match)
 section primaryContact(

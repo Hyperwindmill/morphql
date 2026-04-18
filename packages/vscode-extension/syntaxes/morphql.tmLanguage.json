@@ -33,7 +33,7 @@
       "patterns": [
         {
           "name": "keyword.control.morphql",
-          "match": "\\b(from|to|transform|unsafe|where|if|else)\\b"
+          "match": "\\b(from|to|transform|unsafe|where|if|else|orderby|asc|desc|limit)\\b"
         },
         {
           "name": "keyword.other.morphql",

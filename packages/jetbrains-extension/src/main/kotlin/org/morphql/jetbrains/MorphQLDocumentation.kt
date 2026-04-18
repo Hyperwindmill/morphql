@@ -117,6 +117,30 @@ modify total = total * 1.10</pre>
             <b>Example:</b><pre>set computed = price * 1.1
 return computed</pre>
         """.trimIndent(),
+        "orderby" to """
+            <b>orderby <expression> [asc|desc]</b><br/>
+            Sorts the items in a section based on an expression.<br/><br/>
+            <b>Parameters:</b><ul><li><b>expression:</b> The value to sort by</li></ul>
+            <b>Example:</b><pre>section multiple items(...) from items orderby score desc</pre>
+        """.trimIndent(),
+        "asc" to """
+            <b>asc</b><br/>
+            Sorts items in ascending order (default). Used with orderby.<br/><br/>
+            
+            <b>Example:</b><pre>orderby score asc</pre>
+        """.trimIndent(),
+        "desc" to """
+            <b>desc</b><br/>
+            Sorts items in descending order. Used with orderby.<br/><br/>
+            
+            <b>Example:</b><pre>orderby score desc</pre>
+        """.trimIndent(),
+        "limit" to """
+            <b>limit <count></b><br/>
+            Limits the number of items processed in a section.<br/><br/>
+            <b>Parameters:</b><ul><li><b>count:</b> The maximum number of items to return</li></ul>
+            <b>Example:</b><pre>section multiple items(...) from items orderby score desc limit 10</pre>
+        """.trimIndent(),
         "substring" to """
             <b>substring(str, start, [length])</b><br/>
             Extracts a portion of a string. Supports negative indices.<br/><br/>

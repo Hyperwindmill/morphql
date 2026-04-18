@@ -20,7 +20,11 @@ object MorphQLConstants {
         "if",
         "else",
         "modify",
-        "return"
+        "return",
+        "orderby",
+        "asc",
+        "desc",
+        "limit"
     )
 
     val FUNCTIONS = setOf(

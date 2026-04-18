@@ -230,6 +230,48 @@ export const KEYWORDS: KeywordDef[] = [
       example: "set computed = price * 1.1\nreturn computed",
     },
   },
+  {
+    name: "orderby",
+    category: "control",
+    doc: {
+      signature: "orderby <expression> [asc|desc]",
+      description: "Sorts the items in a section based on an expression.",
+      parameters: [
+        { name: "expression", description: "The value to sort by" },
+      ],
+      example: "section multiple items(...) from items orderby score desc",
+    },
+  },
+  {
+    name: "asc",
+    category: "control",
+    doc: {
+      signature: "asc",
+      description: "Sorts items in ascending order (default). Used with orderby.",
+      example: "orderby score asc",
+    },
+  },
+  {
+    name: "desc",
+    category: "control",
+    doc: {
+      signature: "desc",
+      description: "Sorts items in descending order. Used with orderby.",
+      example: "orderby score desc",
+    },
+  },
+  {
+    name: "limit",
+    category: "control",
+    doc: {
+      signature: "limit <count>",
+      description: "Limits the number of items processed in a section.",
+      parameters: [
+        { name: "count", description: "The maximum number of items to return" },
+      ],
+      example: "section multiple items(...) from items orderby score desc limit 10",
+    },
+  },
 ];
 
 // Helper to get keywords by category
