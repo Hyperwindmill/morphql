@@ -423,4 +423,36 @@ export const runtimeFunctions = {
     if (isNaN(ms)) return null;
     return String(Math.floor(ms / 1000));
   },
+
+  /**
+   * Sorts an array using the Schwartzian Transform to maintain O(N) mapping cost.
+   * Internal helper used by the compiler for orderby clauses.
+   */
+  _sortBy: (arr: any[], keyFn: (item: any) => any, isDesc: boolean): any[] => {
+    if (!Array.isArray(arr) || arr.length === 0) return [];
+    
+    // 1. Map to array of { item, key }
+    const mapped = arr.map(item => ({ item, key: keyFn(item) }));
+    
+    // 2. Sort based on key
+    mapped.sort((a, b) => {
+      const ka = a.key;
+      const kb = b.key;
+      
+      // Nulls/undefined handling (nulls usually come first in ASC, last in DESC)
+      if (ka == null && kb == null) return 0;
+      if (ka == null) return isDesc ? 1 : -1;
+      if (kb == null) return isDesc ? -1 : 1;
+      
+      // Comparison
+      let cmp = 0;
+      if (ka < kb) cmp = -1;
+      else if (ka > kb) cmp = 1;
+      
+      return isDesc ? -cmp : cmp;
+    });
+    
+    // 3. Map back to original items
+    return mapped.map(x => x.item);
+  },
 };
