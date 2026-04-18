@@ -79,6 +79,12 @@ export interface ParsedSectionAction {
   from?: string;
   /** Raw condition expression after "where" keyword, e.g. "active == true" */
   where?: string;
+  /** Raw expression for sorting, e.g. "score" */
+  orderBy?: string;
+  /** True if order should be descending */
+  orderDesc?: boolean;
+  /** Raw expression for limit, e.g. "10" */
+  limit?: string;
   /** Nested actions (inside the section body) */
   actions: ParsedAction[];
   /** true when the section body starts with "from X to Y" (subquery section) */

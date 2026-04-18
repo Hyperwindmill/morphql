@@ -184,6 +184,17 @@ export class ASTVisitor extends (BaseCstVisitor as any) {
     if (from !== undefined) result.from = from;
     if (where !== undefined) result.where = where;
 
+    if (ctx.orderByExpr) {
+      result.orderBy = this.visit(ctx.orderByExpr);
+      if (ctx.orderDirDesc) {
+        result.orderDesc = true;
+      }
+    }
+
+    if (ctx.limitExpr) {
+      result.limit = this.visit(ctx.limitExpr);
+    }
+
     if (isSubquery) {
       result.isSubquery = true;
       result.sourceFormat = this.visit(ctx.subquerySourceType);
