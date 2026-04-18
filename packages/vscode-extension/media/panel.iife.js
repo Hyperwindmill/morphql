@@ -165,7 +165,7 @@
             return "greedy" === m2.skipEmptyLines ? "" === e2.join("").trim() : 1 === e2.length && 0 === e2[0].length;
           }
           function g2() {
-            if (p2 && a2 && (k("Delimiter", "UndetectableDelimiter", "Unable to auto-detect delimiting character; defaulted to '" + v2.DefaultDelimiter + "'"), a2 = false), m2.skipEmptyLines && (p2.data = p2.data.filter(function(e3) {
+            if (p2 && a2 && (k2("Delimiter", "UndetectableDelimiter", "Unable to auto-detect delimiting character; defaulted to '" + v2.DefaultDelimiter + "'"), a2 = false), m2.skipEmptyLines && (p2.data = p2.data.filter(function(e3) {
               return !y2(e3);
             })), _3()) {
               let t3 = function(e3, t4) {
@@ -187,7 +187,7 @@
                 })(t4) ? parseFloat(t4) : d3.test(t4) ? new Date(t4) : "" === t4 ? null : t4) : t4)(n3 = m2.header ? r4 >= c2.length ? "__parsed_extra" : c2[r4] : n3, s3 = m2.transform ? m2.transform(s3, n3) : s3);
                 "__parsed_extra" === n3 ? (i4[n3] = i4[n3] || [], i4[n3].push(s3)) : i4[n3] = s3;
               }
-              return m2.header && (r4 > c2.length ? k("FieldMismatch", "TooManyFields", "Too many fields: expected " + c2.length + " fields but parsed " + r4, f2 + t3) : r4 < c2.length && k("FieldMismatch", "TooFewFields", "Too few fields: expected " + c2.length + " fields but parsed " + r4, f2 + t3)), i4;
+              return m2.header && (r4 > c2.length ? k2("FieldMismatch", "TooManyFields", "Too many fields: expected " + c2.length + " fields but parsed " + r4, f2 + t3) : r4 < c2.length && k2("FieldMismatch", "TooFewFields", "Too few fields: expected " + c2.length + " fields but parsed " + r4, f2 + t3)), i4;
             }
             var r3;
             p2 && (m2.header || m2.dynamicTyping || m2.transform) && (r3 = 1, !p2.data.length || Array.isArray(p2.data[0]) ? (p2.data = p2.data.map(i3), r3 = p2.data.length) : p2.data = i3(p2.data, 0), m2.header && p2.meta && (p2.meta.fields = c2), f2 += r3);
@@ -195,7 +195,7 @@
           function _3() {
             return m2.header && 0 === c2.length;
           }
-          function k(e2, t2, i3, r3) {
+          function k2(e2, t2, i3, r3) {
             e2 = { type: e2, code: t2, message: i3 };
             void 0 !== r3 && (e2.row = r3), p2.errors.push(e2);
           }
@@ -234,8 +234,8 @@
           return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         }
         function E2(C2) {
-          var S = (C2 = C2 || {}).delimiter, O = C2.newline, x2 = C2.comments, I2 = C2.step, A2 = C2.preview, T2 = C2.fastMode, D2 = null, L2 = false, F2 = null == C2.quoteChar ? '"' : C2.quoteChar, j2 = F2;
-          if (void 0 !== C2.escapeChar && (j2 = C2.escapeChar), ("string" != typeof S || -1 < v2.BAD_DELIMITERS.indexOf(S)) && (S = ","), x2 === S) throw new Error("Comment character same as delimiter");
+          var S = (C2 = C2 || {}).delimiter, O = C2.newline, x2 = C2.comments, I2 = C2.step, A2 = C2.preview, T2 = C2.fastMode, D2 = null, L2 = false, F2 = null == C2.quoteChar ? '"' : C2.quoteChar, j = F2;
+          if (void 0 !== C2.escapeChar && (j = C2.escapeChar), ("string" != typeof S || -1 < v2.BAD_DELIMITERS.indexOf(S)) && (S = ","), x2 === S) throw new Error("Comment character same as delimiter");
           true === x2 ? x2 = "#" : ("string" != typeof x2 || -1 < v2.BAD_DELIMITERS.indexOf(x2)) && (x2 = false), "\n" !== O && "\r" !== O && "\r\n" !== O && (O = "\n");
           var z2 = 0, M2 = false;
           this.parse = function(i2, t, r2) {
@@ -248,18 +248,18 @@
                 else if (r2) return w2();
                 if (!x2 || d3.substring(0, a2) !== x2) {
                   if (o2) {
-                    if (h2 = [], k(d3.split(S)), R(), M2) return w2();
-                  } else k(d3.split(S));
+                    if (h2 = [], k2(d3.split(S)), R(), M2) return w2();
+                  } else k2(d3.split(S));
                   if (A2 && A2 <= c2) return h2 = h2.slice(0, A2), w2(true);
                 }
               }
               return w2();
             }
-            for (var p2 = i2.indexOf(S, z2), g2 = i2.indexOf(O, z2), _3 = new RegExp(P2(j2) + P2(F2), "g"), m2 = i2.indexOf(F2, z2); ; ) if (i2[z2] === F2) for (m2 = z2, z2++; ; ) {
+            for (var p2 = i2.indexOf(S, z2), g2 = i2.indexOf(O, z2), _3 = new RegExp(P2(j) + P2(F2), "g"), m2 = i2.indexOf(F2, z2); ; ) if (i2[z2] === F2) for (m2 = z2, z2++; ; ) {
               if (-1 === (m2 = i2.indexOf(F2, m2 + 1))) return r2 || u2.push({ type: "Quotes", code: "MissingQuotes", message: "Quoted field unterminated", row: h2.length, index: z2 }), E3();
               if (m2 === n2 - 1) return E3(i2.substring(z2, m2).replace(_3, F2));
-              if (F2 === j2 && i2[m2 + 1] === j2) m2++;
-              else if (F2 === j2 || 0 === m2 || i2[m2 - 1] !== j2) {
+              if (F2 === j && i2[m2 + 1] === j) m2++;
+              else if (F2 === j || 0 === m2 || i2[m2 - 1] !== j) {
                 -1 !== p2 && p2 < m2 + 1 && (p2 = i2.indexOf(S, m2 + 1));
                 var y2 = v3(-1 === (g2 = -1 !== g2 && g2 < m2 + 1 ? i2.indexOf(O, m2 + 1) : g2) ? p2 : Math.min(p2, g2));
                 if (i2.substr(m2 + 1 + y2, e) === S) {
@@ -285,7 +285,7 @@
               if (A2 && h2.length >= A2) return w2(true);
             }
             return E3();
-            function k(e2) {
+            function k2(e2) {
               h2.push(e2), f2 = z2;
             }
             function v3(e2) {
@@ -293,10 +293,10 @@
               return t2 = -1 !== e2 && (e2 = i2.substring(m2 + 1, e2)) && "" === e2.trim() ? e2.length : t2;
             }
             function E3(e2) {
-              return r2 || (void 0 === e2 && (e2 = i2.substring(z2)), d3.push(e2), z2 = n2, k(d3), o2 && R()), w2();
+              return r2 || (void 0 === e2 && (e2 = i2.substring(z2)), d3.push(e2), z2 = n2, k2(d3), o2 && R()), w2();
             }
             function b2(e2) {
-              z2 = e2, k(d3), d3 = [], g2 = i2.indexOf(O, z2);
+              z2 = e2, k2(d3), d3 = [], g2 = i2.indexOf(O, z2);
             }
             function w2(e2) {
               if (C2.header && !t && h2.length && !L2) {
@@ -391,7 +391,7 @@
           function u2(e2, t2, i3) {
             var r3 = "", n3 = ("string" == typeof e2 && (e2 = JSON.parse(e2)), "string" == typeof t2 && (t2 = JSON.parse(t2)), Array.isArray(e2) && 0 < e2.length), s3 = !Array.isArray(t2[0]);
             if (n3 && _3) {
-              for (var a3 = 0; a3 < e2.length; a3++) 0 < a3 && (r3 += m2), r3 += k(e2[a3], a3);
+              for (var a3 = 0; a3 < e2.length; a3++) 0 < a3 && (r3 += m2), r3 += k2(e2[a3], a3);
               0 < t2.length && (r3 += y2);
             }
             for (var o3 = 0; o3 < t2.length; o3++) {
@@ -407,14 +407,14 @@
                 for (var p2 = 0; p2 < h3; p2++) {
                   0 < p2 && !d3 && (r3 += m2);
                   var g2 = n3 && s3 ? e2[p2] : p2;
-                  r3 += k(t2[o3][g2], p2);
+                  r3 += k2(t2[o3][g2], p2);
                 }
                 o3 < t2.length - 1 && (!i3 || 0 < h3 && !d3) && (r3 += y2);
               }
             }
             return r3;
           }
-          function k(e2, t2) {
+          function k2(e2, t2) {
             var i3, r3;
             return null == e2 ? "" : e2.constructor === Date ? JSON.stringify(e2).slice(1, 25) : (r3 = false, o2 && "string" == typeof e2 && o2.test(e2) && (e2 = "'" + e2, r3 = true), i3 = e2.toString().replace(h2, a2), (r3 = r3 || true === n2 || "function" == typeof n2 && n2(e2, t2) || Array.isArray(n2) && n2[t2] || ((e3, t3) => {
               for (var i4 = 0; i4 < t3.length; i4++) if (-1 < e3.indexOf(t3[i4])) return true;
@@ -2268,7 +2268,7 @@
           if (this._options.preserve_newlines) {
             if (newlines > 1) {
               this.print_newline(false, preserve_statement_flags);
-              for (var j2 = 1; j2 < newlines; j2 += 1) {
+              for (var j = 1; j < newlines; j += 1) {
                 this.print_newline(true, preserve_statement_flags);
               }
             }
@@ -3022,7 +3022,7 @@
       };
       Beautifier.prototype.print_block_commment = function(current_token, preserve_statement_flags) {
         var lines = split_linebreaks(current_token.text);
-        var j2;
+        var j;
         var javadoc = false;
         var starless = false;
         var lastIndent = current_token.whitespace_before;
@@ -3038,16 +3038,16 @@
           if (javadoc) {
             this._flags.alignment = 1;
           }
-          for (j2 = 0; j2 < lines.length; j2++) {
+          for (j = 0; j < lines.length; j++) {
             if (javadoc) {
               this.print_token_line_indentation(current_token);
-              this._output.add_token(ltrim(lines[j2]));
-            } else if (starless && lines[j2]) {
+              this._output.add_token(ltrim(lines[j]));
+            } else if (starless && lines[j]) {
               this.print_token_line_indentation(current_token);
-              this._output.add_token(lines[j2].substring(lastIndentLength));
+              this._output.add_token(lines[j].substring(lastIndentLength));
             } else {
               this._output.current_line.set_indent(-1);
-              this._output.add_token(lines[j2]);
+              this._output.add_token(lines[j]);
             }
             this.print_newline(false, preserve_statement_flags);
           }
@@ -5420,11 +5420,11 @@
             }
             var patterns = grammar[token];
             patterns = Array.isArray(patterns) ? patterns : [patterns];
-            for (var j2 = 0; j2 < patterns.length; ++j2) {
-              if (rematch && rematch.cause == token + "," + j2) {
+            for (var j = 0; j < patterns.length; ++j) {
+              if (rematch && rematch.cause == token + "," + j) {
                 return;
               }
-              var patternObj = patterns[j2];
+              var patternObj = patterns[j];
               var inside = patternObj.inside;
               var lookbehind = !!patternObj.lookbehind;
               var greedy = !!patternObj.greedy;
@@ -5465,9 +5465,9 @@
                   if (currentNode.value instanceof Token) {
                     continue;
                   }
-                  for (var k = currentNode; k !== tokenList.tail && (p < to || typeof k.value === "string"); k = k.next) {
+                  for (var k2 = currentNode; k2 !== tokenList.tail && (p < to || typeof k2.value === "string"); k2 = k2.next) {
                     removeCount++;
-                    p += k.value.length;
+                    p += k2.value.length;
                   }
                   removeCount--;
                   str2 = text.slice(pos, p);
@@ -5499,7 +5499,7 @@
                 }
                 if (removeCount > 1) {
                   var nestedRematch = {
-                    cause: token + "," + j2,
+                    cause: token + "," + j,
                     reach
                   };
                   matchGrammar(text, tokenList, grammar, currentNode.prev, pos, nestedRematch);
@@ -11525,7 +11525,7 @@ See https://chevrotain.io/docs/guide/resolving_lexer_errors.html#UNREACHABLE`;
     // this method also used quite a bit of `!` none null assertions because it is too optimized
     // for `tsc` to always understand it is "safe"
     tokenizeInternal(text, initialMode) {
-      let i, j2, k, matchAltImage, longerAlt, matchedImage, payload, altPayload, imageLength, group, tokType, newToken, errLength, droppedChar, msg, match;
+      let i, j, k2, matchAltImage, longerAlt, matchedImage, payload, altPayload, imageLength, group, tokType, newToken, errLength, droppedChar, msg, match;
       const orgText = text;
       const orgLength = orgText.length;
       let offset = 0;
@@ -11631,8 +11631,8 @@ See https://chevrotain.io/docs/guide/resolving_lexer_errors.html#UNREACHABLE`;
             longerAlt = currConfig.longerAlt;
             if (longerAlt !== void 0) {
               const longerAltLength = longerAlt.length;
-              for (k = 0; k < longerAltLength; k++) {
-                const longerAltConfig = patternIdxToConfig[longerAlt[k]];
+              for (k2 = 0; k2 < longerAltLength; k2++) {
+                const longerAltConfig = patternIdxToConfig[longerAlt[k2]];
                 const longerAltPattern = longerAltConfig.pattern;
                 altPayload = null;
                 if (longerAltConfig.isCustom === true) {
@@ -11703,8 +11703,8 @@ See https://chevrotain.io/docs/guide/resolving_lexer_errors.html#UNREACHABLE`;
           while (foundResyncPoint === false && offset < orgLength) {
             text = this.chopInput(text, 1);
             offset++;
-            for (j2 = 0; j2 < currModePatternsLength; j2++) {
-              const currConfig2 = patternIdxToConfig[j2];
+            for (j = 0; j < currModePatternsLength; j++) {
+              const currConfig2 = patternIdxToConfig[j];
               const currPattern = currConfig2.pattern;
               const singleCharCode = currConfig2.short;
               if (singleCharCode !== false) {
@@ -12551,8 +12551,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
     const tokenMatcher2 = areTokenCategoriesNotUsed(lookAheadPaths) ? tokenStructuredMatcherNoCategories : tokenStructuredMatcher;
     return laFuncBuilder(lookAheadPaths, hasPredicates, tokenMatcher2, dynamicTokensEnabled);
   }
-  function buildLookaheadFuncForOptionalProd(occurrence, ruleGrammar, k, dynamicTokensEnabled, prodType, lookaheadBuilder) {
-    const lookAheadPaths = getLookaheadPathsForOptionalProd(occurrence, ruleGrammar, prodType, k);
+  function buildLookaheadFuncForOptionalProd(occurrence, ruleGrammar, k2, dynamicTokensEnabled, prodType, lookaheadBuilder) {
+    const lookAheadPaths = getLookaheadPathsForOptionalProd(occurrence, ruleGrammar, prodType, k2);
     const tokenMatcher2 = areTokenCategoriesNotUsed(lookAheadPaths) ? tokenStructuredMatcherNoCategories : tokenStructuredMatcher;
     return lookaheadBuilder(lookAheadPaths[0], tokenMatcher2, dynamicTokensEnabled);
   }
@@ -12573,8 +12573,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
           if (currPredicate !== void 0 && currPredicate.call(this) === false) {
             continue;
           }
-          nextPath: for (let j2 = 0; j2 < currNumOfPaths; j2++) {
-            const currPath = currAlt[j2];
+          nextPath: for (let j = 0; j < currNumOfPaths; j++) {
+            const currPath = currAlt[j];
             const currPathLength = currPath.length;
             for (let i = 0; i < currPathLength; i++) {
               const nextToken = this.LA(i + 1);
@@ -12613,8 +12613,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
         for (let t = 0; t < numOfAlts; t++) {
           const currAlt = alts[t];
           const currNumOfPaths = currAlt.length;
-          nextPath: for (let j2 = 0; j2 < currNumOfPaths; j2++) {
-            const currPath = currAlt[j2];
+          nextPath: for (let j = 0; j < currNumOfPaths; j++) {
+            const currPath = currAlt[j];
             const currPathLength = currPath.length;
             for (let i = 0; i < currPathLength; i++) {
               const nextToken = this.LA(i + 1);
@@ -12657,8 +12657,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
       }
     } else {
       return function() {
-        nextPath: for (let j2 = 0; j2 < numOfPaths; j2++) {
-          const currPath = alt[j2];
+        nextPath: for (let j = 0; j < numOfPaths; j++) {
+          const currPath = alt[j];
           const currPathLength = currPath.length;
           for (let i = 0; i < currPathLength; i++) {
             const nextToken = this.LA(i + 1);
@@ -12760,8 +12760,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
     for (let i = 0; i < path.length; i++) {
       const tokType = path[i];
       const longerKeys = [];
-      for (let j2 = 0; j2 < keys2.length; j2++) {
-        const currShorterKey = keys2[j2];
+      for (let j = 0; j < keys2.length; j++) {
+        const currShorterKey = keys2[j];
         longerKeys.push(currShorterKey + "_" + tokType.tokenTypeIdx);
         for (let t = 0; t < tokType.categoryMatches.length; t++) {
           const categoriesKeySuffix = "_" + tokType.categoryMatches[t];
@@ -12787,7 +12787,7 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
     }
     return true;
   }
-  function lookAheadSequenceFromAlternatives(altsDefs, k) {
+  function lookAheadSequenceFromAlternatives(altsDefs, k2) {
     const partialAlts = map_default(altsDefs, (currAlt) => possiblePathsFrom([currAlt], 1));
     const finalResult = initializeArrayOfArrays(partialAlts.length);
     const altsHashes = map_default(partialAlts, (currAltPaths) => {
@@ -12801,7 +12801,7 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
       return dict;
     });
     let newData = partialAlts;
-    for (let pathLength = 1; pathLength <= k; pathLength++) {
+    for (let pathLength = 1; pathLength <= k2; pathLength++) {
       const currDataset = newData;
       newData = initializeArrayOfArrays(currDataset.length);
       for (let altIdx = 0; altIdx < currDataset.length; altIdx++) {
@@ -12811,12 +12811,12 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
           const suffixDef = currAltPathsAndSuffixes[currPathIdx].suffixDef;
           const prefixKeys = pathToHashKeys(currPathPrefix);
           const isUnique = isUniquePrefixHash(altsHashes, prefixKeys, altIdx);
-          if (isUnique || isEmpty_default(suffixDef) || currPathPrefix.length === k) {
+          if (isUnique || isEmpty_default(suffixDef) || currPathPrefix.length === k2) {
             const currAltResult = finalResult[altIdx];
             if (containsPath(currAltResult, currPathPrefix) === false) {
               currAltResult.push(currPathPrefix);
-              for (let j2 = 0; j2 < prefixKeys.length; j2++) {
-                const currKey = prefixKeys[j2];
+              for (let j = 0; j < prefixKeys.length; j++) {
+                const currKey = prefixKeys[j];
                 altsHashes[altIdx][currKey] = true;
               }
             }
@@ -12835,12 +12835,12 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
     }
     return finalResult;
   }
-  function getLookaheadPathsForOr(occurrence, ruleGrammar, k, orProd) {
+  function getLookaheadPathsForOr(occurrence, ruleGrammar, k2, orProd) {
     const visitor = new InsideDefinitionFinderVisitor(occurrence, PROD_TYPE.ALTERNATION, orProd);
     ruleGrammar.accept(visitor);
-    return lookAheadSequenceFromAlternatives(visitor.result, k);
+    return lookAheadSequenceFromAlternatives(visitor.result, k2);
   }
-  function getLookaheadPathsForOptionalProd(occurrence, ruleGrammar, prodType, k) {
+  function getLookaheadPathsForOptionalProd(occurrence, ruleGrammar, prodType, k2) {
     const insideDefVisitor = new InsideDefinitionFinderVisitor(occurrence, prodType);
     ruleGrammar.accept(insideDefVisitor);
     const insideDef = insideDefVisitor.result;
@@ -12848,7 +12848,7 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
     const afterDef = afterDefWalker.startWalking();
     const insideFlat = new Alternative({ definition: insideDef });
     const afterFlat = new Alternative({ definition: afterDef });
-    return lookAheadSequenceFromAlternatives([insideFlat, afterFlat], k);
+    return lookAheadSequenceFromAlternatives([insideFlat, afterFlat], k2);
   }
   function containsPath(alternative, searchPath) {
     compareOtherPath: for (let i = 0; i < alternative.length; i++) {
@@ -12856,9 +12856,9 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
       if (otherPath.length !== searchPath.length) {
         continue;
       }
-      for (let j2 = 0; j2 < otherPath.length; j2++) {
-        const searchTok = searchPath[j2];
-        const otherTok = otherPath[j2];
+      for (let j = 0; j < otherPath.length; j++) {
+        const searchTok = searchPath[j];
+        const otherTok = otherPath[j];
         const matchingTokens = searchTok === otherTok || otherTok.categoryMatchesMap[searchTok.tokenTypeIdx] !== void 0;
         if (matchingTokens === false) {
           continue compareOtherPath;
@@ -13473,7 +13473,7 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
     findReSyncTokenType() {
       const allPossibleReSyncTokTypes = this.flattenFollowSet();
       let nextToken = this.LA(1);
-      let k = 2;
+      let k2 = 2;
       while (true) {
         const foundMatch = find_default(allPossibleReSyncTokTypes, (resyncTokType) => {
           const canMatch = tokenMatcher(nextToken, resyncTokType);
@@ -13482,8 +13482,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
         if (foundMatch !== void 0) {
           return foundMatch;
         }
-        nextToken = this.LA(k);
-        k++;
+        nextToken = this.LA(k2);
+        k2++;
       }
     }
     getCurrFollowKey() {
@@ -13819,8 +13819,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
       const currChildName = childrenNames[i];
       const currChildArray = ctx[currChildName];
       const currChildArrayLength = currChildArray.length;
-      for (let j2 = 0; j2 < currChildArrayLength; j2++) {
-        const currChild = currChildArray[j2];
+      for (let j = 0; j < currChildArrayLength; j++) {
+        const currChild = currChildArray[j];
         if (currChild.tokenTypeIdx === void 0) {
           this[currChild.name](currChild.children, param);
         }
@@ -16117,8 +16117,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     return index;
   };
   function hasSeq(data, seq2, i) {
-    for (let j2 = 0; j2 < seq2.length; j2++) {
-      if (seq2[j2] !== data[i + j2 + 1]) return false;
+    for (let j = 0; j < seq2.length; j++) {
+      if (seq2[j] !== data[i + j + 1]) return false;
     }
     return true;
   }
@@ -17218,8 +17218,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
         const arrLen = jObj[key].length;
         let listTagVal = "";
         let listTagAttr = "";
-        for (let j2 = 0; j2 < arrLen; j2++) {
-          const item = jObj[key][j2];
+        for (let j = 0; j < arrLen; j++) {
+          const item = jObj[key][j];
           if (typeof item === "undefined") {
           } else if (item === null) {
             if (key[0] === "?") val += this.indentate(level) + "<" + key + "?" + this.tagEndChar;
@@ -17252,8 +17252,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
         if (this.options.attributesGroupName && key === this.options.attributesGroupName) {
           const Ks = Object.keys(jObj[key]);
           const L2 = Ks.length;
-          for (let j2 = 0; j2 < L2; j2++) {
-            attrStr += this.buildAttrPairStr(Ks[j2], "" + jObj[key][Ks[j2]]);
+          for (let j = 0; j < L2; j++) {
+            attrStr += this.buildAttrPairStr(Ks[j], "" + jObj[key][Ks[j]]);
           }
         } else {
           val += this.processTextOrObjNode(jObj[key], key, level, ajPath);
@@ -19980,58 +19980,58 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
   // ../core/dist/index.js
   var import_js_beautify = __toESM(require_js(), 1);
   var Oe = createToken({ name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED });
-  var Ie = createToken({ name: "LineComment", pattern: /\/\/[^\n\r]*/, group: Lexer.SKIPPED });
-  var $e = createToken({ name: "BlockComment", pattern: /\/\*[\s\S]*?\*\//, group: Lexer.SKIPPED });
+  var $e = createToken({ name: "LineComment", pattern: /\/\/[^\n\r]*/, group: Lexer.SKIPPED });
+  var Ie = createToken({ name: "BlockComment", pattern: /\/\*[\s\S]*?\*\//, group: Lexer.SKIPPED });
   var d = createToken({ name: "Identifier", pattern: /[a-zA-Z_$][a-zA-Z0-9_.[\]]*/ });
-  var j = createToken({ name: "QuotedIdentifier", pattern: /`([^`\\]|\\.)*`/ });
+  var M = createToken({ name: "QuotedIdentifier", pattern: /`([^`\\]|\\.)*`/ });
   var x = createToken({ name: "From", pattern: /from/i, longer_alt: d });
-  var I = createToken({ name: "To", pattern: /to/i, longer_alt: d });
-  var $ = createToken({ name: "Transform", pattern: /transform/i, longer_alt: d });
-  var M = createToken({ name: "Set", pattern: /set/i, longer_alt: d });
-  var P = createToken({ name: "Section", pattern: /section/i, longer_alt: d });
-  var _ = createToken({ name: "Multiple", pattern: /multiple/i, longer_alt: d });
-  var B = createToken({ name: "Clone", pattern: /clone/i, longer_alt: d });
-  var q = createToken({ name: "Delete", pattern: /delete/i, longer_alt: d });
-  var F = createToken({ name: "Define", pattern: /define/i, longer_alt: d });
-  var D = createToken({ name: "Modify", pattern: /modify/i, longer_alt: d });
+  var $ = createToken({ name: "To", pattern: /to/i, longer_alt: d });
+  var I = createToken({ name: "Transform", pattern: /transform/i, longer_alt: d });
+  var P = createToken({ name: "Set", pattern: /set/i, longer_alt: d });
+  var _ = createToken({ name: "Section", pattern: /section/i, longer_alt: d });
+  var B = createToken({ name: "Multiple", pattern: /multiple/i, longer_alt: d });
+  var q = createToken({ name: "Clone", pattern: /clone/i, longer_alt: d });
+  var F = createToken({ name: "Delete", pattern: /delete/i, longer_alt: d });
+  var D = createToken({ name: "Define", pattern: /define/i, longer_alt: d });
+  var W = createToken({ name: "Modify", pattern: /modify/i, longer_alt: d });
   var U = createToken({ name: "If", pattern: /if/i, longer_alt: d });
-  var W = createToken({ name: "Else", pattern: /else/i, longer_alt: d });
-  var z = createToken({ name: "True", pattern: /true/i, longer_alt: d });
-  var Q = createToken({ name: "False", pattern: /false/i, longer_alt: d });
-  var V = createToken({ name: "Null", pattern: /null/i, longer_alt: d });
-  var Y = createToken({ name: "Return", pattern: /return/i, longer_alt: d });
+  var z = createToken({ name: "Else", pattern: /else/i, longer_alt: d });
+  var Q = createToken({ name: "True", pattern: /true/i, longer_alt: d });
+  var V = createToken({ name: "False", pattern: /false/i, longer_alt: d });
+  var Y = createToken({ name: "Null", pattern: /null/i, longer_alt: d });
+  var J = createToken({ name: "Return", pattern: /return/i, longer_alt: d });
   var G = createToken({ name: "Unsafe", pattern: /unsafe/i, longer_alt: d });
-  var J = createToken({ name: "Where", pattern: /where/i, longer_alt: d });
+  var H = createToken({ name: "Where", pattern: /where/i, longer_alt: d });
   var X = createToken({ name: "EqualsEquals", pattern: /==/ });
-  var H = createToken({ name: "EqualsEqualsEquals", pattern: /===/ });
-  var Z = createToken({ name: "NotEquals", pattern: /!=/ });
-  var K = createToken({ name: "NotEqualsEquals", pattern: /!==/ });
-  var ee = createToken({ name: "LessThanOrEqual", pattern: /<=/ });
-  var te = createToken({ name: "GreaterThanOrEqual", pattern: />=/ });
-  var re = createToken({ name: "LessThan", pattern: /</ });
-  var se = createToken({ name: "GreaterThan", pattern: />/ });
-  var ne = createToken({ name: "And", pattern: /&&/ });
-  var ie = createToken({ name: "Or", pattern: /\|\|/ });
-  var oe = createToken({ name: "Not", pattern: /!/ });
+  var Z = createToken({ name: "EqualsEqualsEquals", pattern: /===/ });
+  var K = createToken({ name: "NotEquals", pattern: /!=/ });
+  var ee = createToken({ name: "NotEqualsEquals", pattern: /!==/ });
+  var te = createToken({ name: "LessThanOrEqual", pattern: /<=/ });
+  var re = createToken({ name: "GreaterThanOrEqual", pattern: />=/ });
+  var se = createToken({ name: "LessThan", pattern: /</ });
+  var ne = createToken({ name: "GreaterThan", pattern: />/ });
+  var ie = createToken({ name: "And", pattern: /&&/ });
+  var oe = createToken({ name: "Or", pattern: /\|\|/ });
+  var ae = createToken({ name: "Not", pattern: /!/ });
   var w = createToken({ name: "Equals", pattern: /=/ });
-  var ae = createToken({ name: "Plus", pattern: /\+/ });
+  var ue = createToken({ name: "Plus", pattern: /\+/ });
   var C = createToken({ name: "Minus", pattern: /-/ });
-  var ue = createToken({ name: "Times", pattern: /\*/ });
-  var le = createToken({ name: "Divide", pattern: /\// });
-  var ce = createToken({ name: "Modulo", pattern: /%/ });
-  var A = createToken({ name: "LParen", pattern: /\(/ });
+  var le = createToken({ name: "Times", pattern: /\*/ });
+  var ce = createToken({ name: "Divide", pattern: /\// });
+  var pe = createToken({ name: "Modulo", pattern: /%/ });
+  var E = createToken({ name: "LParen", pattern: /\(/ });
   var v = createToken({ name: "RParen", pattern: /\)/ });
   var T = createToken({ name: "Comma", pattern: /,/ });
-  var pe = createToken({ name: "StringLiteral", pattern: /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/ });
-  var me = createToken({ name: "NumericLiteral", pattern: /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/ });
-  var fe = [Oe, Ie, $e, x, I, $, M, P, _, B, q, F, D, U, W, z, Q, V, Y, G, J, H, X, K, Z, ee, te, ne, ie, w, re, se, oe, ae, C, ue, le, ce, A, v, T, pe, me, j, d];
-  var he = new Lexer(fe);
-  var de = class extends CstParser {
+  var me = createToken({ name: "StringLiteral", pattern: /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/ });
+  var fe = createToken({ name: "NumericLiteral", pattern: /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/ });
+  var he = [Oe, $e, Ie, x, $, I, P, _, B, q, F, D, W, U, z, Q, V, Y, J, G, H, Z, X, ee, K, te, re, ie, oe, w, se, ne, ae, ue, C, le, ce, pe, E, v, T, me, fe, M, d];
+  var de = new Lexer(he);
+  var ge = class extends CstParser {
     constructor() {
-      super(fe);
+      super(he);
       __publicField(this, "query", this.RULE("query", () => {
-        this.CONSUME(x), this.SUBRULE(this.typeFormat, { LABEL: "sourceType" }), this.CONSUME(I), this.SUBRULE1(this.typeFormat, { LABEL: "targetType" }), this.OPTION(() => {
-          this.CONSUME($), this.OPTION1(() => {
+        this.CONSUME(x), this.SUBRULE(this.typeFormat, { LABEL: "sourceType" }), this.CONSUME($), this.SUBRULE1(this.typeFormat, { LABEL: "targetType" }), this.OPTION(() => {
+          this.CONSUME(I), this.OPTION1(() => {
             this.CONSUME(G);
           }), this.MANY(() => {
             this.SUBRULE(this.action);
@@ -20040,7 +20040,7 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       }));
       __publicField(this, "typeFormat", this.RULE("typeFormat", () => {
         this.SUBRULE(this.anyIdentifier, { LABEL: "name" }), this.OPTION(() => {
-          this.CONSUME(A), this.MANY_SEP({ SEP: T, DEF: () => {
+          this.CONSUME(E), this.MANY_SEP({ SEP: T, DEF: () => {
             this.SUBRULE(this.typeFormatParameter, { LABEL: "params" });
           } }), this.CONSUME(v);
         });
@@ -20052,108 +20052,108 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
         this.SUBRULE(this.anyIdentifier, { LABEL: "key" }), this.CONSUME(w), this.SUBRULE(this.literal, { LABEL: "value" });
       }));
       __publicField(this, "anyIdentifier", this.RULE("anyIdentifier", () => {
-        this.OR([{ ALT: () => this.CONSUME(d) }, { ALT: () => this.CONSUME(j) }]);
+        this.OR([{ ALT: () => this.CONSUME(d) }, { ALT: () => this.CONSUME(M) }]);
       }));
       __publicField(this, "literal", this.RULE("literal", () => {
-        this.OR([{ ALT: () => this.CONSUME(pe) }, { ALT: () => this.CONSUME(me) }, { ALT: () => this.CONSUME(z) }, { ALT: () => this.CONSUME(Q) }, { ALT: () => this.CONSUME(V) }]);
+        this.OR([{ ALT: () => this.CONSUME(me) }, { ALT: () => this.CONSUME(fe) }, { ALT: () => this.CONSUME(Q) }, { ALT: () => this.CONSUME(V) }, { ALT: () => this.CONSUME(Y) }]);
       }));
       __publicField(this, "action", this.RULE("action", () => {
         this.OR([{ ALT: () => this.SUBRULE(this.setRule) }, { ALT: () => this.SUBRULE(this.modifyRule) }, { ALT: () => this.SUBRULE(this.sectionRule) }, { ALT: () => this.SUBRULE(this.cloneRule) }, { ALT: () => this.SUBRULE(this.deleteRule) }, { ALT: () => this.SUBRULE(this.ifAction) }, { ALT: () => this.SUBRULE(this.defineRule) }, { ALT: () => this.SUBRULE(this.returnRule) }]);
       }));
       __publicField(this, "returnRule", this.RULE("returnRule", () => {
-        this.CONSUME(Y), this.SUBRULE(this.expression, { LABEL: "expr" });
+        this.CONSUME(J), this.SUBRULE(this.expression, { LABEL: "expr" });
       }));
       __publicField(this, "deleteRule", this.RULE("deleteRule", () => {
-        this.CONSUME(q), this.SUBRULE(this.anyIdentifier, { LABEL: "field" });
+        this.CONSUME(F), this.SUBRULE(this.anyIdentifier, { LABEL: "field" });
       }));
       __publicField(this, "ifAction", this.RULE("ifAction", () => {
-        this.CONSUME(U), this.CONSUME(A), this.SUBRULE(this.expression, { LABEL: "condition" }), this.CONSUME(v), this.CONSUME2(A), this.MANY(() => {
+        this.CONSUME(U), this.CONSUME(E), this.SUBRULE(this.expression, { LABEL: "condition" }), this.CONSUME(v), this.CONSUME2(E), this.MANY(() => {
           this.SUBRULE(this.action, { LABEL: "thenActions" });
         }), this.CONSUME2(v), this.OPTION(() => {
-          this.CONSUME(W), this.CONSUME3(A), this.MANY2(() => {
+          this.CONSUME(z), this.CONSUME3(E), this.MANY2(() => {
             this.SUBRULE2(this.action, { LABEL: "elseActions" });
           }), this.CONSUME3(v);
         });
       }));
       __publicField(this, "cloneRule", this.RULE("cloneRule", () => {
-        this.CONSUME(B), this.OPTION(() => {
-          this.CONSUME(A), this.MANY_SEP({ SEP: T, DEF: () => {
+        this.CONSUME(q), this.OPTION(() => {
+          this.CONSUME(E), this.MANY_SEP({ SEP: T, DEF: () => {
             this.SUBRULE(this.anyIdentifier, { LABEL: "fields" });
           } }), this.CONSUME(v);
         });
       }));
       __publicField(this, "setRule", this.RULE("setRule", () => {
-        this.CONSUME(M), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
+        this.CONSUME(P), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
       }));
       __publicField(this, "modifyRule", this.RULE("modifyRule", () => {
-        this.CONSUME(D), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
+        this.CONSUME(W), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
       }));
       __publicField(this, "expression", this.RULE("expression", () => {
         this.SUBRULE(this.logicalOr);
       }));
       __publicField(this, "logicalOr", this.RULE("logicalOr", () => {
         this.SUBRULE(this.logicalAnd, { LABEL: "lhs" }), this.MANY(() => {
-          this.CONSUME(ie), this.SUBRULE1(this.logicalAnd, { LABEL: "rhs" });
+          this.CONSUME(oe), this.SUBRULE1(this.logicalAnd, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "logicalAnd", this.RULE("logicalAnd", () => {
         this.SUBRULE(this.comparison, { LABEL: "lhs" }), this.MANY(() => {
-          this.CONSUME(ne), this.SUBRULE1(this.comparison, { LABEL: "rhs" });
+          this.CONSUME(ie), this.SUBRULE1(this.comparison, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "comparison", this.RULE("comparison", () => {
         this.SUBRULE(this.addition, { LABEL: "lhs" }), this.OPTION(() => {
-          this.OR([{ ALT: () => this.CONSUME(X, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(H, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(Z, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(K, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ee, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(te, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(re, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(se, { LABEL: "ops" }) }]), this.SUBRULE1(this.addition, { LABEL: "rhs" });
+          this.OR([{ ALT: () => this.CONSUME(X, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(Z, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(K, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ee, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(te, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(re, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(se, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ne, { LABEL: "ops" }) }]), this.SUBRULE1(this.addition, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "addition", this.RULE("addition", () => {
         this.SUBRULE(this.multiplication, { LABEL: "lhs" }), this.MANY(() => {
-          this.OR([{ ALT: () => this.CONSUME(ae, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(C, { LABEL: "ops" }) }]), this.SUBRULE1(this.multiplication, { LABEL: "rhs" });
+          this.OR([{ ALT: () => this.CONSUME(ue, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(C, { LABEL: "ops" }) }]), this.SUBRULE1(this.multiplication, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "multiplication", this.RULE("multiplication", () => {
         this.SUBRULE(this.unaryExpression, { LABEL: "lhs" }), this.MANY(() => {
-          this.OR([{ ALT: () => this.CONSUME(ue, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(le, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ce, { LABEL: "ops" }) }]), this.SUBRULE1(this.unaryExpression, { LABEL: "rhs" });
+          this.OR([{ ALT: () => this.CONSUME(le, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ce, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(pe, { LABEL: "ops" }) }]), this.SUBRULE1(this.unaryExpression, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "unaryExpression", this.RULE("unaryExpression", () => {
         this.OPTION(() => {
-          this.OR([{ ALT: () => this.CONSUME(C, { LABEL: "sign" }) }, { ALT: () => this.CONSUME(oe, { LABEL: "sign" }) }]);
+          this.OR([{ ALT: () => this.CONSUME(C, { LABEL: "sign" }) }, { ALT: () => this.CONSUME(ae, { LABEL: "sign" }) }]);
         }), this.SUBRULE(this.atomic);
       }));
       __publicField(this, "atomic", this.RULE("atomic", () => {
-        this.OR([{ ALT: () => this.SUBRULE(this.literal) }, { GATE: () => this.LA(2).tokenType === A, ALT: () => this.SUBRULE(this.functionCall) }, { ALT: () => this.SUBRULE(this.anyIdentifier) }, { ALT: () => {
-          this.CONSUME(A), this.SUBRULE(this.expression), this.CONSUME(v);
+        this.OR([{ ALT: () => this.SUBRULE(this.literal) }, { GATE: () => this.LA(2).tokenType === E, ALT: () => this.SUBRULE(this.functionCall) }, { ALT: () => this.SUBRULE(this.anyIdentifier) }, { ALT: () => {
+          this.CONSUME(E), this.SUBRULE(this.expression), this.CONSUME(v);
         } }]);
       }));
       __publicField(this, "functionCall", this.RULE("functionCall", () => {
-        this.OR([{ ALT: () => this.CONSUME(d, { LABEL: "name" }) }, { ALT: () => this.CONSUME(U, { LABEL: "name" }) }]), this.CONSUME(A), this.MANY_SEP({ SEP: T, DEF: () => {
+        this.OR([{ ALT: () => this.CONSUME(d, { LABEL: "name" }) }, { ALT: () => this.CONSUME(U, { LABEL: "name" }) }]), this.CONSUME(E), this.MANY_SEP({ SEP: T, DEF: () => {
           this.SUBRULE(this.expression, { LABEL: "args" });
         } }), this.CONSUME(v);
       }));
       __publicField(this, "sectionRule", this.RULE("sectionRule", () => {
-        this.CONSUME(P), this.OPTION(() => {
-          this.CONSUME(_);
-        }), this.SUBRULE(this.anyIdentifier, { LABEL: "sectionName" }), this.CONSUME(A), this.OPTION1(() => {
-          this.CONSUME(x, { LABEL: "subqueryFrom" }), this.SUBRULE(this.typeFormat, { LABEL: "subquerySourceType" }), this.CONSUME(I, { LABEL: "subqueryTo" }), this.SUBRULE1(this.typeFormat, { LABEL: "subqueryTargetType" }), this.OPTION2(() => {
-            this.CONSUME($, { LABEL: "subqueryTransform" });
+        this.CONSUME(_), this.OPTION(() => {
+          this.CONSUME(B);
+        }), this.SUBRULE(this.anyIdentifier, { LABEL: "sectionName" }), this.CONSUME(E), this.OPTION1(() => {
+          this.CONSUME(x, { LABEL: "subqueryFrom" }), this.SUBRULE(this.typeFormat, { LABEL: "subquerySourceType" }), this.CONSUME($, { LABEL: "subqueryTo" }), this.SUBRULE1(this.typeFormat, { LABEL: "subqueryTargetType" }), this.OPTION2(() => {
+            this.CONSUME(I, { LABEL: "subqueryTransform" });
           });
         }), this.MANY(() => {
           this.SUBRULE(this.action);
         }), this.CONSUME(v), this.OPTION3(() => {
           this.CONSUME1(x, { LABEL: "followFrom" }), this.SUBRULE(this.expression, { LABEL: "followExpr" });
         }), this.OPTION4(() => {
-          this.CONSUME(J, { LABEL: "whereClause" }), this.SUBRULE1(this.expression, { LABEL: "whereExpr" });
+          this.CONSUME(H, { LABEL: "whereClause" }), this.SUBRULE1(this.expression, { LABEL: "whereExpr" });
         });
       }));
       __publicField(this, "defineRule", this.RULE("defineRule", () => {
-        this.CONSUME(F), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
+        this.CONSUME(D), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
       }));
       this.performSelfAnalysis();
     }
   };
-  var E = new de();
-  var ve = { substring: (r, e) => {
+  var A = new ge();
+  var k = { substring: (r, e) => {
     if (r.length < 2) throw new Error("substring() requires at least 2 arguments (string, start, [length])");
     let [t, s, i] = r;
     return i !== void 0 ? `String(${t}).slice(${s}, (${s}) + (${i}))` : `String(${t}).slice(${s})`;
@@ -20447,8 +20447,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       return { source: this.sourceRoot, target: this.targetRoot };
     }
   };
-  var ke = E.getBaseCstVisitorConstructor();
-  var ge = class extends ke {
+  var ke = A.getBaseCstVisitorConstructor();
+  var ye = class extends ke {
     constructor() {
       super();
       __publicField(this, "readFrom", "source");
@@ -20709,7 +20709,7 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       if (e.expression) return `(${this.visit(e.expression)})`;
     }
     functionCall(e) {
-      let t = e.name[0].image, s = (t.startsWith("`") ? t.slice(1, -1) : t).toLowerCase(), i = e.args ? e.args.map((o) => this.visit(o)) : [], n = ve[s];
+      let t = e.name[0].image, s = (t.startsWith("`") ? t.slice(1, -1) : t).toLowerCase(), i = e.args ? e.args.map((o) => this.visit(o)) : [], n = k[s];
       if (n) return ["substring", "text", "replace", "uppercase", "lowercase", "to_base64", "from_base64", "trim", "padstart", "padend", "fixed"].includes(s) ? this.lastInferredType = "string" : ["number", "extractnumber", "floor", "ceil", "round", "abs", "min", "max", "indexof"].includes(s) ? this.lastInferredType = "number" : ["startswith", "endswith"].includes(s) ? this.lastInferredType = "boolean" : ["aslist", "transpose", "list", "array"].includes(s) ? this.lastInferredType = "array" : s === "asobject" && (this.lastInferredType = "object"), n(i, this);
       throw new Error(`Unknown function: ${t}`);
     }
@@ -20724,16 +20724,16 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
         let l = this.visit(e.subquerySourceType), f = this.visit(e.subqueryTargetType);
         this.scopeStack.push({ format: f.name, options: f.options, isSerializationScope: true });
         try {
-          let h = !!e.subqueryTransform, g = e.action ? e.action.map((k) => this.visit(k)) : [];
+          let h = !!e.subqueryTransform, g = e.action ? e.action.map((j) => this.visit(j)) : [];
           h || g.push("Object.assign(target, source);");
           let S = JSON.stringify(l.options), b = JSON.stringify(f.options), y = n.includes("(") || n.includes("[") || n.includes(" ") ? "_sectionSource" : n, R = y === "_sectionSource" ? `const _sectionSource = ${n};
 ` : "";
           if (a) {
-            let k = u ? `.filter((item, index) => { const source = item; const _key = index; return ${c}; })` : "";
+            let j = u ? `.filter((item, index) => { const source = item; const _key = index; return ${c}; })` : "";
             return `
         {
           ${R}if (${y} && Array.isArray(${y})) {
-            ${i} = ${y}${k}.map((item, index) => {
+            ${i} = ${y}${j}.map((item, index) => {
               const subSource = env.parse('${l.name}', item, ${S});
               const source = _safeSource(subSource);
               const _key = index;
@@ -20845,9 +20845,9 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       }
     }
   };
-  var ye = new ge();
-  var je = E.getBaseCstVisitorConstructor();
-  var Se = class extends je {
+  var Se = new ye();
+  var je = A.getBaseCstVisitorConstructor();
+  var Ae = class extends je {
     constructor() {
       super(), this.validateVisitor();
     }
@@ -20962,12 +20962,12 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       return `${t}(${s.join(", ")})`;
     }
   };
-  var Le = new Se();
+  var we = new Ae();
   var Ee = {};
   function L(r, e) {
     Ee[r.toLowerCase()] = e;
   }
-  function Ae(r) {
+  function be(r) {
     let e = Ee[r.toLowerCase()];
     if (!e) throw new Error(`No adapter found for format: ${r}`);
     return e;
@@ -21068,7 +21068,7 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
 `;
     return r.rows.join(t);
   } });
-  var xe = { spreadsheet: (r) => {
+  var ve = { spreadsheet: (r) => {
     let e = Array.isArray(r) ? r : r == null ? [] : [r];
     if (!Array.isArray(r) && r && typeof r == "object" && Array.isArray(r.rows) && (e = r.rows), e.length === 0) return [];
     let t = [], s = [], i = [];
@@ -21230,24 +21230,24 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     let e = new Date(String(r)).getTime();
     return isNaN(e) ? null : String(Math.floor(e / 1e3));
   } };
-  async function bt(r, e) {
+  async function Lt(r, e) {
     if (e == null ? void 0 : e.cache) {
       let m = await e.cache.retrieve(r);
       if (m) return Te(m);
     }
-    let t = he.tokenize(r);
+    let t = de.tokenize(r);
     if (t.errors.length > 0) throw new Error(`Lexing errors: ${t.errors[0].message}`);
-    E.input = t.tokens;
-    let s = E.query();
-    if (E.errors.length > 0) throw new Error(`Parsing errors: ${E.errors[0].message}`);
-    ye.isAnalyzing = !!(e == null ? void 0 : e.analyze);
-    let { code: i, analysis: n, sourceType: o, targetType: a } = ye.visit(s), u = import_js_beautify.default.js(i, { indent_size: 2, space_in_empty_paren: true, end_with_newline: true });
+    A.input = t.tokens;
+    let s = A.query();
+    if (A.errors.length > 0) throw new Error(`Parsing errors: ${A.errors[0].message}`);
+    Se.isAnalyzing = !!(e == null ? void 0 : e.analyze);
+    let { code: i, analysis: n, sourceType: o, targetType: a } = Se.visit(s), u = import_js_beautify.default.js(i, { indent_size: 2, space_in_empty_paren: true, end_with_newline: true });
     (e == null ? void 0 : e.cache) && await e.cache.save(r, u);
     let c = Te(u);
     return n && (n.sourceFormat = o.name, n.targetFormat = a.name, c.analysis = n), c;
   }
   function Te(r) {
-    let t = new Function(r)(), s = { parse: (n, o, a) => Ae(n).parse(o, a), serialize: (n, o, a) => Ae(n).serialize(o, a), functions: xe }, i = ((n) => t(n, s));
+    let t = new Function(r)(), s = { parse: (n, o, a) => be(n).parse(o, a), serialize: (n, o, a) => be(n).serialize(o, a), functions: ve }, i = ((n) => t(n, s));
     return i.code = r, i;
   }
 
@@ -21719,7 +21719,7 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       document.getElementById("filename").textContent = fileName;
       setSourceFile(sourceFileName);
       try {
-        const engine = await bt(query, { analyze: true });
+        const engine = await Lt(query, { analyze: true });
         const output = engine(sourceData != null ? sourceData : "{}");
         const result = typeof output === "string" ? output : JSON.stringify(output, null, 2);
         setStatus("ok", "OK");
@@ -21831,8 +21831,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     }
     let children = "";
     if (hasProps && n.properties) {
-      for (const [k, v2] of Object.entries(n.properties)) {
-        children += renderNode(v2, k);
+      for (const [k2, v2] of Object.entries(n.properties)) {
+        children += renderNode(v2, k2);
       }
     }
     if (hasItems) children += renderNode(n.items, "items[]");
