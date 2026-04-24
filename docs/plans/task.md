@@ -1,0 +1,5 @@
+- [x] Task 1: Package Initialization
+- [x] Task 2: Core Interfaces and Storage Adapters
+- [x] Task 3: SQL Parser
+- [x] Task 4: Transpiler
+- [x] Task 5: Store Engine and E2E Integration
