@@ -4,18 +4,18 @@ import * as path from 'node:path';
 import { existsSync } from 'node:fs';
 
 export class FolderAdapter implements StorageAdapter {
-  constructor(private directory: string) {}
+  constructor(private directory: string, private options: { pretty?: boolean } = {}) {}
 
   async read(source: string): Promise<any[]> {
     if (!source || source === 'source') {
       return [];
     }
     
-    // Safety check to prevent escaping the directory
-    const normalizedDir = path.normalize(this.directory);
-    const targetFile = path.normalize(path.join(this.directory, `${source}.json`));
+    // Safety check to prevent escaping the directory using absolute paths
+    const resolvedDir = path.resolve(this.directory);
+    const targetFile = path.resolve(this.directory, `${source}.json`);
     
-    if (!targetFile.startsWith(normalizedDir)) {
+    if (!targetFile.startsWith(resolvedDir)) {
       throw new Error(`Invalid source table name: ${source}`);
     }
 
@@ -35,5 +35,20 @@ export class FolderAdapter implements StorageAdapter {
     } catch (e: any) {
       throw new Error(`Failed to read from table '${source}': ${e.message}`);
     }
+  }
+
+  async write(collection: string, data: any[]): Promise<void> {
+    const resolvedDir = path.resolve(this.directory);
+    const targetFile = path.resolve(this.directory, `${collection}.json`);
+
+    if (!targetFile.startsWith(resolvedDir)) {
+      throw new Error(`Invalid collection name: ${collection}`);
+    }
+
+    const content = this.options.pretty 
+      ? JSON.stringify(data, null, 2) 
+      : JSON.stringify(data);
+
+    await fs.writeFile(targetFile, content, 'utf8');
   }
 }

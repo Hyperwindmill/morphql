@@ -18,7 +18,11 @@ export async function storeAction(options: any, command: any) {
   if (query) {
     try {
       const result = await store.query(query);
-      console.log(JSON.stringify(result, null, 2));
+      if (Array.isArray(result)) {
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        console.log(`Query OK. ${result.type.toUpperCase()} on "${result.table}" executed.`);
+      }
     } catch (e: any) {
       console.error(`Error: ${e.message}`);
       process.exit(1);
@@ -54,12 +58,14 @@ export async function storeAction(options: any, command: any) {
 
     try {
       const result = await store.query(input);
-      // Optional: console.table(result) for tabular data, but JSON.stringify is safer for nested data
-      if (result.length > 0 && typeof result[0] === 'object' && !Array.isArray(result[0])) {
-        // If it's a flat array of objects, console.table looks nice
-        console.table(result);
+      if (Array.isArray(result)) {
+        if (result.length > 0 && typeof result[0] === 'object' && !Array.isArray(result[0])) {
+          console.table(result);
+        } else {
+          console.log(JSON.stringify(result, null, 2));
+        }
       } else {
-        console.log(JSON.stringify(result, null, 2));
+        console.log(`Query OK. ${result.type.toUpperCase()} on "${result.table}" executed.`);
       }
     } catch (e: any) {
       console.error(`\x1b[31mError:\x1b[0m ${e.message}`);

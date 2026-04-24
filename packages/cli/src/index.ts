@@ -97,7 +97,7 @@ import { storeAction } from "./store.js";
 program
   .command("store")
   .description("Query a directory of JSON files using SQL-like syntax")
-  .requiredOption("-d, --dir <path>", "Directory containing JSON files")
+  .option("-d, --dir <path>", "Directory containing JSON files", ".")
   .option("-q, --query <string>", "MorphQL query string (if omitted, starts an interactive REPL)")
   .action(storeAction);
 

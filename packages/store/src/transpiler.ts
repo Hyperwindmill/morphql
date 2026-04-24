@@ -1,6 +1,15 @@
-import { ParsedSQL } from './parser.js';
+import { ParsedSQL, ParsedSelect, ParsedUpdate, ParsedDelete } from './parser.js';
 
 export function transpile(ast: ParsedSQL): string {
+  switch (ast.type) {
+    case 'select': return transpileSelect(ast);
+    case 'update': return transpileUpdate(ast);
+    case 'delete': return transpileDelete(ast);
+    case 'insert': throw new Error('INSERT statements are not transpiled to MorphQL');
+  }
+}
+
+function transpileSelect(ast: ParsedSelect): string {
   const actions: string[] = [];
 
   if (ast.hasWildcard) {
@@ -8,11 +17,6 @@ export function transpile(ast: ParsedSQL): string {
   }
 
   for (const field of ast.select) {
-    // If the alias is the same as the expression, we can just use `set alias` in morphql
-    // actually in morphql `set expr` is valid. Wait, `set a = b` is valid. 
-    // If it's a field selection like `id`, it should be `set id = id`.
-    // Wait, MorphQL `set` syntax is `set [field] = [expr]`. Or just `set [field]`?
-    // According to MorphQL docs, `set a = b` works. `set a` is also valid (sets `a` to `a` from source).
     if (field.alias === field.expr) {
       actions.push(`    set ${field.alias}`);
     } else {
@@ -21,7 +25,7 @@ export function transpile(ast: ParsedSQL): string {
   }
 
   let clauses = 'from source';
-  if (ast.where) clauses += ` where ${ast.where}`;
+  if (ast.where) clauses += ` where ${sqlToMorphQL(ast.where)}`;
   if (ast.orderBy) clauses += ` orderby ${ast.orderBy} ${ast.orderDesc ? 'desc' : 'asc'}`;
   if (ast.limit) clauses += ` limit ${ast.limit}`;
 
@@ -31,4 +35,37 @@ transform
 ${actions.join('\n')}
   ) ${clauses}
 `;
+}
+
+function transpileUpdate(ast: ParsedUpdate): string {
+  const setActions = ast.set.map(s => `      set ${s.field} = ${s.expr}`).join('\n');
+  const whereGuard = ast.where ? `    if (${sqlToMorphQL(ast.where)}) (\n${setActions}\n    )` : setActions;
+
+  return `from object to object
+transform
+  section multiple data(
+    clone()
+${whereGuard}
+  ) from source
+`;
+}
+
+function transpileDelete(ast: ParsedDelete): string {
+  const whereClause = ast.where ? ` where !(${sqlToMorphQL(ast.where)})` : '';
+  return `from object to object
+transform
+  section multiple data(
+    clone()
+  ) from source${whereClause}
+`;
+}
+
+/** 
+ * Simple helper to convert SQL syntax to MorphQL syntax.
+ * Focuses on operators: = becomes ==.
+ */
+function sqlToMorphQL(expr: string): string {
+  // Replace = with ==, but be careful not to touch ==, !=, <=, >=
+  // We use a regex that looks for = NOT preceded by !, <, >, = and NOT followed by =
+  return expr.replace(/(?<![!<>=])=(?!=)/g, '==');
 }
