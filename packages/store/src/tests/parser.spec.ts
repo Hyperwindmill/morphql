@@ -26,4 +26,25 @@ describe('SQL Parser', () => {
     expect(ast.orderDesc).toBe(true);
     expect(ast.limit).toBe('10');
   });
+  it('should support multiline queries with tabs and newlines', () => {
+    const ast = parseSQL(`
+      SELECT 
+        id, 
+        name 
+      FROM 
+        users 
+      WHERE 
+        age > 18 
+      ORDER BY 
+        score DESC 
+      LIMIT 10
+    `);
+    expect(ast.from).toBe('users');
+    expect(ast.select).toEqual([
+      { alias: 'id', expr: 'id' },
+      { alias: 'name', expr: 'name' }
+    ]);
+    expect(ast.where).toBe('age > 18');
+    expect(ast.orderBy).toBe('score');
+  });
 });
