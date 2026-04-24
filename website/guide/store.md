@@ -4,13 +4,13 @@ The `@morphql/store` package introduces an SQL-like querying and mutation layer 
 
 ## Interactive CLI REPL
 
-The easiest way to experience `@morphql/store` is through the MorphQL CLI. By using the `store` subcommand, you can turn any folder of JSON files into an interactive, queriable database.
+The easiest way to experience `@morphql/store` is through the MorphQL CLI. By using the `store` subcommand, you can turn any folder of JSON files into an interactive, queriable database. **If no directory is specified, it defaults to the current working directory (`.`).**
 
 ```bash
-# Start the interactive REPL in the current directory
+# Start the interactive REPL in the current directory (.)
 morphql store
 
-# Connect to a specific directory
+# Or connect to a specific directory
 morphql store -d ./my-data-folder
 ```
 
