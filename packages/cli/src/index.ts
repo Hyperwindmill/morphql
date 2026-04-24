@@ -92,7 +92,16 @@ program
     }
   });
 
-// --- 4. Default Command (Single File) ---
+// --- 4. Store Subcommand ---
+import { storeAction } from "./store.js";
+program
+  .command("store")
+  .description("Query a directory of JSON files using SQL-like syntax")
+  .requiredOption("-d, --dir <path>", "Directory containing JSON files")
+  .option("-q, --query <string>", "MorphQL query string (if omitted, starts an interactive REPL)")
+  .action(storeAction);
+
+// --- 5. Default Command (Single File) ---
 program
   .option("-f, --from <path>", "Path to the source file")
   .option("-i, --input <string>", "Raw source content as string")

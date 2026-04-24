@@ -17,10 +17,10 @@ export function parseSQL(sql: string): ParsedSQL {
 
   const masked = maskStringsAndParens(sql);
   
-  const fromMatch = masked.match(/\s+from\s+/);
-  const whereMatch = masked.match(/\s+where\s+/);
-  const orderMatch = masked.match(/\s+order\s+by\s+/) || masked.match(/\s+orderby\s+/);
-  const limitMatch = masked.match(/\s+limit\s+/);
+  const fromMatch = masked.match(/\bfrom\b/);
+  const whereMatch = masked.match(/\bwhere\b/);
+  const orderMatch = masked.match(/\border\s+by\b/) || masked.match(/\borderby\b/);
+  const limitMatch = masked.match(/\blimit\b/);
 
   const fromIdx = fromMatch ? fromMatch.index! : -1;
   const whereIdx = whereMatch ? whereMatch.index! : -1;

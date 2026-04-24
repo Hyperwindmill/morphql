@@ -45,6 +45,7 @@
   ],
   "dependencies": {
     "@morphql/core": "*",
+    "@morphql/store": "*",
     "commander": "^14.0.3"
   },
   "devDependencies": {
