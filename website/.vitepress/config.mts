@@ -83,6 +83,7 @@ export default defineConfig({
         text: "Tools",
         items: [
           { text: "CLI", link: "/guide/cli" },
+          { text: "Store Engine & REPL", link: "/guide/store" },
           { text: "Server", link: "/guide/server" },
           { text: "PHP Library", link: "/guide/php" },
           { text: "Python Library", link: "/guide/python" },
