@@ -47,17 +47,49 @@ export class Store {
 
     if (ast.jsonValue) {
       newRecord = JSON.parse(ast.jsonValue);
+      // Resolve $auto placeholders in JSON values
+      resolveAutoIncrements(newRecord, existing);
     } else {
       // Build object from columns + values
       newRecord = {};
       for (let i = 0; i < ast.columns!.length; i++) {
-        newRecord[ast.columns![i]] = parseValue(ast.values![i]);
+        const raw = ast.values![i];
+        // Detect auto(), autoincrement(), or $auto in SQL VALUES
+        if (/^(auto|autoincrement)\(\)$/i.test(raw.trim()) || raw.trim() === '$auto') {
+          newRecord[ast.columns![i]] = nextId(existing);
+        } else {
+          newRecord[ast.columns![i]] = parseValue(raw);
+        }
       }
     }
 
     existing.push(newRecord);
     await this.adapter.write(ast.into, existing);
     return { type: 'insert', table: ast.into };
+  }
+}
+
+/** Compute next autoincrement id from existing records */
+function nextId(existing: any[]): number {
+  if (existing.length === 0) return 1;
+  return Math.max(0, ...existing.map(r => (typeof r.id === 'number' ? r.id : 0))) + 1;
+}
+
+/** 
+ * Walk a JSON object and replace "$auto" string values with the next id.
+ * Escaped "\$auto" becomes the literal string "$auto".
+ */
+function resolveAutoIncrements(obj: any, existing: any[]): void {
+  for (const key of Object.keys(obj)) {
+    const val = obj[key];
+    if (val === '$auto') {
+      obj[key] = nextId(existing);
+    } else if (typeof val === 'string' && val === '\\$auto') {
+      // Escaped: store the literal "$auto"
+      obj[key] = '$auto';
+    } else if (val && typeof val === 'object' && !Array.isArray(val)) {
+      resolveAutoIncrements(val, existing);
+    }
   }
 }
 

@@ -54,4 +54,52 @@ describe('MorphStore', () => {
       expect(data[0].name).toBe('Alice');
     }
   });
+
+  it('should support auto() in SQL INSERT', async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 5, name: 'Alice' }, { id: 10, name: 'Bob' }] }));
+    await store.query("INSERT INTO users (id, name) VALUES (auto(), 'Charlie')");
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data).toHaveLength(3);
+      expect(data[2].id).toBe(11); // max(10) + 1
+      expect(data[2].name).toBe('Charlie');
+    }
+  });
+
+  it('should support autoincrement() in SQL INSERT', async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'Alice' }] }));
+    await store.query("INSERT INTO users (id, name) VALUES (autoincrement(), 'Bob')");
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[1].id).toBe(2);
+    }
+  });
+
+  it('should support $auto in JSON INSERT', async () => {
+    const store = new Store(new MemoryAdapter({ items: [{ id: 3, label: 'A' }] }));
+    await store.query('INSERT INTO items { "id": "$auto", "label": "B" }');
+    const data = await store.query('SELECT * FROM items');
+    if (Array.isArray(data)) {
+      expect(data).toHaveLength(2);
+      expect(data[1].id).toBe(4); // max(3) + 1
+    }
+  });
+
+  it('should treat \\$auto as literal $auto in JSON INSERT', async () => {
+    const store = new Store(new MemoryAdapter({ items: [{ id: 1 }] }));
+    await store.query('INSERT INTO items { "id": 2, "tag": "\\\\$auto" }');
+    const data = await store.query('SELECT * FROM items');
+    if (Array.isArray(data)) {
+      expect(data[1].tag).toBe('$auto');
+    }
+  });
+
+  it('should start autoincrement at 1 for empty tables', async () => {
+    const store = new Store(new MemoryAdapter({ empty: [] }));
+    await store.query("INSERT INTO empty (id, name) VALUES (auto(), 'First')");
+    const data = await store.query('SELECT * FROM empty');
+    if (Array.isArray(data)) {
+      expect(data[0].id).toBe(1);
+    }
+  });
 });

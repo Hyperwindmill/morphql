@@ -144,15 +144,36 @@ function parseInsert(sql: string): ParsedInsert {
   }
 
   // SQL syntax: INSERT INTO table (col1, col2) VALUES (val1, val2)
-  const sqlMatch = sql.match(/^\s*insert\s+into\s+(\w+)\s*\(([^)]+)\)\s*values\s*\(([^)]+)\)\s*$/i);
-  if (!sqlMatch) {
+  // We use a more robust approach to handle nested parens like auto()
+  const headerMatch = sql.match(/^\s*insert\s+into\s+(\w+)\s*/i);
+  if (!headerMatch) {
     throw new Error('Invalid INSERT syntax. Use: INSERT INTO table (cols) VALUES (vals) or INSERT INTO table { json }');
   }
+  const tableName = headerMatch[1];
+  const rest = sql.substring(headerMatch[0].length);
 
-  const columns = sqlMatch[2].split(',').map(c => c.trim());
-  const values = smartSplit(sqlMatch[3], ',').map(v => v.trim());
+  // Extract balanced paren groups: (cols) VALUES (vals)
+  const colGroup = extractParenGroup(rest);
+  if (!colGroup) {
+    throw new Error('Invalid INSERT syntax. Use: INSERT INTO table (cols) VALUES (vals) or INSERT INTO table { json }');
+  }
+  
+  const afterCols = rest.substring(colGroup.end).trim();
+  const valuesMatch = afterCols.match(/^\s*values\s*/i);
+  if (!valuesMatch) {
+    throw new Error('Invalid INSERT syntax: missing VALUES keyword');
+  }
 
-  return { type: 'insert', into: sqlMatch[1], columns, values };
+  const valRest = afterCols.substring(valuesMatch[0].length);
+  const valGroup = extractParenGroup(valRest);
+  if (!valGroup) {
+    throw new Error('Invalid INSERT syntax: missing VALUES (...)');
+  }
+
+  const columns = colGroup.content.split(',').map(c => c.trim());
+  const values = smartSplit(valGroup.content, ',').map(v => v.trim());
+
+  return { type: 'insert', into: tableName, columns, values };
 }
 
 function parseUpdate(sql: string): ParsedUpdate {
@@ -197,6 +218,34 @@ function parseDelete(sql: string): ParsedDelete {
     : undefined;
 
   return { type: 'delete', from, where };
+}
+
+/** Extract the content of the first balanced parenthesis group from a string */
+function extractParenGroup(str: string): { content: string; end: number } | null {
+  const start = str.indexOf('(');
+  if (start === -1) return null;
+  
+  let depth = 0;
+  let inQuotes = false;
+  let quoteChar = '';
+
+  for (let i = start; i < str.length; i++) {
+    const char = str[i];
+    if (inQuotes) {
+      if (char === quoteChar && str[i - 1] !== '\\') inQuotes = false;
+    } else if (char === '"' || char === "'") {
+      inQuotes = true;
+      quoteChar = char;
+    } else if (char === '(') {
+      depth++;
+    } else if (char === ')') {
+      depth--;
+      if (depth === 0) {
+        return { content: str.substring(start + 1, i), end: i + 1 };
+      }
+    }
+  }
+  return null;
 }
 
 function maskStringsAndParens(sql: string): string {
