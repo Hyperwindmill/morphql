@@ -383,4 +383,12 @@ export const functionRegistry: Record<string, FunctionHandler> = {
     // Inline as: ({...})[value] ?? null
     return `(({${entries.join(', ')}})[(${value})] ?? null)`;
   },
+  morph: (args: string[], _compiler) => {
+    if (args.length !== 2) {
+      throw new Error('morph() requires exactly 2 arguments (queryName, input)');
+    }
+    const [queryName, input] = args;
+    // queryName is a string literal e.g. "'addressTransform'"
+    return `(env.queries[${queryName}] ? env.queries[${queryName}](${input}) : (() => { throw new Error(\`Subquery \${${queryName}} was not provided in CompileOptions.queries\`); })())`;
+  },
 };
