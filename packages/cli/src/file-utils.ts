@@ -180,7 +180,7 @@ export async function compileSubqueries(
       throw new Error(`Subquery file not found for '${name}': ${filePath}`);
     }
     const content = readFileSync(filePath, "utf8");
-    queries[name] = await compile(content, { cache });
+    queries[name] = await compile(content, { cache, queries });
   }
   return queries;
 }

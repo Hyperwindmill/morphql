@@ -83,7 +83,7 @@ window.addEventListener("message", async ({ data: msg }) => {
       const compiledQueries: Record<string, any> = {};
       if (subqueries) {
         for (const [name, code] of Object.entries(subqueries)) {
-          compiledQueries[name] = await compile(code);
+          compiledQueries[name] = await compile(code, { queries: compiledQueries } as Parameters<typeof compile>[1]);
         }
       }
 

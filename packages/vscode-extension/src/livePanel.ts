@@ -300,42 +300,62 @@ export class MorphQLLivePanel {
 
     let subqueries: Record<string, string> = {};
     try {
-      const ast = parse(query);
       const morphRegex = /morph\(\s*(['"`])(.*?)\1/g;
-      const names = new Set<string>();
+      
+      const extractFromAst = (ast: any): string[] => {
+        const names = new Set<string>();
+        const processExpression = (expr?: string) => {
+          if (!expr) return;
+          let match;
+          while ((match = morphRegex.exec(expr)) !== null) {
+            names.add(match[2]);
+          }
+        };
 
-      const processExpression = (expr?: string) => {
-        if (!expr) return;
-        let match;
-        while ((match = morphRegex.exec(expr)) !== null) {
-          names.add(match[2]);
-        }
+        const walk = (actions: any[]) => {
+          for (const action of actions) {
+            if (action.expression) processExpression(action.expression);
+            if (action.condition) processExpression(action.condition);
+            if (action.from) processExpression(action.from);
+            if (action.actions) walk(action.actions);
+            if (action.thenActions) walk(action.thenActions);
+            if (action.elseActions) walk(action.elseActions);
+          }
+        };
+        
+        walk(ast.actions);
+        return Array.from(names);
       };
 
-      const walk = (actions: any[]) => {
-        for (const action of actions) {
-          if (action.expression) processExpression(action.expression);
-          if (action.condition) processExpression(action.condition);
-          if (action.from) processExpression(action.from);
-          if (action.actions) walk(action.actions);
-          if (action.thenActions) walk(action.thenActions);
-          if (action.elseActions) walk(action.elseActions);
-        }
-      };
-
-      walk(ast.actions);
-
-      for (const name of names) {
-        const subqueryPath = path.join(path.dirname(doc.fileName), `${name}.morphql`);
+      const queue = [query];
+      const processed = new Set<string>();
+      
+      while (queue.length > 0) {
+        const currentQuery = queue.shift()!;
         try {
-          const raw = await vscode.workspace.fs.readFile(vscode.Uri.file(subqueryPath));
-          subqueries[name] = Buffer.from(raw).toString("utf-8");
+          const ast = parse(currentQuery);
+          const foundNames = extractFromAst(ast);
+          
+          for (const name of foundNames) {
+            if (!processed.has(name)) {
+              processed.add(name);
+              const subqueryPath = path.join(path.dirname(doc.fileName), `${name}.morphql`);
+              try {
+                const raw = await vscode.workspace.fs.readFile(vscode.Uri.file(subqueryPath));
+                const content = Buffer.from(raw).toString("utf-8");
+                subqueries[name] = content;
+                queue.push(content);
+              } catch {
+                // ignore unreadable
+              }
+            }
+          }
         } catch {
-          // ignore unreadable subqueries
+          // ignore parse errors for current query
         }
       }
     } catch {
-      // Ignore parse errors here, let the webview display them
+      // safe fallback
     }
 
     // Send raw data — the panel's bundled JS handles compilation and display
