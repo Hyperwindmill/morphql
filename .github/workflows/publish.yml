@@ -38,6 +38,9 @@ jobs:
       - name: Publish @morphql/core
         run: npm publish -w @morphql/core --provenance
 
+      - name: Publish @morphql/store
+        run: npm publish -w @morphql/store --provenance
+
       - name: Publish Remaining Packages
         run: |
           npm publish -w @morphql/cli --provenance

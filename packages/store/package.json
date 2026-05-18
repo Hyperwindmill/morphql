@@ -1,6 +1,7 @@
 {
   "name": "@morphql/store",
   "version": "0.1.39",
+  "description": "In-memory and persistent data store for morphql with SQL-like query support.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -17,10 +18,36 @@
       "require": "./dist/node.cjs"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsup src/index.ts src/node.ts --format cjs,esm --dts --clean",
     "test": "vitest run"
   },
+  "keywords": [
+    "morphql",
+    "store",
+    "database",
+    "in-memory",
+    "sql"
+  ],
+  "author": "Hyperwindmill",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hyperwindmill/morphql.git",
+    "directory": "packages/store"
+  },
+  "bugs": {
+    "url": "https://github.com/Hyperwindmill/morphql/issues"
+  },
+  "homepage": "https://github.com/Hyperwindmill/morphql/tree/main/packages/store#readme",
   "dependencies": {
     "@morphql/core": "*"
   },
