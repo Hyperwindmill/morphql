@@ -1,6 +1,6 @@
 {
   "name": "@morphql/store",
-  "version": "0.1.41",
+  "version": "0.1.42",
   "description": "In-memory and persistent data store for morphql with SQL-like query support.",
   "type": "module",
   "main": "./dist/index.cjs",
