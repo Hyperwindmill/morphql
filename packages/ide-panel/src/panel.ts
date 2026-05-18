@@ -68,18 +68,26 @@ window.addEventListener("message", async ({ data: msg }) => {
   }
 
   if (msg.type === "data") {
-    const { query, sourceData, fileName, sourceFileName } = msg as {
+    const { query, sourceData, fileName, sourceFileName, subqueries } = msg as {
       query: string;
       sourceData: string;
       fileName: string;
       sourceFileName: string | null;
+      subqueries?: Record<string, string>;
     };
 
     document.getElementById("filename")!.textContent = fileName;
     setSourceFile(sourceFileName);
 
     try {
-      const engine = (await compile(query, { analyze: true } as Parameters<typeof compile>[1])) as (
+      const compiledQueries: Record<string, any> = {};
+      if (subqueries) {
+        for (const [name, code] of Object.entries(subqueries)) {
+          compiledQueries[name] = await compile(code);
+        }
+      }
+
+      const engine = (await compile(query, { analyze: true, queries: compiledQueries } as Parameters<typeof compile>[1])) as (
         data: string
       ) => unknown & { code?: string; analysis?: unknown };
 

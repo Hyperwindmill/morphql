@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import { parse } from "@morphql/core";
 
 const SETTINGS_DIR = ".morphql-extension";
 const SETTINGS_FILE = "panel-settings.json";
@@ -297,6 +298,46 @@ export class MorphQLLivePanel {
       }
     }
 
+    let subqueries: Record<string, string> = {};
+    try {
+      const ast = parse(query);
+      const morphRegex = /morph\(\s*(['"`])(.*?)\1/g;
+      const names = new Set<string>();
+
+      const processExpression = (expr?: string) => {
+        if (!expr) return;
+        let match;
+        while ((match = morphRegex.exec(expr)) !== null) {
+          names.add(match[2]);
+        }
+      };
+
+      const walk = (actions: any[]) => {
+        for (const action of actions) {
+          if (action.expression) processExpression(action.expression);
+          if (action.condition) processExpression(action.condition);
+          if (action.from) processExpression(action.from);
+          if (action.actions) walk(action.actions);
+          if (action.thenActions) walk(action.thenActions);
+          if (action.elseActions) walk(action.elseActions);
+        }
+      };
+
+      walk(ast.actions);
+
+      for (const name of names) {
+        const subqueryPath = path.join(path.dirname(doc.fileName), `${name}.morphql`);
+        try {
+          const raw = await vscode.workspace.fs.readFile(vscode.Uri.file(subqueryPath));
+          subqueries[name] = Buffer.from(raw).toString("utf-8");
+        } catch {
+          // ignore unreadable subqueries
+        }
+      }
+    } catch {
+      // Ignore parse errors here, let the webview display them
+    }
+
     // Send raw data — the panel's bundled JS handles compilation and display
     this.panel.webview.postMessage({
       type: "data",
@@ -304,6 +345,7 @@ export class MorphQLLivePanel {
       sourceData,
       fileName,
       sourceFileName,
+      subqueries,
     });
   }
 
