@@ -7,7 +7,7 @@ import { existsSync } from "node:fs";
 import { batchAction } from "./batch.js";
 import { watchAction } from "./watch.js";
 import { createLogger, LogFormat } from "./logger.js";
-import { resolveQuery } from "./file-utils.js";
+import { resolveQuery, collectSubquery, compileSubqueries } from "./file-utils.js";
 
 /**
  * Reads all data from stdin (for pipe support)
@@ -48,6 +48,7 @@ program
     "Delete source files after successful processing (if --done-dir is missing)",
   )
   .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
+  .option("-s, --subquery <mapping>", "Add a subquery (format: name or name=file.morphql)", collectSubquery, {})
   .option("--log-format <format>", "Log output format: text or json", "text")
   .action(batchAction);
 
@@ -71,6 +72,7 @@ program
   )
   .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
   .option("--pid-file <path>", "Write PID to file for process management")
+  .option("-s, --subquery <mapping>", "Add a subquery (format: name or name=file.morphql)", collectSubquery, {})
   .option("--log-format <format>", "Log output format: text or json", "text")
   .action(watchAction);
 
@@ -114,6 +116,7 @@ program
     "-Q, --query-file <path>",
     "Path to a file containing the MorphQL query",
   )
+  .option("-s, --subquery <mapping>", "Add a subquery (format: name or name=file.morphql)", collectSubquery, {})
   .option("--cache-dir <path>", "Directory for compiled cache", ".compiled")
   .option("--log-format <format>", "Log output format: text or json", "text")
   .action(async (options) => {
@@ -152,8 +155,11 @@ program
       // 2. Initialize Cache
       const cache = new MorphQLFileCache(cacheDir);
 
+      // 2.5 Compile Subqueries
+      const queries = await compileSubqueries(options.subquery, cache);
+
       // 3. Compile Query
-      const engine = await compile(query, { cache });
+      const engine = await compile(query, { cache, queries });
 
       // 4. Transform
       const result = await engine(sourceContent);

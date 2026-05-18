@@ -10,11 +10,13 @@ import {
   processFile,
   resolveOutputPath,
   resolveQuery,
+  compileSubqueries
 } from "./file-utils.js";
 
 export interface BatchOptions {
   query?: string;
   queryFile?: string;
+  subquery?: Record<string, string>;
   in: string;
   out: string;
   pattern: string;
@@ -60,7 +62,8 @@ export async function batchAction(options: BatchOptions) {
     // 3. Compile Query Once
     const query = resolveQuery(options.query, options.queryFile);
     const cache = new MorphQLFileCache(cacheDir);
-    const engine = await compile(query, { cache });
+    const queries = await compileSubqueries(options.subquery, cache);
+    const engine = await compile(query, { cache, queries });
     const targetFormat = extractTargetFormat(query);
 
     // 4. List Files

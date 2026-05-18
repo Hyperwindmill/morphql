@@ -1,6 +1,7 @@
 import * as fs from "node:fs/promises";
 import { existsSync, readFileSync } from "node:fs";
 import * as path from "node:path";
+import { compile, type MorphEngine } from "@morphql/core";
 
 /**
  * Resolves the query string from either --query or --query-file.
@@ -158,4 +159,28 @@ export async function processFile(
       error: err.message,
     };
   }
+}
+
+export function collectSubquery(value: string, previous: Record<string, string>) {
+  const parts = value.split('=');
+  const name = parts[0];
+  const file = parts.length > 1 ? parts.slice(1).join('=') : `${name}.morphql`;
+  previous[name] = file;
+  return previous;
+}
+
+export async function compileSubqueries(
+  subqueryOptions: Record<string, string> | undefined,
+  cache?: any
+): Promise<Record<string, MorphEngine> | undefined> {
+  if (!subqueryOptions || Object.keys(subqueryOptions).length === 0) return undefined;
+  const queries: Record<string, MorphEngine> = {};
+  for (const [name, filePath] of Object.entries(subqueryOptions)) {
+    if (!existsSync(filePath)) {
+      throw new Error(`Subquery file not found for '${name}': ${filePath}`);
+    }
+    const content = readFileSync(filePath, "utf8");
+    queries[name] = await compile(content, { cache });
+  }
+  return queries;
 }
