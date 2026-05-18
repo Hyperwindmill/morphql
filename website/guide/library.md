@@ -43,6 +43,22 @@ const q1 = "from json to json";
 const q2 = morphQL`from json to json`;
 ```
 
+## Compilation Options
+
+The `compile` function accepts an optional second argument, `CompileOptions`:
+
+```typescript
+interface CompileOptions {
+  cache?: MorphQLCache;
+  analyze?: boolean;
+  queries?: Record<string, MorphEngine>; // Injected subqueries
+}
+```
+
+- **`cache`**: A cache instance to speed up compilation.
+- **`analyze`**: If true, returns an `analysis` object detailing the inferred input/output structure.
+- **`queries`**: A dictionary of pre-compiled `MorphEngine`s. These can be executed inside the query using the `morph(name, input)` function. (See [Subqueries](./subqueries.md)).
+
 ## TypeScript Support
 
 MorphQL is written in TypeScript and ships with type definitions.

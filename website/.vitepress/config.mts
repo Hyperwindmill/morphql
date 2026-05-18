@@ -44,6 +44,7 @@ export default defineConfig({
           { text: "Library (Core)", link: "/guide/library" },
           { text: "Language Reference", link: "/guide/language-reference" },
           { text: "Functions Reference", link: "/guide/functions" },
+          { text: "Subqueries", link: "/guide/subqueries" },
           {
             text: "Adapters",
             collapsed: false,

@@ -597,6 +597,19 @@ export const FUNCTIONS: FunctionDef[] = [
       example: 'endswith("hello", "lo")  // true',
     },
   },
+  {
+    name: "morph",
+    doc: {
+      signature: "morph(queryName, input)",
+      description: "Executes a subquery by name, passing the given input. The subquery must be provided in the CompileOptions.queries map.",
+      parameters: [
+        { name: "queryName", description: "The registered name of the subquery (as a string literal)" },
+        { name: "input", description: "The data to pass into the subquery" },
+      ],
+      returns: "any",
+      example: "set address = morph('addressFormatter', source.address)",
+    },
+  },
 ];
 
 // Helper to get all function names

@@ -72,6 +72,7 @@ export interface MorphEngine<Source = any, Target = any> {
 export interface CompileOptions {
   cache?: MorphQLCache;
   analyze?: boolean;
+  queries?: Record<string, MorphEngine>;
 }
 
 export async function compile<Source = any, Target = any>(
@@ -82,7 +83,7 @@ export async function compile<Source = any, Target = any>(
   if (options?.cache) {
     const cachedCode = await options.cache.retrieve(queryString);
     if (cachedCode) {
-      return createEngine<Source, Target>(cachedCode);
+      return createEngine<Source, Target>(cachedCode, options.queries);
     }
   }
 
@@ -114,7 +115,7 @@ export async function compile<Source = any, Target = any>(
     await options.cache.save(queryString, code);
   }
 
-  const engine = createEngine<Source, Target>(code);
+  const engine = createEngine<Source, Target>(code, options?.queries);
   if (analysis) {
     analysis.sourceFormat = sourceType.name;
     analysis.targetFormat = targetType.name;
@@ -123,7 +124,10 @@ export async function compile<Source = any, Target = any>(
   return engine;
 }
 
-function createEngine<Source, Target>(code: string): MorphEngine<Source, Target> {
+function createEngine<Source, Target>(
+  code: string,
+  queries?: Record<string, MorphEngine>
+): MorphEngine<Source, Target> {
   // Create the base transformation function
   const factory = new Function(code);
   const transform = factory() as (source: any, env: any) => any;
@@ -137,6 +141,7 @@ function createEngine<Source, Target>(code: string): MorphEngine<Source, Target>
       return getAdapter(format).serialize(data, options);
     },
     functions: runtimeFunctions,
+    queries: queries || {},
   };
 
   // Return the format-aware engine
