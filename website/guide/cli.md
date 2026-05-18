@@ -34,6 +34,7 @@ morphql -i '{"hello": "world"}' -q "from json to xml"
 | `--input`      | `-i`  | Raw source content as a string.                            |
 | `--to`         | `-t`  | Path to the destination file.                              |
 | `--cache-dir`  |       | Directory for compiled query cache (default: `.compiled`). |
+| `--subquery`   | `-s`  | Add a subquery (format: `name` or `name=file.morphql`).    |
 | `--log-format` |       | Log output format: `text` (default) or `json`.             |
 
 > **Note**: If `--to` is omitted, the result is printed to `stdout`. All logs/errors go to `stderr`.
@@ -81,6 +82,7 @@ morphql batch \
 | :------------------------ | :----------------------------------------------------- |
 | `-q, --query <string>`    | MorphQL query string (\*).                             |
 | `-Q, --query-file <path>` | Path to a file containing the query (\*).              |
+| `-s, --subquery <mapping>`| Add a subquery (format: `name` or `name=file.morphql`).|
 | `--in <path>`             | **(Required)** Input directory.                        |
 | `--out <path>`            | **(Required)** Output directory (created if missing).  |
 | `--pattern <glob>`        | Include pattern for filenames (default: `*`).          |
