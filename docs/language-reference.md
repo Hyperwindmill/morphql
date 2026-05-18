@@ -537,6 +537,7 @@ Function names are **case-insensitive**.
 | :---------------------------- | :----------------------------------- | :-------------------------- |
 | `if(cond, trueVal, falseVal)` | Inline ternary. All 3 args required. | `if(isActive, "Yes", "No")` |
 | `lookup(val, "k:v", ...)`     | Dictionary lookup, returns mapped value or `null`. | `lookup(code, "1:open", "2:done")` |
+| `morph(queryName, input)`     | Executes an injected subquery by name. | `morph('address', source.address)` |
 
 > **Note:** `if(cond, trueVal, falseVal)` is an inline expression function (returns a value). `if (cond) ( actions ) else ( actions )` is a block action (executes actions). They are different constructs.
 
