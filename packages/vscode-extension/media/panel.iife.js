@@ -9,14 +9,14 @@
   var __hasOwnProp = Object.prototype.hasOwnProperty;
   var __propIsEnum = Object.prototype.propertyIsEnumerable;
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __spreadValues = (a, b) => {
-    for (var prop in b || (b = {}))
-      if (__hasOwnProp.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
+  var __spreadValues = (a, b2) => {
+    for (var prop in b2 || (b2 = {}))
+      if (__hasOwnProp.call(b2, prop))
+        __defNormalProp(a, prop, b2[prop]);
     if (__getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(b)) {
-        if (__propIsEnum.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
+      for (var prop of __getOwnPropSymbols(b2)) {
+        if (__propIsEnum.call(b2, prop))
+          __defNormalProp(a, prop, b2[prop]);
       }
     return a;
   };
@@ -48,10 +48,10 @@
         "function" == typeof define && define.amd ? define([], t) : "object" == typeof module2 && "undefined" != typeof exports2 ? module2.exports = t() : e.Papa = t();
       })(exports2, function r() {
         var n = "undefined" != typeof self ? self : "undefined" != typeof window ? window : void 0 !== n ? n : {};
-        var d2, s = !n.document && !!n.postMessage, a = n.IS_PAPA_WORKER || false, o = {}, h = 0, v2 = {};
+        var d, s = !n.document && !!n.postMessage, a = n.IS_PAPA_WORKER || false, o = {}, h = 0, v = {};
         function u(e) {
           this._handle = null, this._finished = false, this._completed = false, this._halted = false, this._input = null, this._baseIndex = 0, this._partialLine = "", this._rowCount = 0, this._start = 0, this._nextChunk = null, this.isFirstChunk = true, this._completeResults = { data: [], errors: [], meta: {} }, function(e2) {
-            var t = b(e2);
+            var t = b2(e2);
             t.chunkSize = parseInt(t.chunkSize), e2.step || e2.chunk || (t.chunkSize = null);
             this._handle = new i(t), (this._handle.streamer = this)._config = t;
           }.call(this, e), this.parseChunk = function(t, e2) {
@@ -64,7 +64,7 @@
             var i2 = this._partialLine + t, r2 = (this._partialLine = "", this._handle.parse(i2, this._baseIndex, !this._finished));
             if (!this._handle.paused() && !this._handle.aborted()) {
               t = r2.meta.cursor, i2 = (this._finished || (this._partialLine = i2.substring(t - this._baseIndex), this._baseIndex = t), r2 && r2.data && (this._rowCount += r2.data.length), this._finished || this._config.preview && this._rowCount >= this._config.preview);
-              if (a) n.postMessage({ results: r2, workerId: v2.WORKER_ID, finished: i2 });
+              if (a) n.postMessage({ results: r2, workerId: v.WORKER_ID, finished: i2 });
               else if (U2(this._config.chunk) && !e2) {
                 if (this._config.chunk(r2, this._handle), this._handle.paused() || this._handle.aborted()) return void (this._halted = true);
                 this._completeResults = r2 = void 0;
@@ -73,12 +73,12 @@
             }
             this._halted = true;
           }, this._sendError = function(e2) {
-            U2(this._config.error) ? this._config.error(e2) : a && this._config.error && n.postMessage({ workerId: v2.WORKER_ID, error: e2, finished: false });
+            U2(this._config.error) ? this._config.error(e2) : a && this._config.error && n.postMessage({ workerId: v.WORKER_ID, error: e2, finished: false });
           };
         }
-        function f(e) {
+        function f2(e) {
           var r2;
-          (e = e || {}).chunkSize || (e.chunkSize = v2.RemoteChunkSize), u.call(this, e), this._nextChunk = s ? function() {
+          (e = e || {}).chunkSize || (e.chunkSize = v.RemoteChunkSize), u.call(this, e), this._nextChunk = s ? function() {
             this._readChunk(), this._chunkLoaded();
           } : function() {
             this._readChunk();
@@ -108,7 +108,7 @@
           };
         }
         function l(e) {
-          (e = e || {}).chunkSize || (e.chunkSize = v2.LocalChunkSize), u.call(this, e);
+          (e = e || {}).chunkSize || (e.chunkSize = v.LocalChunkSize), u.call(this, e);
           var i2, r2, n2 = "undefined" != typeof FileReader;
           this.stream = function(e2) {
             this._input = e2, r2 = e2.slice || e2.webkitSlice || e2.mozSlice, n2 ? ((i2 = new FileReader()).onload = y(this._chunkLoaded, this), i2.onerror = y(this._chunkError, this)) : i2 = new FileReaderSync(), this._nextChunk();
@@ -160,12 +160,12 @@
           }, this);
         }
         function i(m2) {
-          var n2, s2, a2, t, o2 = Math.pow(2, 53), h2 = -o2, u2 = /^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/, d3 = /^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/, i2 = this, r2 = 0, f2 = 0, l2 = false, e = false, c2 = [], p2 = { data: [], errors: [], meta: {} };
+          var n2, s2, a2, t, o2 = Math.pow(2, 53), h2 = -o2, u2 = /^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/, d2 = /^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/, i2 = this, r2 = 0, f3 = 0, l2 = false, e = false, c2 = [], p2 = { data: [], errors: [], meta: {} };
           function y2(e2) {
             return "greedy" === m2.skipEmptyLines ? "" === e2.join("").trim() : 1 === e2.length && 0 === e2[0].length;
           }
           function g2() {
-            if (p2 && a2 && (k2("Delimiter", "UndetectableDelimiter", "Unable to auto-detect delimiting character; defaulted to '" + v2.DefaultDelimiter + "'"), a2 = false), m2.skipEmptyLines && (p2.data = p2.data.filter(function(e3) {
+            if (p2 && a2 && (k2("Delimiter", "UndetectableDelimiter", "Unable to auto-detect delimiting character; defaulted to '" + v.DefaultDelimiter + "'"), a2 = false), m2.skipEmptyLines && (p2.data = p2.data.filter(function(e3) {
               return !y2(e3);
             })), _3()) {
               let t3 = function(e3, t4) {
@@ -184,13 +184,13 @@
                     e5 = parseFloat(e5);
                     if (h2 < e5 && e5 < o2) return 1;
                   }
-                })(t4) ? parseFloat(t4) : d3.test(t4) ? new Date(t4) : "" === t4 ? null : t4) : t4)(n3 = m2.header ? r4 >= c2.length ? "__parsed_extra" : c2[r4] : n3, s3 = m2.transform ? m2.transform(s3, n3) : s3);
+                })(t4) ? parseFloat(t4) : d2.test(t4) ? new Date(t4) : "" === t4 ? null : t4) : t4)(n3 = m2.header ? r4 >= c2.length ? "__parsed_extra" : c2[r4] : n3, s3 = m2.transform ? m2.transform(s3, n3) : s3);
                 "__parsed_extra" === n3 ? (i4[n3] = i4[n3] || [], i4[n3].push(s3)) : i4[n3] = s3;
               }
-              return m2.header && (r4 > c2.length ? k2("FieldMismatch", "TooManyFields", "Too many fields: expected " + c2.length + " fields but parsed " + r4, f2 + t3) : r4 < c2.length && k2("FieldMismatch", "TooFewFields", "Too few fields: expected " + c2.length + " fields but parsed " + r4, f2 + t3)), i4;
+              return m2.header && (r4 > c2.length ? k2("FieldMismatch", "TooManyFields", "Too many fields: expected " + c2.length + " fields but parsed " + r4, f3 + t3) : r4 < c2.length && k2("FieldMismatch", "TooFewFields", "Too few fields: expected " + c2.length + " fields but parsed " + r4, f3 + t3)), i4;
             }
             var r3;
-            p2 && (m2.header || m2.dynamicTyping || m2.transform) && (r3 = 1, !p2.data.length || Array.isArray(p2.data[0]) ? (p2.data = p2.data.map(i3), r3 = p2.data.length) : p2.data = i3(p2.data, 0), m2.header && p2.meta && (p2.meta.fields = c2), f2 += r3);
+            p2 && (m2.header || m2.dynamicTyping || m2.transform) && (r3 = 1, !p2.data.length || Array.isArray(p2.data[0]) ? (p2.data = p2.data.map(i3), r3 = p2.data.length) : p2.data = i3(p2.data, 0), m2.header && p2.meta && (p2.meta.fields = c2), f3 += r3);
           }
           function _3() {
             return m2.header && 0 === c2.length;
@@ -204,14 +204,14 @@
           }), this.parse = function(e2, t2, i3) {
             var r3 = m2.quoteChar || '"', r3 = (m2.newline || (m2.newline = this.guessLineEndings(e2, r3)), a2 = false, m2.delimiter ? U2(m2.delimiter) && (m2.delimiter = m2.delimiter(e2), p2.meta.delimiter = m2.delimiter) : ((r3 = ((e3, t3, i4, r4, n3) => {
               var s3, a3, o3, h3;
-              n3 = n3 || [",", "	", "|", ";", v2.RECORD_SEP, v2.UNIT_SEP];
+              n3 = n3 || [",", "	", "|", ";", v.RECORD_SEP, v.UNIT_SEP];
               for (var u3 = 0; u3 < n3.length; u3++) {
-                for (var d4, f3 = n3[u3], l3 = 0, c3 = 0, p3 = 0, g3 = (o3 = void 0, new E2({ comments: r4, delimiter: f3, newline: t3, preview: 10 }).parse(e3)), _4 = 0; _4 < g3.data.length; _4++) i4 && y2(g3.data[_4]) ? p3++ : (d4 = g3.data[_4].length, c3 += d4, void 0 === o3 ? o3 = d4 : 0 < d4 && (l3 += Math.abs(d4 - o3), o3 = d4));
-                0 < g3.data.length && (c3 /= g3.data.length - p3), (void 0 === a3 || l3 <= a3) && (void 0 === h3 || h3 < c3) && 1.99 < c3 && (a3 = l3, s3 = f3, h3 = c3);
+                for (var d3, f4 = n3[u3], l3 = 0, c3 = 0, p3 = 0, g3 = (o3 = void 0, new E({ comments: r4, delimiter: f4, newline: t3, preview: 10 }).parse(e3)), _4 = 0; _4 < g3.data.length; _4++) i4 && y2(g3.data[_4]) ? p3++ : (d3 = g3.data[_4].length, c3 += d3, void 0 === o3 ? o3 = d3 : 0 < d3 && (l3 += Math.abs(d3 - o3), o3 = d3));
+                0 < g3.data.length && (c3 /= g3.data.length - p3), (void 0 === a3 || l3 <= a3) && (void 0 === h3 || h3 < c3) && 1.99 < c3 && (a3 = l3, s3 = f4, h3 = c3);
               }
               return { successful: !!(m2.delimiter = s3), bestDelimiter: s3 };
-            })(e2, m2.newline, m2.skipEmptyLines, m2.comments, m2.delimitersToGuess)).successful ? m2.delimiter = r3.bestDelimiter : (a2 = true, m2.delimiter = v2.DefaultDelimiter), p2.meta.delimiter = m2.delimiter), b(m2));
-            return m2.preview && m2.header && r3.preview++, n2 = e2, s2 = new E2(r3), p2 = s2.parse(n2, t2, i3), g2(), l2 ? { meta: { paused: true } } : p2 || { meta: { paused: false } };
+            })(e2, m2.newline, m2.skipEmptyLines, m2.comments, m2.delimitersToGuess)).successful ? m2.delimiter = r3.bestDelimiter : (a2 = true, m2.delimiter = v.DefaultDelimiter), p2.meta.delimiter = m2.delimiter), b2(m2));
+            return m2.preview && m2.header && r3.preview++, n2 = e2, s2 = new E(r3), p2 = s2.parse(n2, t2, i3), g2(), l2 ? { meta: { paused: true } } : p2 || { meta: { paused: false } };
           }, this.paused = function() {
             return l2;
           }, this.pause = function() {
@@ -224,87 +224,87 @@
             e = true, s2.abort(), p2.meta.aborted = true, U2(m2.complete) && m2.complete(p2), n2 = "";
           }, this.guessLineEndings = function(e2, t2) {
             e2 = e2.substring(0, 1048576);
-            var t2 = new RegExp(P2(t2) + "([^]*?)" + P2(t2), "gm"), i3 = (e2 = e2.replace(t2, "")).split("\r"), t2 = e2.split("\n"), e2 = 1 < t2.length && t2[0].length < i3[0].length;
+            var t2 = new RegExp(P(t2) + "([^]*?)" + P(t2), "gm"), i3 = (e2 = e2.replace(t2, "")).split("\r"), t2 = e2.split("\n"), e2 = 1 < t2.length && t2[0].length < i3[0].length;
             if (1 === i3.length || e2) return "\n";
             for (var r3 = 0, n3 = 0; n3 < i3.length; n3++) "\n" === i3[n3][0] && r3++;
             return r3 >= i3.length / 2 ? "\r\n" : "\r";
           };
         }
-        function P2(e) {
+        function P(e) {
           return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         }
-        function E2(C2) {
-          var S = (C2 = C2 || {}).delimiter, O = C2.newline, x2 = C2.comments, I2 = C2.step, A2 = C2.preview, T2 = C2.fastMode, D2 = null, L2 = false, F2 = null == C2.quoteChar ? '"' : C2.quoteChar, j = F2;
-          if (void 0 !== C2.escapeChar && (j = C2.escapeChar), ("string" != typeof S || -1 < v2.BAD_DELIMITERS.indexOf(S)) && (S = ","), x2 === S) throw new Error("Comment character same as delimiter");
-          true === x2 ? x2 = "#" : ("string" != typeof x2 || -1 < v2.BAD_DELIMITERS.indexOf(x2)) && (x2 = false), "\n" !== O && "\r" !== O && "\r\n" !== O && (O = "\n");
+        function E(C) {
+          var S = (C = C || {}).delimiter, O2 = C.newline, x2 = C.comments, I2 = C.step, A = C.preview, T2 = C.fastMode, D2 = null, L2 = false, F2 = null == C.quoteChar ? '"' : C.quoteChar, j2 = F2;
+          if (void 0 !== C.escapeChar && (j2 = C.escapeChar), ("string" != typeof S || -1 < v.BAD_DELIMITERS.indexOf(S)) && (S = ","), x2 === S) throw new Error("Comment character same as delimiter");
+          true === x2 ? x2 = "#" : ("string" != typeof x2 || -1 < v.BAD_DELIMITERS.indexOf(x2)) && (x2 = false), "\n" !== O2 && "\r" !== O2 && "\r\n" !== O2 && (O2 = "\n");
           var z2 = 0, M2 = false;
           this.parse = function(i2, t, r2) {
             if ("string" != typeof i2) throw new Error("Input must be a string");
-            var n2 = i2.length, e = S.length, s2 = O.length, a2 = x2.length, o2 = U2(I2), h2 = [], u2 = [], d3 = [], f2 = z2 = 0;
-            if (!i2) return w2();
+            var n2 = i2.length, e = S.length, s2 = O2.length, a2 = x2.length, o2 = U2(I2), h2 = [], u2 = [], d2 = [], f3 = z2 = 0;
+            if (!i2) return w();
             if (T2 || false !== T2 && -1 === i2.indexOf(F2)) {
-              for (var l2 = i2.split(O), c2 = 0; c2 < l2.length; c2++) {
-                if (d3 = l2[c2], z2 += d3.length, c2 !== l2.length - 1) z2 += O.length;
-                else if (r2) return w2();
-                if (!x2 || d3.substring(0, a2) !== x2) {
+              for (var l2 = i2.split(O2), c2 = 0; c2 < l2.length; c2++) {
+                if (d2 = l2[c2], z2 += d2.length, c2 !== l2.length - 1) z2 += O2.length;
+                else if (r2) return w();
+                if (!x2 || d2.substring(0, a2) !== x2) {
                   if (o2) {
-                    if (h2 = [], k2(d3.split(S)), R(), M2) return w2();
-                  } else k2(d3.split(S));
-                  if (A2 && A2 <= c2) return h2 = h2.slice(0, A2), w2(true);
+                    if (h2 = [], k2(d2.split(S)), R(), M2) return w();
+                  } else k2(d2.split(S));
+                  if (A && A <= c2) return h2 = h2.slice(0, A), w(true);
                 }
               }
-              return w2();
+              return w();
             }
-            for (var p2 = i2.indexOf(S, z2), g2 = i2.indexOf(O, z2), _3 = new RegExp(P2(j) + P2(F2), "g"), m2 = i2.indexOf(F2, z2); ; ) if (i2[z2] === F2) for (m2 = z2, z2++; ; ) {
-              if (-1 === (m2 = i2.indexOf(F2, m2 + 1))) return r2 || u2.push({ type: "Quotes", code: "MissingQuotes", message: "Quoted field unterminated", row: h2.length, index: z2 }), E3();
-              if (m2 === n2 - 1) return E3(i2.substring(z2, m2).replace(_3, F2));
-              if (F2 === j && i2[m2 + 1] === j) m2++;
-              else if (F2 === j || 0 === m2 || i2[m2 - 1] !== j) {
+            for (var p2 = i2.indexOf(S, z2), g2 = i2.indexOf(O2, z2), _3 = new RegExp(P(j2) + P(F2), "g"), m2 = i2.indexOf(F2, z2); ; ) if (i2[z2] === F2) for (m2 = z2, z2++; ; ) {
+              if (-1 === (m2 = i2.indexOf(F2, m2 + 1))) return r2 || u2.push({ type: "Quotes", code: "MissingQuotes", message: "Quoted field unterminated", row: h2.length, index: z2 }), E2();
+              if (m2 === n2 - 1) return E2(i2.substring(z2, m2).replace(_3, F2));
+              if (F2 === j2 && i2[m2 + 1] === j2) m2++;
+              else if (F2 === j2 || 0 === m2 || i2[m2 - 1] !== j2) {
                 -1 !== p2 && p2 < m2 + 1 && (p2 = i2.indexOf(S, m2 + 1));
-                var y2 = v3(-1 === (g2 = -1 !== g2 && g2 < m2 + 1 ? i2.indexOf(O, m2 + 1) : g2) ? p2 : Math.min(p2, g2));
+                var y2 = v2(-1 === (g2 = -1 !== g2 && g2 < m2 + 1 ? i2.indexOf(O2, m2 + 1) : g2) ? p2 : Math.min(p2, g2));
                 if (i2.substr(m2 + 1 + y2, e) === S) {
-                  d3.push(i2.substring(z2, m2).replace(_3, F2)), i2[z2 = m2 + 1 + y2 + e] !== F2 && (m2 = i2.indexOf(F2, z2)), p2 = i2.indexOf(S, z2), g2 = i2.indexOf(O, z2);
+                  d2.push(i2.substring(z2, m2).replace(_3, F2)), i2[z2 = m2 + 1 + y2 + e] !== F2 && (m2 = i2.indexOf(F2, z2)), p2 = i2.indexOf(S, z2), g2 = i2.indexOf(O2, z2);
                   break;
                 }
-                y2 = v3(g2);
-                if (i2.substring(m2 + 1 + y2, m2 + 1 + y2 + s2) === O) {
-                  if (d3.push(i2.substring(z2, m2).replace(_3, F2)), b2(m2 + 1 + y2 + s2), p2 = i2.indexOf(S, z2), m2 = i2.indexOf(F2, z2), o2 && (R(), M2)) return w2();
-                  if (A2 && h2.length >= A2) return w2(true);
+                y2 = v2(g2);
+                if (i2.substring(m2 + 1 + y2, m2 + 1 + y2 + s2) === O2) {
+                  if (d2.push(i2.substring(z2, m2).replace(_3, F2)), b3(m2 + 1 + y2 + s2), p2 = i2.indexOf(S, z2), m2 = i2.indexOf(F2, z2), o2 && (R(), M2)) return w();
+                  if (A && h2.length >= A) return w(true);
                   break;
                 }
                 u2.push({ type: "Quotes", code: "InvalidQuotes", message: "Trailing quote on quoted field is malformed", row: h2.length, index: z2 }), m2++;
               }
             }
-            else if (x2 && 0 === d3.length && i2.substring(z2, z2 + a2) === x2) {
-              if (-1 === g2) return w2();
-              z2 = g2 + s2, g2 = i2.indexOf(O, z2), p2 = i2.indexOf(S, z2);
-            } else if (-1 !== p2 && (p2 < g2 || -1 === g2)) d3.push(i2.substring(z2, p2)), z2 = p2 + e, p2 = i2.indexOf(S, z2);
+            else if (x2 && 0 === d2.length && i2.substring(z2, z2 + a2) === x2) {
+              if (-1 === g2) return w();
+              z2 = g2 + s2, g2 = i2.indexOf(O2, z2), p2 = i2.indexOf(S, z2);
+            } else if (-1 !== p2 && (p2 < g2 || -1 === g2)) d2.push(i2.substring(z2, p2)), z2 = p2 + e, p2 = i2.indexOf(S, z2);
             else {
               if (-1 === g2) break;
-              if (d3.push(i2.substring(z2, g2)), b2(g2 + s2), o2 && (R(), M2)) return w2();
-              if (A2 && h2.length >= A2) return w2(true);
+              if (d2.push(i2.substring(z2, g2)), b3(g2 + s2), o2 && (R(), M2)) return w();
+              if (A && h2.length >= A) return w(true);
             }
-            return E3();
+            return E2();
             function k2(e2) {
-              h2.push(e2), f2 = z2;
+              h2.push(e2), f3 = z2;
             }
-            function v3(e2) {
+            function v2(e2) {
               var t2 = 0;
               return t2 = -1 !== e2 && (e2 = i2.substring(m2 + 1, e2)) && "" === e2.trim() ? e2.length : t2;
             }
-            function E3(e2) {
-              return r2 || (void 0 === e2 && (e2 = i2.substring(z2)), d3.push(e2), z2 = n2, k2(d3), o2 && R()), w2();
+            function E2(e2) {
+              return r2 || (void 0 === e2 && (e2 = i2.substring(z2)), d2.push(e2), z2 = n2, k2(d2), o2 && R()), w();
             }
-            function b2(e2) {
-              z2 = e2, k2(d3), d3 = [], g2 = i2.indexOf(O, z2);
+            function b3(e2) {
+              z2 = e2, k2(d2), d2 = [], g2 = i2.indexOf(O2, z2);
             }
-            function w2(e2) {
-              if (C2.header && !t && h2.length && !L2) {
+            function w(e2) {
+              if (C.header && !t && h2.length && !L2) {
                 var s3 = h2[0], a3 = /* @__PURE__ */ Object.create(null), o3 = new Set(s3);
                 let n3 = false;
                 for (let r3 = 0; r3 < s3.length; r3++) {
                   let i3 = s3[r3];
-                  if (a3[i3 = U2(C2.transformHeader) ? C2.transformHeader(i3, r3) : i3]) {
+                  if (a3[i3 = U2(C.transformHeader) ? C.transformHeader(i3, r3) : i3]) {
                     let e3, t2 = a3[i3];
                     for (; e3 = i3 + "_" + t2, t2++, o3.has(e3); ) ;
                     o3.add(e3), s3[r3] = e3, a3[i3]++, n3 = true, (D2 = null === D2 ? {} : D2)[e3] = i3;
@@ -313,10 +313,10 @@
                 }
                 n3 && console.warn("Duplicate headers found and renamed."), L2 = true;
               }
-              return { data: h2, errors: u2, meta: { delimiter: S, linebreak: O, aborted: M2, truncated: !!e2, cursor: f2 + (t || 0), renamedHeaders: D2 } };
+              return { data: h2, errors: u2, meta: { delimiter: S, linebreak: O2, aborted: M2, truncated: !!e2, cursor: f3 + (t || 0), renamedHeaders: D2 } };
             }
             function R() {
-              I2(w2()), h2 = [], u2 = [];
+              I2(w()), h2 = [], u2 = [];
             }
           }, this.abort = function() {
             M2 = true;
@@ -345,10 +345,10 @@
         function m() {
           throw new Error("Not implemented.");
         }
-        function b(e) {
+        function b2(e) {
           if ("object" != typeof e || null === e) return e;
           var t, i2 = Array.isArray(e) ? [] : {};
-          for (t in e) i2[t] = b(e[t]);
+          for (t in e) i2[t] = b2(e[t]);
           return i2;
         }
         function y(e, t) {
@@ -359,21 +359,21 @@
         function U2(e) {
           return "function" == typeof e;
         }
-        return v2.parse = function(e, t) {
+        return v.parse = function(e, t) {
           var i2 = (t = t || {}).dynamicTyping || false;
           U2(i2) && (t.dynamicTypingFunction = i2, i2 = {});
-          if (t.dynamicTyping = i2, t.transform = !!U2(t.transform) && t.transform, !t.worker || !v2.WORKERS_SUPPORTED) return i2 = null, v2.NODE_STREAM_INPUT, "string" == typeof e ? (e = ((e2) => 65279 !== e2.charCodeAt(0) ? e2 : e2.slice(1))(e), i2 = new (t.download ? f : c)(t)) : true === e.readable && U2(e.read) && U2(e.on) ? i2 = new p(t) : (n.File && e instanceof File || e instanceof Object) && (i2 = new l(t)), i2.stream(e);
+          if (t.dynamicTyping = i2, t.transform = !!U2(t.transform) && t.transform, !t.worker || !v.WORKERS_SUPPORTED) return i2 = null, v.NODE_STREAM_INPUT, "string" == typeof e ? (e = ((e2) => 65279 !== e2.charCodeAt(0) ? e2 : e2.slice(1))(e), i2 = new (t.download ? f2 : c)(t)) : true === e.readable && U2(e.read) && U2(e.on) ? i2 = new p(t) : (n.File && e instanceof File || e instanceof Object) && (i2 = new l(t)), i2.stream(e);
           (i2 = (() => {
             var e2;
-            return !!v2.WORKERS_SUPPORTED && (e2 = (() => {
+            return !!v.WORKERS_SUPPORTED && (e2 = (() => {
               var e3 = n.URL || n.webkitURL || null, t2 = r.toString();
-              return v2.BLOB_URL || (v2.BLOB_URL = e3.createObjectURL(new Blob(["var global = (function() { if (typeof self !== 'undefined') { return self; } if (typeof window !== 'undefined') { return window; } if (typeof global !== 'undefined') { return global; } return {}; })(); global.IS_PAPA_WORKER=true; ", "(", t2, ")();"], { type: "text/javascript" })));
+              return v.BLOB_URL || (v.BLOB_URL = e3.createObjectURL(new Blob(["var global = (function() { if (typeof self !== 'undefined') { return self; } if (typeof window !== 'undefined') { return window; } if (typeof global !== 'undefined') { return global; } return {}; })(); global.IS_PAPA_WORKER=true; ", "(", t2, ")();"], { type: "text/javascript" })));
             })(), (e2 = new n.Worker(e2)).onmessage = g, e2.id = h++, o[e2.id] = e2);
           })()).userStep = t.step, i2.userChunk = t.chunk, i2.userComplete = t.complete, i2.userError = t.error, t.step = U2(t.step), t.chunk = U2(t.chunk), t.complete = U2(t.complete), t.error = U2(t.error), delete t.worker, i2.postMessage({ input: e, config: t, workerId: i2.id });
-        }, v2.unparse = function(e, t) {
+        }, v.unparse = function(e, t) {
           var n2 = false, _3 = true, m2 = ",", y2 = "\r\n", s2 = '"', a2 = s2 + s2, i2 = false, r2 = null, o2 = false, h2 = ((() => {
             if ("object" == typeof t) {
-              if ("string" != typeof t.delimiter || v2.BAD_DELIMITERS.filter(function(e2) {
+              if ("string" != typeof t.delimiter || v.BAD_DELIMITERS.filter(function(e2) {
                 return -1 !== t.delimiter.indexOf(e2);
               }).length || (m2 = t.delimiter), "boolean" != typeof t.quotes && "function" != typeof t.quotes && !Array.isArray(t.quotes) || (n2 = t.quotes), "boolean" != typeof t.skipEmptyLines && "string" != typeof t.skipEmptyLines || (i2 = t.skipEmptyLines), "string" == typeof t.newline && (y2 = t.newline), "string" == typeof t.quoteChar && (s2 = t.quoteChar), "boolean" == typeof t.header && (_3 = t.header), Array.isArray(t.columns)) {
                 if (0 === t.columns.length) throw new Error("Option columns is empty");
@@ -381,7 +381,7 @@
               }
               void 0 !== t.escapeChar && (a2 = t.escapeChar + s2), t.escapeFormulae instanceof RegExp ? o2 = t.escapeFormulae : "boolean" == typeof t.escapeFormulae && t.escapeFormulae && (o2 = /^[=+\-@\t\r].*$/);
             }
-          })(), new RegExp(P2(s2), "g"));
+          })(), new RegExp(P(s2), "g"));
           "string" == typeof e && (e = JSON.parse(e));
           if (Array.isArray(e)) {
             if (!e.length || Array.isArray(e[0])) return u2(null, e, i2);
@@ -395,21 +395,21 @@
               0 < t2.length && (r3 += y2);
             }
             for (var o3 = 0; o3 < t2.length; o3++) {
-              var h3 = (n3 ? e2 : t2[o3]).length, u3 = false, d3 = n3 ? 0 === Object.keys(t2[o3]).length : 0 === t2[o3].length;
+              var h3 = (n3 ? e2 : t2[o3]).length, u3 = false, d2 = n3 ? 0 === Object.keys(t2[o3]).length : 0 === t2[o3].length;
               if (i3 && !n3 && (u3 = "greedy" === i3 ? "" === t2[o3].join("").trim() : 1 === t2[o3].length && 0 === t2[o3][0].length), "greedy" === i3 && n3) {
-                for (var f2 = [], l2 = 0; l2 < h3; l2++) {
+                for (var f3 = [], l2 = 0; l2 < h3; l2++) {
                   var c2 = s3 ? e2[l2] : l2;
-                  f2.push(t2[o3][c2]);
+                  f3.push(t2[o3][c2]);
                 }
-                u3 = "" === f2.join("").trim();
+                u3 = "" === f3.join("").trim();
               }
               if (!u3) {
                 for (var p2 = 0; p2 < h3; p2++) {
-                  0 < p2 && !d3 && (r3 += m2);
+                  0 < p2 && !d2 && (r3 += m2);
                   var g2 = n3 && s3 ? e2[p2] : p2;
                   r3 += k2(t2[o3][g2], p2);
                 }
-                o3 < t2.length - 1 && (!i3 || 0 < h3 && !d3) && (r3 += y2);
+                o3 < t2.length - 1 && (!i3 || 0 < h3 && !d2) && (r3 += y2);
               }
             }
             return r3;
@@ -419,13 +419,13 @@
             return null == e2 ? "" : e2.constructor === Date ? JSON.stringify(e2).slice(1, 25) : (r3 = false, o2 && "string" == typeof e2 && o2.test(e2) && (e2 = "'" + e2, r3 = true), i3 = e2.toString().replace(h2, a2), (r3 = r3 || true === n2 || "function" == typeof n2 && n2(e2, t2) || Array.isArray(n2) && n2[t2] || ((e3, t3) => {
               for (var i4 = 0; i4 < t3.length; i4++) if (-1 < e3.indexOf(t3[i4])) return true;
               return false;
-            })(i3, v2.BAD_DELIMITERS) || -1 < i3.indexOf(m2) || " " === i3.charAt(0) || " " === i3.charAt(i3.length - 1)) ? s2 + i3 + s2 : i3);
+            })(i3, v.BAD_DELIMITERS) || -1 < i3.indexOf(m2) || " " === i3.charAt(0) || " " === i3.charAt(i3.length - 1)) ? s2 + i3 + s2 : i3);
           }
-        }, v2.RECORD_SEP = String.fromCharCode(30), v2.UNIT_SEP = String.fromCharCode(31), v2.BYTE_ORDER_MARK = "\uFEFF", v2.BAD_DELIMITERS = ["\r", "\n", '"', v2.BYTE_ORDER_MARK], v2.WORKERS_SUPPORTED = !s && !!n.Worker, v2.NODE_STREAM_INPUT = 1, v2.LocalChunkSize = 10485760, v2.RemoteChunkSize = 5242880, v2.DefaultDelimiter = ",", v2.Parser = E2, v2.ParserHandle = i, v2.NetworkStreamer = f, v2.FileStreamer = l, v2.StringStreamer = c, v2.ReadableStreamStreamer = p, n.jQuery && ((d2 = n.jQuery).fn.parse = function(o2) {
+        }, v.RECORD_SEP = String.fromCharCode(30), v.UNIT_SEP = String.fromCharCode(31), v.BYTE_ORDER_MARK = "\uFEFF", v.BAD_DELIMITERS = ["\r", "\n", '"', v.BYTE_ORDER_MARK], v.WORKERS_SUPPORTED = !s && !!n.Worker, v.NODE_STREAM_INPUT = 1, v.LocalChunkSize = 10485760, v.RemoteChunkSize = 5242880, v.DefaultDelimiter = ",", v.Parser = E, v.ParserHandle = i, v.NetworkStreamer = f2, v.FileStreamer = l, v.StringStreamer = c, v.ReadableStreamStreamer = p, n.jQuery && ((d = n.jQuery).fn.parse = function(o2) {
           var i2 = o2.config || {}, h2 = [];
           return this.each(function(e2) {
-            if (!("INPUT" === d2(this).prop("tagName").toUpperCase() && "file" === d2(this).attr("type").toLowerCase() && n.FileReader) || !this.files || 0 === this.files.length) return true;
-            for (var t = 0; t < this.files.length; t++) h2.push({ file: this.files[t], inputElem: this, instanceConfig: d2.extend({}, i2) });
+            if (!("INPUT" === d(this).prop("tagName").toUpperCase() && "file" === d(this).attr("type").toLowerCase() && n.FileReader) || !this.files || 0 === this.files.length) return true;
+            for (var t = 0; t < this.files.length; t++) h2.push({ file: this.files[t], inputElem: this, instanceConfig: d.extend({}, i2) });
           }), e(), this;
           function e() {
             if (0 === h2.length) U2(o2.complete) && o2.complete();
@@ -436,13 +436,13 @@
                 if ("object" == typeof s2) {
                   if ("abort" === s2.action) return e2 = "AbortError", t = n2.file, i3 = n2.inputElem, r2 = s2.reason, void (U2(o2.error) && o2.error({ name: e2 }, t, i3, r2));
                   if ("skip" === s2.action) return void u2();
-                  "object" == typeof s2.config && (n2.instanceConfig = d2.extend(n2.instanceConfig, s2.config));
+                  "object" == typeof s2.config && (n2.instanceConfig = d.extend(n2.instanceConfig, s2.config));
                 } else if ("skip" === s2) return void u2();
               }
               var a2 = n2.instanceConfig.complete;
               n2.instanceConfig.complete = function(e3) {
                 U2(a2) && a2(e3, n2.file, n2.inputElem), u2();
-              }, v2.parse(n2.file, n2.instanceConfig);
+              }, v.parse(n2.file, n2.instanceConfig);
             }
           }
           function u2() {
@@ -450,9 +450,9 @@
           }
         }), a && (n.onmessage = function(e) {
           e = e.data;
-          void 0 === v2.WORKER_ID && e && (v2.WORKER_ID = e.workerId);
-          "string" == typeof e.input ? n.postMessage({ workerId: v2.WORKER_ID, results: v2.parse(e.input, e.config), finished: true }) : (n.File && e.input instanceof File || e.input instanceof Object) && (e = v2.parse(e.input, e.config)) && n.postMessage({ workerId: v2.WORKER_ID, results: e, finished: true });
-        }), (f.prototype = Object.create(u.prototype)).constructor = f, (l.prototype = Object.create(u.prototype)).constructor = l, (c.prototype = Object.create(c.prototype)).constructor = c, (p.prototype = Object.create(u.prototype)).constructor = p, v2;
+          void 0 === v.WORKER_ID && e && (v.WORKER_ID = e.workerId);
+          "string" == typeof e.input ? n.postMessage({ workerId: v.WORKER_ID, results: v.parse(e.input, e.config), finished: true }) : (n.File && e.input instanceof File || e.input instanceof Object) && (e = v.parse(e.input, e.config)) && n.postMessage({ workerId: v.WORKER_ID, results: e, finished: true });
+        }), (f2.prototype = Object.create(u.prototype)).constructor = f2, (l.prototype = Object.create(u.prototype)).constructor = l, (c.prototype = Object.create(c.prototype)).constructor = c, (p.prototype = Object.create(u.prototype)).constructor = p, v;
       });
     }
   });
@@ -1740,10 +1740,10 @@
         }
         return token;
       };
-      Tokenizer.prototype._read_pair = function(c, d2) {
+      Tokenizer.prototype._read_pair = function(c, d) {
         var token = null;
-        if (c === "#" && d2 === "{") {
-          token = this._create_token(TOKEN.START_BLOCK, c + d2);
+        if (c === "#" && d === "{") {
+          token = this._create_token(TOKEN.START_BLOCK, c + d);
         }
         if (token) {
           this._input.next();
@@ -2268,7 +2268,7 @@
           if (this._options.preserve_newlines) {
             if (newlines > 1) {
               this.print_newline(false, preserve_statement_flags);
-              for (var j = 1; j < newlines; j += 1) {
+              for (var j2 = 1; j2 < newlines; j2 += 1) {
                 this.print_newline(true, preserve_statement_flags);
               }
             }
@@ -3022,7 +3022,7 @@
       };
       Beautifier.prototype.print_block_commment = function(current_token, preserve_statement_flags) {
         var lines = split_linebreaks(current_token.text);
-        var j;
+        var j2;
         var javadoc = false;
         var starless = false;
         var lastIndent = current_token.whitespace_before;
@@ -3038,16 +3038,16 @@
           if (javadoc) {
             this._flags.alignment = 1;
           }
-          for (j = 0; j < lines.length; j++) {
+          for (j2 = 0; j2 < lines.length; j2++) {
             if (javadoc) {
               this.print_token_line_indentation(current_token);
-              this._output.add_token(ltrim(lines[j]));
-            } else if (starless && lines[j]) {
+              this._output.add_token(ltrim(lines[j2]));
+            } else if (starless && lines[j2]) {
               this.print_token_line_indentation(current_token);
-              this._output.add_token(lines[j].substring(lastIndentLength));
+              this._output.add_token(lines[j2].substring(lastIndentLength));
             } else {
               this._output.current_line.set_indent(-1);
-              this._output.add_token(lines[j]);
+              this._output.add_token(lines[j2]);
             }
             this.print_newline(false, preserve_statement_flags);
           }
@@ -4843,8 +4843,8 @@
                   visited[id] = clone2;
                   /** @type {Array} */
                   /** @type {any} */
-                  o.forEach(function(v2, i) {
-                    clone2[i] = deepClone(v2, visited);
+                  o.forEach(function(v, i) {
+                    clone2[i] = deepClone(v, visited);
                   });
                   return (
                     /** @type {any} */
@@ -5420,11 +5420,11 @@
             }
             var patterns = grammar[token];
             patterns = Array.isArray(patterns) ? patterns : [patterns];
-            for (var j = 0; j < patterns.length; ++j) {
-              if (rematch && rematch.cause == token + "," + j) {
+            for (var j2 = 0; j2 < patterns.length; ++j2) {
+              if (rematch && rematch.cause == token + "," + j2) {
                 return;
               }
-              var patternObj = patterns[j];
+              var patternObj = patterns[j2];
               var inside = patternObj.inside;
               var lookbehind = !!patternObj.lookbehind;
               var greedy = !!patternObj.greedy;
@@ -5499,7 +5499,7 @@
                 }
                 if (removeCount > 1) {
                   var nestedRematch = {
-                    cause: token + "," + j,
+                    cause: token + "," + j2,
                     reach
                   };
                   matchGrammar(text, tokenList, grammar, currentNode.prev, pos, nestedRematch);
@@ -8937,7 +8937,7 @@
     constructor(options) {
       super([]);
       this.idx = 1;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
     set definition(definition) {
     }
@@ -8955,49 +8955,49 @@
     constructor(options) {
       super(options.definition);
       this.orgText = "";
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
   };
   var Alternative = class extends AbstractProduction {
     constructor(options) {
       super(options.definition);
       this.ignoreAmbiguities = false;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
   };
   var Option = class extends AbstractProduction {
     constructor(options) {
       super(options.definition);
       this.idx = 1;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
   };
   var RepetitionMandatory = class extends AbstractProduction {
     constructor(options) {
       super(options.definition);
       this.idx = 1;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
   };
   var RepetitionMandatoryWithSeparator = class extends AbstractProduction {
     constructor(options) {
       super(options.definition);
       this.idx = 1;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
   };
   var Repetition = class extends AbstractProduction {
     constructor(options) {
       super(options.definition);
       this.idx = 1;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
   };
   var RepetitionWithSeparator = class extends AbstractProduction {
     constructor(options) {
       super(options.definition);
       this.idx = 1;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
   };
   var Alternation = class extends AbstractProduction {
@@ -9012,13 +9012,13 @@
       this.idx = 1;
       this.ignoreAmbiguities = false;
       this.hasPredicates = false;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
   };
   var Terminal = class {
     constructor(options) {
       this.idx = 1;
-      assign_default(this, pickBy_default(options, (v2) => v2 !== void 0));
+      assign_default(this, pickBy_default(options, (v) => v !== void 0));
     }
     accept(visitor) {
       visitor.visit(this);
@@ -11525,7 +11525,7 @@ See https://chevrotain.io/docs/guide/resolving_lexer_errors.html#UNREACHABLE`;
     // this method also used quite a bit of `!` none null assertions because it is too optimized
     // for `tsc` to always understand it is "safe"
     tokenizeInternal(text, initialMode) {
-      let i, j, k2, matchAltImage, longerAlt, matchedImage, payload, altPayload, imageLength, group, tokType, newToken, errLength, droppedChar, msg, match;
+      let i, j2, k2, matchAltImage, longerAlt, matchedImage, payload, altPayload, imageLength, group, tokType, newToken, errLength, droppedChar, msg, match;
       const orgText = text;
       const orgLength = orgText.length;
       let offset = 0;
@@ -11703,8 +11703,8 @@ See https://chevrotain.io/docs/guide/resolving_lexer_errors.html#UNREACHABLE`;
           while (foundResyncPoint === false && offset < orgLength) {
             text = this.chopInput(text, 1);
             offset++;
-            for (j = 0; j < currModePatternsLength; j++) {
-              const currConfig2 = patternIdxToConfig[j];
+            for (j2 = 0; j2 < currModePatternsLength; j2++) {
+              const currConfig2 = patternIdxToConfig[j2];
               const currPattern = currConfig2.pattern;
               const singleCharCode = currConfig2.short;
               if (singleCharCode !== false) {
@@ -12573,8 +12573,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
           if (currPredicate !== void 0 && currPredicate.call(this) === false) {
             continue;
           }
-          nextPath: for (let j = 0; j < currNumOfPaths; j++) {
-            const currPath = currAlt[j];
+          nextPath: for (let j2 = 0; j2 < currNumOfPaths; j2++) {
+            const currPath = currAlt[j2];
             const currPathLength = currPath.length;
             for (let i = 0; i < currPathLength; i++) {
               const nextToken = this.LA(i + 1);
@@ -12613,8 +12613,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
         for (let t = 0; t < numOfAlts; t++) {
           const currAlt = alts[t];
           const currNumOfPaths = currAlt.length;
-          nextPath: for (let j = 0; j < currNumOfPaths; j++) {
-            const currPath = currAlt[j];
+          nextPath: for (let j2 = 0; j2 < currNumOfPaths; j2++) {
+            const currPath = currAlt[j2];
             const currPathLength = currPath.length;
             for (let i = 0; i < currPathLength; i++) {
               const nextToken = this.LA(i + 1);
@@ -12657,8 +12657,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
       }
     } else {
       return function() {
-        nextPath: for (let j = 0; j < numOfPaths; j++) {
-          const currPath = alt[j];
+        nextPath: for (let j2 = 0; j2 < numOfPaths; j2++) {
+          const currPath = alt[j2];
           const currPathLength = currPath.length;
           for (let i = 0; i < currPathLength; i++) {
             const nextToken = this.LA(i + 1);
@@ -12760,8 +12760,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
     for (let i = 0; i < path.length; i++) {
       const tokType = path[i];
       const longerKeys = [];
-      for (let j = 0; j < keys2.length; j++) {
-        const currShorterKey = keys2[j];
+      for (let j2 = 0; j2 < keys2.length; j2++) {
+        const currShorterKey = keys2[j2];
         longerKeys.push(currShorterKey + "_" + tokType.tokenTypeIdx);
         for (let t = 0; t < tokType.categoryMatches.length; t++) {
           const categoriesKeySuffix = "_" + tokType.categoryMatches[t];
@@ -12815,8 +12815,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
             const currAltResult = finalResult[altIdx];
             if (containsPath(currAltResult, currPathPrefix) === false) {
               currAltResult.push(currPathPrefix);
-              for (let j = 0; j < prefixKeys.length; j++) {
-                const currKey = prefixKeys[j];
+              for (let j2 = 0; j2 < prefixKeys.length; j2++) {
+                const currKey = prefixKeys[j2];
                 altsHashes[altIdx][currKey] = true;
               }
             }
@@ -12856,9 +12856,9 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
       if (otherPath.length !== searchPath.length) {
         continue;
       }
-      for (let j = 0; j < otherPath.length; j++) {
-        const searchTok = searchPath[j];
-        const otherTok = otherPath[j];
+      for (let j2 = 0; j2 < otherPath.length; j2++) {
+        const searchTok = searchPath[j2];
+        const otherTok = otherPath[j2];
         const matchingTokens = searchTok === otherTok || otherTok.categoryMatchesMap[searchTok.tokenTypeIdx] !== void 0;
         if (matchingTokens === false) {
           continue compareOtherPath;
@@ -13819,8 +13819,8 @@ see: https://en.wikipedia.org/wiki/LL_parser#Left_factoring.`;
       const currChildName = childrenNames[i];
       const currChildArray = ctx[currChildName];
       const currChildArrayLength = currChildArray.length;
-      for (let j = 0; j < currChildArrayLength; j++) {
-        const currChild = currChildArray[j];
+      for (let j2 = 0; j2 < currChildArrayLength; j2++) {
+        const currChild = currChildArray[j2];
         if (currChild.tokenTypeIdx === void 0) {
           this[currChild.name](currChild.children, param);
         }
@@ -15424,8 +15424,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     const match = regexName.exec(string);
     return !(match === null || typeof match === "undefined");
   };
-  function isExist(v2) {
-    return typeof v2 !== "undefined";
+  function isExist(v) {
+    return typeof v !== "undefined";
   }
 
   // ../../node_modules/fast-xml-parser/src/validator.js
@@ -16117,8 +16117,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     return index;
   };
   function hasSeq(data, seq2, i) {
-    for (let j = 0; j < seq2.length; j++) {
-      if (seq2[j] !== data[i + j + 1]) return false;
+    for (let j2 = 0; j2 < seq2.length; j2++) {
+      if (seq2[j2] !== data[i + j2 + 1]) return false;
     }
     return true;
   }
@@ -17218,8 +17218,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
         const arrLen = jObj[key].length;
         let listTagVal = "";
         let listTagAttr = "";
-        for (let j = 0; j < arrLen; j++) {
-          const item = jObj[key][j];
+        for (let j2 = 0; j2 < arrLen; j2++) {
+          const item = jObj[key][j2];
           if (typeof item === "undefined") {
           } else if (item === null) {
             if (key[0] === "?") val += this.indentate(level) + "<" + key + "?" + this.tagEndChar;
@@ -17252,8 +17252,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
         if (this.options.attributesGroupName && key === this.options.attributesGroupName) {
           const Ks = Object.keys(jObj[key]);
           const L2 = Ks.length;
-          for (let j = 0; j < L2; j++) {
-            attrStr += this.buildAttrPairStr(Ks[j], "" + jObj[key][Ks[j]]);
+          for (let j2 = 0; j2 < L2; j2++) {
+            attrStr += this.buildAttrPairStr(Ks[j2], "" + jObj[key][Ks[j2]]);
           }
         } else {
           val += this.processTextOrObjNode(jObj[key], key, level, ajPath);
@@ -19979,60 +19979,64 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
 
   // ../core/dist/index.js
   var import_js_beautify = __toESM(require_js(), 1);
-  var Oe = createToken({ name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED });
-  var $e = createToken({ name: "LineComment", pattern: /\/\/[^\n\r]*/, group: Lexer.SKIPPED });
-  var Ie = createToken({ name: "BlockComment", pattern: /\/\*[\s\S]*?\*\//, group: Lexer.SKIPPED });
-  var d = createToken({ name: "Identifier", pattern: /[a-zA-Z_$][a-zA-Z0-9_.[\]]*/ });
-  var M = createToken({ name: "QuotedIdentifier", pattern: /`([^`\\]|\\.)*`/ });
-  var x = createToken({ name: "From", pattern: /from/i, longer_alt: d });
-  var $ = createToken({ name: "To", pattern: /to/i, longer_alt: d });
-  var I = createToken({ name: "Transform", pattern: /transform/i, longer_alt: d });
-  var P = createToken({ name: "Set", pattern: /set/i, longer_alt: d });
-  var _ = createToken({ name: "Section", pattern: /section/i, longer_alt: d });
-  var B = createToken({ name: "Multiple", pattern: /multiple/i, longer_alt: d });
-  var q = createToken({ name: "Clone", pattern: /clone/i, longer_alt: d });
-  var F = createToken({ name: "Delete", pattern: /delete/i, longer_alt: d });
-  var D = createToken({ name: "Define", pattern: /define/i, longer_alt: d });
-  var W = createToken({ name: "Modify", pattern: /modify/i, longer_alt: d });
-  var U = createToken({ name: "If", pattern: /if/i, longer_alt: d });
-  var z = createToken({ name: "Else", pattern: /else/i, longer_alt: d });
-  var Q = createToken({ name: "True", pattern: /true/i, longer_alt: d });
-  var V = createToken({ name: "False", pattern: /false/i, longer_alt: d });
-  var Y = createToken({ name: "Null", pattern: /null/i, longer_alt: d });
-  var J = createToken({ name: "Return", pattern: /return/i, longer_alt: d });
-  var G = createToken({ name: "Unsafe", pattern: /unsafe/i, longer_alt: d });
-  var H = createToken({ name: "Where", pattern: /where/i, longer_alt: d });
-  var X = createToken({ name: "EqualsEquals", pattern: /==/ });
-  var Z = createToken({ name: "EqualsEqualsEquals", pattern: /===/ });
-  var K = createToken({ name: "NotEquals", pattern: /!=/ });
-  var ee = createToken({ name: "NotEqualsEquals", pattern: /!==/ });
-  var te = createToken({ name: "LessThanOrEqual", pattern: /<=/ });
-  var re = createToken({ name: "GreaterThanOrEqual", pattern: />=/ });
-  var se = createToken({ name: "LessThan", pattern: /</ });
-  var ne = createToken({ name: "GreaterThan", pattern: />/ });
-  var ie = createToken({ name: "And", pattern: /&&/ });
-  var oe = createToken({ name: "Or", pattern: /\|\|/ });
-  var ae = createToken({ name: "Not", pattern: /!/ });
-  var w = createToken({ name: "Equals", pattern: /=/ });
-  var ue = createToken({ name: "Plus", pattern: /\+/ });
-  var C = createToken({ name: "Minus", pattern: /-/ });
-  var le = createToken({ name: "Times", pattern: /\*/ });
-  var ce = createToken({ name: "Divide", pattern: /\// });
-  var pe = createToken({ name: "Modulo", pattern: /%/ });
-  var E = createToken({ name: "LParen", pattern: /\(/ });
-  var v = createToken({ name: "RParen", pattern: /\)/ });
-  var T = createToken({ name: "Comma", pattern: /,/ });
-  var me = createToken({ name: "StringLiteral", pattern: /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/ });
-  var fe = createToken({ name: "NumericLiteral", pattern: /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/ });
-  var he = [Oe, $e, Ie, x, $, I, P, _, B, q, F, D, W, U, z, Q, V, Y, J, G, H, Z, X, ee, K, te, re, ie, oe, w, se, ne, ae, ue, C, le, ce, pe, E, v, T, me, fe, M, d];
-  var de = new Lexer(he);
-  var ge = class extends CstParser {
+  var _e = createToken({ name: "WhiteSpace", pattern: /\s+/, group: Lexer.SKIPPED });
+  var Pe = createToken({ name: "LineComment", pattern: /\/\/[^\n\r]*/, group: Lexer.SKIPPED });
+  var qe = createToken({ name: "BlockComment", pattern: /\/\*[\s\S]*?\*\//, group: Lexer.SKIPPED });
+  var f = createToken({ name: "Identifier", pattern: /[a-zA-Z_$][a-zA-Z0-9_.[\]]*/ });
+  var F = createToken({ name: "QuotedIdentifier", pattern: /`([^`\\]|\\.)*`/ });
+  var I = createToken({ name: "From", pattern: /from/i, longer_alt: f });
+  var k = createToken({ name: "To", pattern: /to/i, longer_alt: f });
+  var j = createToken({ name: "Transform", pattern: /transform/i, longer_alt: f });
+  var D = createToken({ name: "Set", pattern: /set/i, longer_alt: f });
+  var W = createToken({ name: "Section", pattern: /section/i, longer_alt: f });
+  var z = createToken({ name: "Multiple", pattern: /multiple/i, longer_alt: f });
+  var Q = createToken({ name: "Clone", pattern: /clone/i, longer_alt: f });
+  var V = createToken({ name: "Delete", pattern: /delete/i, longer_alt: f });
+  var Y = createToken({ name: "Define", pattern: /define/i, longer_alt: f });
+  var J = createToken({ name: "Modify", pattern: /modify/i, longer_alt: f });
+  var M = createToken({ name: "If", pattern: /if/i, longer_alt: f });
+  var G = createToken({ name: "Else", pattern: /else/i, longer_alt: f });
+  var H = createToken({ name: "True", pattern: /true/i, longer_alt: f });
+  var X = createToken({ name: "False", pattern: /false/i, longer_alt: f });
+  var Z = createToken({ name: "Null", pattern: /null/i, longer_alt: f });
+  var K = createToken({ name: "Return", pattern: /return/i, longer_alt: f });
+  var ee = createToken({ name: "Unsafe", pattern: /unsafe/i, longer_alt: f });
+  var te = createToken({ name: "Where", pattern: /where/i, longer_alt: f });
+  var re = createToken({ name: "OrderBy", pattern: /orderby/i, longer_alt: f });
+  var se = createToken({ name: "Asc", pattern: /asc/i, longer_alt: f });
+  var ne = createToken({ name: "Desc", pattern: /desc/i, longer_alt: f });
+  var ie = createToken({ name: "Limit", pattern: /limit/i, longer_alt: f });
+  var oe = createToken({ name: "EqualsEquals", pattern: /==/ });
+  var ae = createToken({ name: "EqualsEqualsEquals", pattern: /===/ });
+  var ue = createToken({ name: "NotEquals", pattern: /!=/ });
+  var le = createToken({ name: "NotEqualsEquals", pattern: /!==/ });
+  var ce = createToken({ name: "LessThanOrEqual", pattern: /<=/ });
+  var pe = createToken({ name: "GreaterThanOrEqual", pattern: />=/ });
+  var me = createToken({ name: "LessThan", pattern: /</ });
+  var fe = createToken({ name: "GreaterThan", pattern: />/ });
+  var he = createToken({ name: "And", pattern: /&&/ });
+  var de = createToken({ name: "Or", pattern: /\|\|/ });
+  var ge = createToken({ name: "Not", pattern: /!/ });
+  var O = createToken({ name: "Equals", pattern: /=/ });
+  var ye = createToken({ name: "Plus", pattern: /\+/ });
+  var B = createToken({ name: "Minus", pattern: /-/ });
+  var Ee = createToken({ name: "Times", pattern: /\*/ });
+  var Se = createToken({ name: "Divide", pattern: /\// });
+  var Ae = createToken({ name: "Modulo", pattern: /%/ });
+  var L = createToken({ name: "LParen", pattern: /\(/ });
+  var x = createToken({ name: "RParen", pattern: /\)/ });
+  var U = createToken({ name: "Comma", pattern: /,/ });
+  var be = createToken({ name: "StringLiteral", pattern: /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/ });
+  var ve = createToken({ name: "NumericLiteral", pattern: /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/ });
+  var Le = [_e, Pe, qe, I, k, j, D, W, z, Q, V, Y, J, M, G, H, X, Z, K, ee, te, re, se, ne, ie, ae, oe, le, ue, ce, pe, he, de, O, me, fe, ge, ye, B, Ee, Se, Ae, L, x, U, be, ve, F, f];
+  var we = new Lexer(Le);
+  var xe = class extends CstParser {
     constructor() {
-      super(he);
+      super(Le);
       __publicField(this, "query", this.RULE("query", () => {
-        this.CONSUME(x), this.SUBRULE(this.typeFormat, { LABEL: "sourceType" }), this.CONSUME($), this.SUBRULE1(this.typeFormat, { LABEL: "targetType" }), this.OPTION(() => {
-          this.CONSUME(I), this.OPTION1(() => {
-            this.CONSUME(G);
+        this.CONSUME(I), this.SUBRULE(this.typeFormat, { LABEL: "sourceType" }), this.CONSUME(k), this.SUBRULE1(this.typeFormat, { LABEL: "targetType" }), this.OPTION(() => {
+          this.CONSUME(j), this.OPTION1(() => {
+            this.CONSUME(ee);
           }), this.MANY(() => {
             this.SUBRULE(this.action);
           });
@@ -20040,120 +20044,126 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       }));
       __publicField(this, "typeFormat", this.RULE("typeFormat", () => {
         this.SUBRULE(this.anyIdentifier, { LABEL: "name" }), this.OPTION(() => {
-          this.CONSUME(E), this.MANY_SEP({ SEP: T, DEF: () => {
+          this.CONSUME(L), this.MANY_SEP({ SEP: U, DEF: () => {
             this.SUBRULE(this.typeFormatParameter, { LABEL: "params" });
-          } }), this.CONSUME(v);
+          } }), this.CONSUME(x);
         });
       }));
       __publicField(this, "typeFormatParameter", this.RULE("typeFormatParameter", () => {
-        this.OR([{ GATE: () => this.LA(2).tokenType === w, ALT: () => this.SUBRULE(this.namedParameter) }, { ALT: () => this.SUBRULE(this.literal) }]);
+        this.OR([{ GATE: () => this.LA(2).tokenType === O, ALT: () => this.SUBRULE(this.namedParameter) }, { ALT: () => this.SUBRULE(this.literal) }]);
       }));
       __publicField(this, "namedParameter", this.RULE("namedParameter", () => {
-        this.SUBRULE(this.anyIdentifier, { LABEL: "key" }), this.CONSUME(w), this.SUBRULE(this.literal, { LABEL: "value" });
+        this.SUBRULE(this.anyIdentifier, { LABEL: "key" }), this.CONSUME(O), this.SUBRULE(this.literal, { LABEL: "value" });
       }));
       __publicField(this, "anyIdentifier", this.RULE("anyIdentifier", () => {
-        this.OR([{ ALT: () => this.CONSUME(d) }, { ALT: () => this.CONSUME(M) }]);
+        this.OR([{ ALT: () => this.CONSUME(f) }, { ALT: () => this.CONSUME(F) }]);
       }));
       __publicField(this, "literal", this.RULE("literal", () => {
-        this.OR([{ ALT: () => this.CONSUME(me) }, { ALT: () => this.CONSUME(fe) }, { ALT: () => this.CONSUME(Q) }, { ALT: () => this.CONSUME(V) }, { ALT: () => this.CONSUME(Y) }]);
+        this.OR([{ ALT: () => this.CONSUME(be) }, { ALT: () => this.CONSUME(ve) }, { ALT: () => this.CONSUME(H) }, { ALT: () => this.CONSUME(X) }, { ALT: () => this.CONSUME(Z) }]);
       }));
       __publicField(this, "action", this.RULE("action", () => {
         this.OR([{ ALT: () => this.SUBRULE(this.setRule) }, { ALT: () => this.SUBRULE(this.modifyRule) }, { ALT: () => this.SUBRULE(this.sectionRule) }, { ALT: () => this.SUBRULE(this.cloneRule) }, { ALT: () => this.SUBRULE(this.deleteRule) }, { ALT: () => this.SUBRULE(this.ifAction) }, { ALT: () => this.SUBRULE(this.defineRule) }, { ALT: () => this.SUBRULE(this.returnRule) }]);
       }));
       __publicField(this, "returnRule", this.RULE("returnRule", () => {
-        this.CONSUME(J), this.SUBRULE(this.expression, { LABEL: "expr" });
+        this.CONSUME(K), this.SUBRULE(this.expression, { LABEL: "expr" });
       }));
       __publicField(this, "deleteRule", this.RULE("deleteRule", () => {
-        this.CONSUME(F), this.SUBRULE(this.anyIdentifier, { LABEL: "field" });
+        this.CONSUME(V), this.SUBRULE(this.anyIdentifier, { LABEL: "field" });
       }));
       __publicField(this, "ifAction", this.RULE("ifAction", () => {
-        this.CONSUME(U), this.CONSUME(E), this.SUBRULE(this.expression, { LABEL: "condition" }), this.CONSUME(v), this.CONSUME2(E), this.MANY(() => {
+        this.CONSUME(M), this.CONSUME(L), this.SUBRULE(this.expression, { LABEL: "condition" }), this.CONSUME(x), this.CONSUME2(L), this.MANY(() => {
           this.SUBRULE(this.action, { LABEL: "thenActions" });
-        }), this.CONSUME2(v), this.OPTION(() => {
-          this.CONSUME(z), this.CONSUME3(E), this.MANY2(() => {
+        }), this.CONSUME2(x), this.OPTION(() => {
+          this.CONSUME(G), this.CONSUME3(L), this.MANY2(() => {
             this.SUBRULE2(this.action, { LABEL: "elseActions" });
-          }), this.CONSUME3(v);
+          }), this.CONSUME3(x);
         });
       }));
       __publicField(this, "cloneRule", this.RULE("cloneRule", () => {
-        this.CONSUME(q), this.OPTION(() => {
-          this.CONSUME(E), this.MANY_SEP({ SEP: T, DEF: () => {
+        this.CONSUME(Q), this.OPTION(() => {
+          this.CONSUME(L), this.MANY_SEP({ SEP: U, DEF: () => {
             this.SUBRULE(this.anyIdentifier, { LABEL: "fields" });
-          } }), this.CONSUME(v);
+          } }), this.CONSUME(x);
         });
       }));
       __publicField(this, "setRule", this.RULE("setRule", () => {
-        this.CONSUME(P), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
+        this.CONSUME(D), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(O), this.SUBRULE(this.expression, { LABEL: "right" });
       }));
       __publicField(this, "modifyRule", this.RULE("modifyRule", () => {
-        this.CONSUME(W), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
+        this.CONSUME(J), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(O), this.SUBRULE(this.expression, { LABEL: "right" });
       }));
       __publicField(this, "expression", this.RULE("expression", () => {
         this.SUBRULE(this.logicalOr);
       }));
       __publicField(this, "logicalOr", this.RULE("logicalOr", () => {
         this.SUBRULE(this.logicalAnd, { LABEL: "lhs" }), this.MANY(() => {
-          this.CONSUME(oe), this.SUBRULE1(this.logicalAnd, { LABEL: "rhs" });
+          this.CONSUME(de), this.SUBRULE1(this.logicalAnd, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "logicalAnd", this.RULE("logicalAnd", () => {
         this.SUBRULE(this.comparison, { LABEL: "lhs" }), this.MANY(() => {
-          this.CONSUME(ie), this.SUBRULE1(this.comparison, { LABEL: "rhs" });
+          this.CONSUME(he), this.SUBRULE1(this.comparison, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "comparison", this.RULE("comparison", () => {
         this.SUBRULE(this.addition, { LABEL: "lhs" }), this.OPTION(() => {
-          this.OR([{ ALT: () => this.CONSUME(X, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(Z, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(K, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ee, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(te, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(re, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(se, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ne, { LABEL: "ops" }) }]), this.SUBRULE1(this.addition, { LABEL: "rhs" });
+          this.OR([{ ALT: () => this.CONSUME(oe, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ae, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ue, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(le, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ce, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(pe, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(me, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(fe, { LABEL: "ops" }) }]), this.SUBRULE1(this.addition, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "addition", this.RULE("addition", () => {
         this.SUBRULE(this.multiplication, { LABEL: "lhs" }), this.MANY(() => {
-          this.OR([{ ALT: () => this.CONSUME(ue, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(C, { LABEL: "ops" }) }]), this.SUBRULE1(this.multiplication, { LABEL: "rhs" });
+          this.OR([{ ALT: () => this.CONSUME(ye, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(B, { LABEL: "ops" }) }]), this.SUBRULE1(this.multiplication, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "multiplication", this.RULE("multiplication", () => {
         this.SUBRULE(this.unaryExpression, { LABEL: "lhs" }), this.MANY(() => {
-          this.OR([{ ALT: () => this.CONSUME(le, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(ce, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(pe, { LABEL: "ops" }) }]), this.SUBRULE1(this.unaryExpression, { LABEL: "rhs" });
+          this.OR([{ ALT: () => this.CONSUME(Ee, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(Se, { LABEL: "ops" }) }, { ALT: () => this.CONSUME(Ae, { LABEL: "ops" }) }]), this.SUBRULE1(this.unaryExpression, { LABEL: "rhs" });
         });
       }));
       __publicField(this, "unaryExpression", this.RULE("unaryExpression", () => {
         this.OPTION(() => {
-          this.OR([{ ALT: () => this.CONSUME(C, { LABEL: "sign" }) }, { ALT: () => this.CONSUME(ae, { LABEL: "sign" }) }]);
+          this.OR([{ ALT: () => this.CONSUME(B, { LABEL: "sign" }) }, { ALT: () => this.CONSUME(ge, { LABEL: "sign" }) }]);
         }), this.SUBRULE(this.atomic);
       }));
       __publicField(this, "atomic", this.RULE("atomic", () => {
-        this.OR([{ ALT: () => this.SUBRULE(this.literal) }, { GATE: () => this.LA(2).tokenType === E, ALT: () => this.SUBRULE(this.functionCall) }, { ALT: () => this.SUBRULE(this.anyIdentifier) }, { ALT: () => {
-          this.CONSUME(E), this.SUBRULE(this.expression), this.CONSUME(v);
+        this.OR([{ ALT: () => this.SUBRULE(this.literal) }, { GATE: () => this.LA(2).tokenType === L, ALT: () => this.SUBRULE(this.functionCall) }, { ALT: () => this.SUBRULE(this.anyIdentifier) }, { ALT: () => {
+          this.CONSUME(L), this.SUBRULE(this.expression), this.CONSUME(x);
         } }]);
       }));
       __publicField(this, "functionCall", this.RULE("functionCall", () => {
-        this.OR([{ ALT: () => this.CONSUME(d, { LABEL: "name" }) }, { ALT: () => this.CONSUME(U, { LABEL: "name" }) }]), this.CONSUME(E), this.MANY_SEP({ SEP: T, DEF: () => {
+        this.OR([{ ALT: () => this.CONSUME(f, { LABEL: "name" }) }, { ALT: () => this.CONSUME(M, { LABEL: "name" }) }]), this.CONSUME(L), this.MANY_SEP({ SEP: U, DEF: () => {
           this.SUBRULE(this.expression, { LABEL: "args" });
-        } }), this.CONSUME(v);
+        } }), this.CONSUME(x);
       }));
       __publicField(this, "sectionRule", this.RULE("sectionRule", () => {
-        this.CONSUME(_), this.OPTION(() => {
-          this.CONSUME(B);
-        }), this.SUBRULE(this.anyIdentifier, { LABEL: "sectionName" }), this.CONSUME(E), this.OPTION1(() => {
-          this.CONSUME(x, { LABEL: "subqueryFrom" }), this.SUBRULE(this.typeFormat, { LABEL: "subquerySourceType" }), this.CONSUME($, { LABEL: "subqueryTo" }), this.SUBRULE1(this.typeFormat, { LABEL: "subqueryTargetType" }), this.OPTION2(() => {
-            this.CONSUME(I, { LABEL: "subqueryTransform" });
+        this.CONSUME(W), this.OPTION(() => {
+          this.CONSUME(z);
+        }), this.SUBRULE(this.anyIdentifier, { LABEL: "sectionName" }), this.CONSUME(L), this.OPTION1(() => {
+          this.CONSUME(I, { LABEL: "subqueryFrom" }), this.SUBRULE(this.typeFormat, { LABEL: "subquerySourceType" }), this.CONSUME(k, { LABEL: "subqueryTo" }), this.SUBRULE1(this.typeFormat, { LABEL: "subqueryTargetType" }), this.OPTION2(() => {
+            this.CONSUME(j, { LABEL: "subqueryTransform" });
           });
         }), this.MANY(() => {
           this.SUBRULE(this.action);
-        }), this.CONSUME(v), this.OPTION3(() => {
-          this.CONSUME1(x, { LABEL: "followFrom" }), this.SUBRULE(this.expression, { LABEL: "followExpr" });
+        }), this.CONSUME(x), this.OPTION3(() => {
+          this.CONSUME1(I, { LABEL: "followFrom" }), this.SUBRULE(this.expression, { LABEL: "followExpr" });
         }), this.OPTION4(() => {
-          this.CONSUME(H, { LABEL: "whereClause" }), this.SUBRULE1(this.expression, { LABEL: "whereExpr" });
+          this.CONSUME(te, { LABEL: "whereClause" }), this.SUBRULE1(this.expression, { LABEL: "whereExpr" });
+        }), this.OPTION5(() => {
+          this.CONSUME(re, { LABEL: "orderByClause" }), this.SUBRULE2(this.expression, { LABEL: "orderByExpr" }), this.OPTION6(() => {
+            this.OR([{ ALT: () => this.CONSUME(se, { LABEL: "orderDirAsc" }) }, { ALT: () => this.CONSUME(ne, { LABEL: "orderDirDesc" }) }]);
+          });
+        }), this.OPTION7(() => {
+          this.CONSUME(ie, { LABEL: "limitClause" }), this.SUBRULE3(this.expression, { LABEL: "limitExpr" });
         });
       }));
       __publicField(this, "defineRule", this.RULE("defineRule", () => {
-        this.CONSUME(D), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(w), this.SUBRULE(this.expression, { LABEL: "right" });
+        this.CONSUME(Y), this.SUBRULE(this.anyIdentifier, { LABEL: "left" }), this.CONSUME(O), this.SUBRULE(this.expression, { LABEL: "right" });
       }));
       this.performSelfAnalysis();
     }
   };
-  var A = new ge();
-  var k = { substring: (r, e) => {
+  var b = new xe();
+  var _ = { substring: (r, e) => {
     if (r.length < 2) throw new Error("substring() requires at least 2 arguments (string, start, [length])");
     let [t, s, i] = r;
     return i !== void 0 ? `String(${t}).slice(${s}, (${s}) + (${i}))` : `String(${t}).slice(${s})`;
@@ -20215,10 +20225,10 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     s.forEach((n) => {
       let o = n.replace(/^["']|["']$/g, ""), a = o.split(":");
       if (a.length < 3) throw new Error(`Invalid field spec for unpack(): ${o}. Expected "name:start:length[:modifier]"`);
-      let [u, c, m] = a;
+      let [u, l, m] = a;
       if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(u)) throw new Error(`Invalid field name in unpack() spec: "${u}". Must be a valid JavaScript identifier.`);
-      let l = parseInt(c, 10), f = parseInt(m, 10);
-      if (isNaN(l) || isNaN(f)) throw new Error(`Invalid character positions in unpack() spec: ${o}`);
+      let p = parseInt(l, 10), h = parseInt(m, 10);
+      if (isNaN(p) || isNaN(h)) throw new Error(`Invalid character positions in unpack() spec: ${o}`);
     });
     let i = s.join(", ");
     return `env.functions.unpack(${t}, ${i})`;
@@ -20228,10 +20238,10 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     s.forEach((n) => {
       let o = n.replace(/^["']|["']$/g, ""), a = o.split(":");
       if (a.length < 3) throw new Error(`Invalid field spec for pack(): ${o}. Expected "name:start:length[:modifier]"`);
-      let [u, c, m] = a;
+      let [u, l, m] = a;
       if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(u)) throw new Error(`Invalid field name in pack() spec: "${u}". Must be a valid JavaScript identifier.`);
-      let l = parseInt(c, 10), f = parseInt(m, 10);
-      if (isNaN(l) || isNaN(f)) throw new Error(`Invalid character positions in pack() spec: ${o}`);
+      let p = parseInt(l, 10), h = parseInt(m, 10);
+      if (isNaN(p) || isNaN(h)) throw new Error(`Invalid character positions in pack() spec: ${o}`);
     });
     let i = s.join(", ");
     return `env.functions.pack(${t}, ${i})`;
@@ -20327,11 +20337,11 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     return `(({${s.map((n) => {
       let o = n.replace(/^["']|["']$/g, ""), a = o.indexOf(":");
       if (a === -1) throw new Error(`Invalid lookup() spec: ${n}. Expected "key:value" format (e.g. "1:open").`);
-      let u = JSON.stringify(o.substring(0, a)), c = JSON.stringify(o.substring(a + 1));
-      return `${u}: ${c}`;
+      let u = JSON.stringify(o.substring(0, a)), l = JSON.stringify(o.substring(a + 1));
+      return `${u}: ${l}`;
     }).join(", ")}})[(${t})] ?? null)`;
   } };
-  var N = class {
+  var $ = class {
     constructor() {
       __publicField(this, "sourceRoot", { type: "object", properties: {} });
       __publicField(this, "targetRoot", { type: "object", properties: {} });
@@ -20438,8 +20448,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
           n = n.items;
           continue;
         }
-        let c = u ? s : "object";
-        n.properties || (n.properties = {}), n.properties[a] || (n.properties[a] = { type: c }, c === "object" ? n.properties[a].properties = {} : c === "array" && (n.properties[a].items = { type: "object", properties: {} })), n = n.properties[a];
+        let l = u ? s : "object";
+        n.properties || (n.properties = {}), n.properties[a] || (n.properties[a] = { type: l }, l === "object" ? n.properties[a].properties = {} : l === "array" && (n.properties[a].items = { type: "object", properties: {} })), n = n.properties[a];
       }
       return n;
     }
@@ -20447,20 +20457,20 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       return { source: this.sourceRoot, target: this.targetRoot };
     }
   };
-  var ke = A.getBaseCstVisitorConstructor();
-  var ye = class extends ke {
+  var We = b.getBaseCstVisitorConstructor();
+  var Ne = class extends We {
     constructor() {
       super();
       __publicField(this, "readFrom", "source");
       __publicField(this, "scopeStack", []);
       __publicField(this, "safeMode", true);
       __publicField(this, "isAnalyzing", false);
-      __publicField(this, "tracker", new N());
+      __publicField(this, "tracker", new $());
       __publicField(this, "lastInferredType", "any");
       this.validateVisitor();
     }
     reset() {
-      this.readFrom = "source", this.scopeStack = [], this.tracker = new N(), this.lastInferredType = "any";
+      this.readFrom = "source", this.scopeStack = [], this.tracker = new $(), this.lastInferredType = "any";
     }
     visitWithContext(e, t) {
       let s = this.readFrom;
@@ -20472,13 +20482,13 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       }
     }
     query(e) {
-      this.reset(), this.isAnalyzing && (this.tracker = new N());
+      this.reset(), this.isAnalyzing && (this.tracker = new $());
       let t = this.visit(e.sourceType), s = this.visit(e.targetType), i = !!e.Unsafe;
       this.safeMode = !i, this.scopeStack.push({ format: s.name, options: s.options, isSerializationScope: true });
       try {
-        let n = e.action ? e.action.map((f) => this.visit(f)) : [];
+        let n = e.action ? e.action.map((h) => this.visit(h)) : [];
         e.Transform || n.push("Object.assign(target, source);");
-        let o = t.name, a = s.name, u = JSON.stringify(t.options), c = JSON.stringify(s.options), m = n.some((f) => typeof f == "string" && f.trim().startsWith("return "));
+        let o = t.name, a = s.name, u = JSON.stringify(t.options), l = JSON.stringify(s.options), m = n.some((h) => typeof h == "string" && h.trim().startsWith("return "));
         return { code: `
       return function(input, env) {
         // 1. Parse Input
@@ -20494,7 +20504,7 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
         `)}
 
         // 3. Serialize Output
-        ${m ? "" : `return env.serialize('${a}', target, ${c});`}
+        ${m ? "" : `return env.serialize('${a}', target, ${l});`}
       }
     `, sourceType: t, targetType: s, analysis: this.isAnalyzing ? this.tracker.getResult() : void 0 };
       } finally {
@@ -20642,8 +20652,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       if (e.rhs && e.rhs.length > 0) {
         let n = s === "string", o = s === "number";
         for (let a = 0; a < e.rhs.length; a++) {
-          let u = e.ops[a].image, c = this.visit(e.rhs[a]);
-          this.lastInferredType === "string" && (n = true), this.lastInferredType !== "number" && (o = false), i = `${i} ${u} ${c}`;
+          let u = e.ops[a].image, l = this.visit(e.rhs[a]);
+          this.lastInferredType === "string" && (n = true), this.lastInferredType !== "number" && (o = false), i = `${i} ${u} ${l}`;
         }
         n ? this.lastInferredType = "string" : o ? this.lastInferredType = "number" : this.lastInferredType = "any";
       } else this.lastInferredType = s;
@@ -20709,71 +20719,78 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       if (e.expression) return `(${this.visit(e.expression)})`;
     }
     functionCall(e) {
-      let t = e.name[0].image, s = (t.startsWith("`") ? t.slice(1, -1) : t).toLowerCase(), i = e.args ? e.args.map((o) => this.visit(o)) : [], n = k[s];
+      let t = e.name[0].image, s = (t.startsWith("`") ? t.slice(1, -1) : t).toLowerCase(), i = e.args ? e.args.map((o) => this.visit(o)) : [], n = _[s];
       if (n) return ["substring", "text", "replace", "uppercase", "lowercase", "to_base64", "from_base64", "trim", "padstart", "padend", "fixed"].includes(s) ? this.lastInferredType = "string" : ["number", "extractnumber", "floor", "ceil", "round", "abs", "min", "max", "indexof"].includes(s) ? this.lastInferredType = "number" : ["startswith", "endswith"].includes(s) ? this.lastInferredType = "boolean" : ["aslist", "transpose", "list", "array"].includes(s) ? this.lastInferredType = "array" : s === "asobject" && (this.lastInferredType = "object"), n(i, this);
       throw new Error(`Unknown function: ${t}`);
     }
     sectionRule(e) {
       let t = this.visit(e.sectionName), s = t.name, i = this.genAccess("target", t, true), n, o;
       if (e.followExpr) {
-        let l = this.visit(e.followExpr), f = l.replace(/\?\./g, ".");
-        f === "source.parent" || f === "this.source.parent" || f === `${this.readFrom.replace(/\?\./g, ".")}.parent` ? (n = "source", o = "parent") : (n = l, o = n);
+        let d = this.visit(e.followExpr), g = d.replace(/\?\./g, ".");
+        g === "source.parent" || g === "this.source.parent" || g === `${this.readFrom.replace(/\?\./g, ".")}.parent` ? (n = "source", o = "parent") : (n = d, o = n);
       } else n = this.genAccess("source", t), o = t.name;
-      let a = !!e.Multiple, u = !!e.whereExpr, c = "";
-      if (u && (c = this.visit(e.whereExpr)), !!e.subqueryFrom) {
-        let l = this.visit(e.subquerySourceType), f = this.visit(e.subqueryTargetType);
-        this.scopeStack.push({ format: f.name, options: f.options, isSerializationScope: true });
+      let a = !!e.Multiple, u = !!e.whereExpr, l = "";
+      u && (l = this.visit(e.whereExpr));
+      let m = !!e.orderByExpr, p = "", h = false;
+      m && (p = this.visit(e.orderByExpr), h = !!e.orderDirDesc);
+      let A = !!e.limitExpr, y = "";
+      if (A && (y = this.visit(e.limitExpr)), !!e.subqueryFrom) {
+        let d = this.visit(e.subquerySourceType), g = this.visit(e.subqueryTargetType);
+        this.scopeStack.push({ format: g.name, options: g.options, isSerializationScope: true });
         try {
-          let h = !!e.subqueryTransform, g = e.action ? e.action.map((j) => this.visit(j)) : [];
-          h || g.push("Object.assign(target, source);");
-          let S = JSON.stringify(l.options), b = JSON.stringify(f.options), y = n.includes("(") || n.includes("[") || n.includes(" ") ? "_sectionSource" : n, R = y === "_sectionSource" ? `const _sectionSource = ${n};
+          let S = !!e.subqueryTransform, R = e.action ? e.action.map((v) => this.visit(v)) : [];
+          S || R.push("Object.assign(target, source);");
+          let E = JSON.stringify(d.options), P = JSON.stringify(g.options), w = n.includes("(") || n.includes("[") || n.includes(" ") ? "_sectionSource" : n, q = w === "_sectionSource" ? `const _sectionSource = ${n};
 ` : "";
           if (a) {
-            let j = u ? `.filter((item, index) => { const source = item; const _key = index; return ${c}; })` : "";
-            return `
+            let v = w;
+            return u && (v += `.filter((item, index) => { const source = item; const _key = index; return ${l}; })`), m && (v = `env.functions._sortBy(${v}, (item) => { const source = item; return ${p}; }, ${h})`), A && (v += `.slice(0, ${y})`), `
         {
-          ${R}if (${y} && Array.isArray(${y})) {
-            ${i} = ${y}${j}.map((item, index) => {
-              const subSource = env.parse('${l.name}', item, ${S});
+          ${q}if (${w} && Array.isArray(${w})) {
+            ${i} = ${v}.map((item, index) => {
+              const subSource = env.parse('${d.name}', item, ${E});
               const source = _safeSource(subSource);
               const _key = index;
               const target = {};
-              ${g.join(`
+              ${R.join(`
               `)}
-              return env.serialize('${f.name}', target, ${b});
+              return env.serialize('${g.name}', target, ${P});
             });
           }
         }
         `;
-          } else return u ? `
+          } else if (u || m) {
+            let v = w;
+            return u && (v += `.filter((item, index) => { const source = item; const _key = index; return ${l}; })`), m && (v = `env.functions._sortBy(${v}, (item) => { const source = item; return ${p}; }, ${h})`), `
         {
-          ${R}if (${y} && Array.isArray(${y})) {
-            const _filtered = ${y}.find((item, index) => { const source = item; const _key = index; return ${c}; });
+          ${q}if (${w} && Array.isArray(${w})) {
+            const _filtered = ${v}[0];
             if (_filtered) {
               ${i} = (function(innerSource, innerIndex) {
-                const subSource = env.parse('${l.name}', innerSource, ${S});
+                const subSource = env.parse('${d.name}', innerSource, ${E});
                 const source = _safeSource(subSource);
                 const _key = innerIndex;
                 const target = {};
-                ${g.join(`
+                ${R.join(`
                 `)}
-                return env.serialize('${f.name}', target, ${b});
-              })(_filtered, ${y}.indexOf(_filtered));
+                return env.serialize('${g.name}', target, ${P});
+              })(_filtered, ${w}.indexOf(_filtered));
             }
           }
         }
-        ` : `
+        `;
+          } else return `
         {
-          ${R}if (${y}) {
+          ${q}if (${w}) {
             ${i} = (function(innerSource) {
-              const subSource = env.parse('${l.name}', innerSource, ${S});
+              const subSource = env.parse('${d.name}', innerSource, ${E});
               const source = _safeSource(subSource);
               const _key = 0; // Single section without where, index is effectively 0 if we consider it an "iteration"
               const target = {};
-              ${g.join(`
+              ${R.join(`
               `)}
-              return env.serialize('${f.name}', target, ${b});
-            })(${y});
+              return env.serialize('${g.name}', target, ${P});
+            })(${w});
           }
         }
         `;
@@ -20783,61 +20800,64 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       }
       this.scopeStack.push({ format: "object", options: {}, isSerializationScope: false });
       try {
-        let l = o;
-        l !== "parent" && (l = l.replace(/^source\??\./, "").replace(/^this\.source\??\./, "").replace(/\?\./g, ".")), this.isAnalyzing && (l === "parent" || this.isSimplePath(l) ? this.tracker.pushSection(s, l, a) : this.tracker.pushSection(s, "parent", a));
+        let d = o;
+        d !== "parent" && (d = d.replace(/^source\??\./, "").replace(/^this\.source\??\./, "").replace(/\?\./g, ".")), this.isAnalyzing && (d === "parent" || this.isSimplePath(d) ? this.tracker.pushSection(s, d, a) : this.tracker.pushSection(s, "parent", a));
         try {
-          let f = e.action ? e.action.map((S) => this.visit(S)) : [], h = n.includes("(") || n.includes("[") || n.includes(" ") ? "_sectionSource" : n, g = h === "_sectionSource" ? `const _sectionSource = ${n};
+          let g = e.action ? e.action.map((E) => this.visit(E)) : [], S = n.includes("(") || n.includes("[") || n.includes(" ") ? "_sectionSource" : n, R = S === "_sectionSource" ? `const _sectionSource = ${n};
 ` : "";
           if (a) {
-            let S = u ? `.filter((item, index) => { const source = _safeSource(item); const _key = index; return ${c}; })` : "";
-            return `
+            let E = S;
+            return u && (E += `.filter((item, index) => { const source = _safeSource(item); const _key = index; return ${l}; })`), m && (E = `env.functions._sortBy(${E}, (item) => { const source = _safeSource(item); return ${p}; }, ${h})`), A && (E += `.slice(0, ${y})`), `
       {
-        ${g}if (${h} && Array.isArray(${h})) {
-          ${i} = ${h}${S}.map((item, index) => {
+        ${R}if (${S} && Array.isArray(${S})) {
+          ${i} = ${E}.map((item, index) => {
             const source = _safeSource(item);
             const _key = index;
             const target = {};
-            ${f.join(`
+            ${g.join(`
             `)}
             return target;
           });
         }
       }
       `;
-          } else return u ? `
+          } else if (u || m) {
+            let E = S;
+            return u && (E += `.filter((item, index) => { const source = _safeSource(item); const _key = index; return ${l}; })`), m && (E = `env.functions._sortBy(${E}, (item) => { const source = _safeSource(item); return ${p}; }, ${h})`), `
       {
-        ${g}if (${h} && Array.isArray(${h})) {
-          const _filtered = ${h}.find((item, index) => { const source = _safeSource(item); const _key = index; return ${c}; });
+        ${R}if (${S} && Array.isArray(${S})) {
+          const _filtered = ${E}[0];
           if (_filtered) {
             ${i} = (function(innerSource, innerIndex) {
               const source = _safeSource(innerSource);
               const _key = innerIndex;
               const target = {};
-              ${f.join(`
+              ${g.join(`
               `)}
               return target;
-            })(_filtered, ${h}.indexOf(_filtered));
+            })(_filtered, ${S}.indexOf(_filtered));
           }
         }
       }
-      ` : `
+      `;
+          } else return `
       {
-        ${g}if (${h}) {
+        ${R}if (${S}) {
           ${i} = (function(innerSource) {
             const source = _safeSource(innerSource);
             const _key = 0;
             const target = {};
-            ${f.join(`
+            ${g.join(`
             `)}
             return target;
-          })(${h});
+          })(${S});
         }
       }
       `;
         } finally {
           if (this.isAnalyzing) {
-            let f = l === "parent" || this.isSimplePath(l) ? l : "parent";
-            this.tracker.popSection(f, a);
+            let g = d === "parent" || this.isSimplePath(d) ? d : "parent";
+            this.tracker.popSection(g, a);
           }
         }
       } finally {
@@ -20845,9 +20865,9 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       }
     }
   };
-  var Se = new ye();
-  var je = A.getBaseCstVisitorConstructor();
-  var Ae = class extends je {
+  var Re = new Ne();
+  var ze = b.getBaseCstVisitorConstructor();
+  var Te = class extends ze {
     constructor() {
       super(), this.validateVisitor();
     }
@@ -20910,8 +20930,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       return i !== void 0 && (n.elseActions = i), n;
     }
     sectionRule(e) {
-      let s = this.visit(e.sectionName).name, i = !!e.Multiple, n = !!e.subqueryFrom, o = e.action ? e.action.map((m) => this.visit(m)) : [], a = e.followExpr ? this.visit(e.followExpr) : void 0, u = e.whereExpr ? this.visit(e.whereExpr) : void 0, c = { type: "section", name: s, actions: o };
-      return i && (c.multiple = true), a !== void 0 && (c.from = a), u !== void 0 && (c.where = u), n && (c.isSubquery = true, c.sourceFormat = this.visit(e.subquerySourceType), c.targetFormat = this.visit(e.subqueryTargetType)), c;
+      let s = this.visit(e.sectionName).name, i = !!e.Multiple, n = !!e.subqueryFrom, o = e.action ? e.action.map((m) => this.visit(m)) : [], a = e.followExpr ? this.visit(e.followExpr) : void 0, u = e.whereExpr ? this.visit(e.whereExpr) : void 0, l = { type: "section", name: s, actions: o };
+      return i && (l.multiple = true), a !== void 0 && (l.from = a), u !== void 0 && (l.where = u), e.orderByExpr && (l.orderBy = this.visit(e.orderByExpr), e.orderDirDesc && (l.orderDesc = true)), e.limitExpr && (l.limit = this.visit(e.limitExpr)), n && (l.isSubquery = true, l.sourceFormat = this.visit(e.subquerySourceType), l.targetFormat = this.visit(e.subqueryTargetType)), l;
     }
     expression(e) {
       return this.visit(e.logicalOr);
@@ -20962,36 +20982,36 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       return `${t}(${s.join(", ")})`;
     }
   };
-  var we = new Ae();
-  var Ee = {};
-  function L(r, e) {
-    Ee[r.toLowerCase()] = e;
+  var Ce = new Te();
+  var Oe = {};
+  function T(r, e) {
+    Oe[r.toLowerCase()] = e;
   }
-  function be(r) {
-    let e = Ee[r.toLowerCase()];
+  function $e(r) {
+    let e = Oe[r.toLowerCase()];
     if (!e) throw new Error(`No adapter found for format: ${r}`);
     return e;
   }
-  function _e(r) {
+  function Ye(r) {
     let e = "";
     for (; r >= 0; ) e = String.fromCharCode(r % 26 + 65) + e, r = Math.floor(r / 26) - 1;
     return e;
   }
-  L("json", { parse: (r) => typeof r != "string" ? r : JSON.parse(r), serialize: (r) => JSON.stringify(r, null, 2) });
-  var Be = new json2xml_default({ ignoreAttributes: false, attributeNamePrefix: "$", textNodeName: "_", format: true });
-  L("xml", { parse: (r, e) => typeof r != "string" ? r : new XMLParser(__spreadValues({ ignoreAttributes: false, removeNSPrefix: true }, e)).parse(r), serialize: (r, e) => {
+  T("json", { parse: (r) => typeof r != "string" ? r : JSON.parse(r), serialize: (r) => JSON.stringify(r, null, 2) });
+  var Je = new json2xml_default({ ignoreAttributes: false, attributeNamePrefix: "$", textNodeName: "_", format: true });
+  T("xml", { parse: (r, e) => typeof r != "string" ? r : new XMLParser(__spreadValues({ ignoreAttributes: false, removeNSPrefix: true }, e)).parse(r), serialize: (r, e) => {
     var _a, _b, _c;
     let t = (_c = (_b = e == null ? void 0 : e.rootGenerated) != null ? _b : (_a = e == null ? void 0 : e.params) == null ? void 0 : _a[0]) != null ? _c : "root";
-    return (e ? new json2xml_default(__spreadValues({ ignoreAttributes: false, attributeNamePrefix: "$", textNodeName: "_", format: true }, e)) : Be).build({ [t]: r });
+    return (e ? new json2xml_default(__spreadValues({ ignoreAttributes: false, attributeNamePrefix: "$", textNodeName: "_", format: true }, e)) : Je).build({ [t]: r });
   } });
-  L("csv", { parse: (r, e) => {
+  T("csv", { parse: (r, e) => {
     var _a, _b, _c;
     if (typeof r != "string") return r;
     let t = (_c = (_b = e == null ? void 0 : e.delimiter) != null ? _b : (_a = e == null ? void 0 : e.params) == null ? void 0 : _a[0]) != null ? _c : ",";
     return { rows: import_papaparse.default.parse(r, __spreadValues({ delimiter: t, skipEmptyLines: true }, e)).data.map((n) => {
       let o = {};
       return Array.isArray(n) && n.forEach((a, u) => {
-        o[_e(u)] = a;
+        o[Ye(u)] = a;
       }), o;
     }) };
   }, serialize: (r, e) => {
@@ -21000,32 +21020,32 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     let t = (_c = (_b = e == null ? void 0 : e.delimiter) != null ? _b : (_a = e == null ? void 0 : e.params) == null ? void 0 : _a[0]) != null ? _c : ",", s = r.rows.map((i) => Object.keys(i).filter((o) => /^[A-Z]+$/.test(o)).sort((o, a) => o.length !== a.length ? o.length - a.length : o.localeCompare(a)).map((o) => i[o]));
     return import_papaparse.default.unparse(s, __spreadValues({ delimiter: t }, e));
   } });
-  L("edifact", { parse: (r, e) => {
+  T("edifact", { parse: (r, e) => {
     if (typeof r != "string") return r;
     let t = "'", s = "+", i = ":", n = "?", o = r.trim();
     if (o.startsWith("UNA")) {
-      let l = o.substring(3, 9);
-      i = l[0], s = l[1], n = l[3], t = l[5], o = o.substring(9).trim();
+      let p = o.substring(3, 9);
+      i = p[0], s = p[1], n = p[3], t = p[5], o = o.substring(9).trim();
     }
     e && (e.segmentTerminator && (t = e.segmentTerminator), e.elementSeparator && (s = e.elementSeparator), e.componentSeparator && (i = e.componentSeparator), e.releaseChar && (n = e.releaseChar));
-    let a = {}, u = (l, f, h) => {
-      let g = [], S = "";
-      for (let b = 0; b < l.length; b++) {
-        let y = l[b];
-        y === h && b + 1 < l.length ? S += h + l[++b] : y === f ? (g.push(S), S = "") : S += y;
+    let a = {}, u = (p, h, A) => {
+      let y = [], N = "";
+      for (let d = 0; d < p.length; d++) {
+        let g = p[d];
+        g === A && d + 1 < p.length ? N += A + p[++d] : g === h ? (y.push(N), N = "") : N += g;
       }
-      return g.push(S), g;
-    }, c = (l, f) => {
-      let h = "";
-      for (let g = 0; g < l.length; g++) l[g] === f && g + 1 < l.length ? h += l[++g] : h += l[g];
-      return h;
-    }, m = u(o, t, n).map((l) => l.trim()).filter((l) => l.length > 0);
-    for (let l of m) {
-      let f = u(l, s, n), h = c(f[0], n), g = f.slice(1).map((S) => {
-        let y = u(S, i, n).map((R) => c(R, n));
-        return y.length > 1 ? y : y[0];
+      return y.push(N), y;
+    }, l = (p, h) => {
+      let A = "";
+      for (let y = 0; y < p.length; y++) p[y] === h && y + 1 < p.length ? A += p[++y] : A += p[y];
+      return A;
+    }, m = u(o, t, n).map((p) => p.trim()).filter((p) => p.length > 0);
+    for (let p of m) {
+      let h = u(p, s, n), A = l(h[0], n), y = h.slice(1).map((N) => {
+        let g = u(N, i, n).map((S) => l(S, n));
+        return g.length > 1 ? g : g[0];
       });
-      a[h] || (a[h] = []), a[h].push(g);
+      a[A] || (a[A] = []), a[A].push(y);
     }
     return a;
   }, serialize: (r, e) => {
@@ -21033,22 +21053,22 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     if (!r || typeof r != "object") return "";
     let t = (_a = e == null ? void 0 : e.segmentTerminator) != null ? _a : "'", s = (_b = e == null ? void 0 : e.elementSeparator) != null ? _b : "+", i = (_c = e == null ? void 0 : e.componentSeparator) != null ? _c : ":", n = (_d = e == null ? void 0 : e.releaseChar) != null ? _d : "?", o = (u) => {
       if (u == null) return "";
-      let c = String(u), m = "";
-      for (let l of c) (l === t || l === s || l === i || l === n) && (m += n), m += l;
+      let l = String(u), m = "";
+      for (let p of l) (p === t || p === s || p === i || p === n) && (m += n), m += p;
       return m;
     }, a = "";
     (e == null ? void 0 : e.includeUNA) && (a += `UNA${i}${s}.${n} ${t}`);
     for (let u in r) {
-      let c = Array.isArray(r[u]) ? r[u] : [r[u]];
-      for (let m of c) {
-        if (a += u, Array.isArray(m)) for (let l of m) a += s, Array.isArray(l) ? a += l.map(o).join(i) : a += o(l);
+      let l = Array.isArray(r[u]) ? r[u] : [r[u]];
+      for (let m of l) {
+        if (a += u, Array.isArray(m)) for (let p of m) a += s, Array.isArray(p) ? a += p.map(o).join(i) : a += o(p);
         a += t;
       }
     }
     return a;
   } });
-  L("yaml", { parse: (r, e) => typeof r != "string" ? r : jsYaml.load(r, e), serialize: (r, e) => jsYaml.dump(r, e) });
-  L("object", { parse: (r) => {
+  T("yaml", { parse: (r, e) => typeof r != "string" ? r : jsYaml.load(r, e), serialize: (r, e) => jsYaml.dump(r, e) });
+  T("object", { parse: (r) => {
     if (typeof r == "string" && (r.trim().startsWith("{") || r.trim().startsWith("["))) try {
       return JSON.parse(r);
     } catch (e) {
@@ -21056,7 +21076,7 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     }
     return r;
   }, serialize: (r) => r });
-  L("plaintext", { parse: (r, e) => {
+  T("plaintext", { parse: (r, e) => {
     var _a, _b, _c;
     if (typeof r != "string") return r;
     let t = (_c = (_b = e == null ? void 0 : e.separator) != null ? _b : (_a = e == null ? void 0 : e.params) == null ? void 0 : _a[0]) != null ? _c : /\r?\n/;
@@ -21068,7 +21088,7 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
 `;
     return r.rows.join(t);
   } });
-  var ve = { spreadsheet: (r) => {
+  var Ie = { spreadsheet: (r) => {
     let e = Array.isArray(r) ? r : r == null ? [] : [r];
     if (!Array.isArray(r) && r && typeof r == "object" && Array.isArray(r.rows) && (e = r.rows), e.length === 0) return [];
     let t = [], s = [], i = [];
@@ -21080,8 +21100,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       } else {
         let a = {};
         for (let u = 0; u < i.length; u++) {
-          let c = i[u], m = s[u];
-          a[m] = o[c];
+          let l = i[u], m = s[u];
+          a[m] = o[l];
         }
         t.push(a);
       }
@@ -21106,10 +21126,10 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     for (let i of e) {
       let n = i.split(":");
       if (n.length < 3) continue;
-      let [o, a, u, c] = n, m = parseInt(a, 10), l = parseInt(u, 10);
-      if (isNaN(m) || isNaN(l)) continue;
-      let f = t.substring(m, m + l);
-      c !== "raw" && (f = f.trim()), s[o] = f;
+      let [o, a, u, l] = n, m = parseInt(a, 10), p = parseInt(u, 10);
+      if (isNaN(m) || isNaN(p)) continue;
+      let h = t.substring(m, m + p);
+      l !== "raw" && (h = h.trim()), s[o] = h;
     }
     return s;
   }, pack: (r, ...e) => {
@@ -21117,12 +21137,12 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     let t = r || {}, s = e.map((o) => {
       let a = o.split(":");
       if (a.length < 3) return null;
-      let [u, c, m, l] = a;
-      return { name: u, start: parseInt(c, 10), length: parseInt(m, 10), left: l === "left" };
+      let [u, l, m, p] = a;
+      return { name: u, start: parseInt(l, 10), length: parseInt(m, 10), left: p === "left" };
     }).filter((o) => o !== null), i = s.reduce((o, a) => Math.max(o, a.start + a.length), 0), n = " ".repeat(i);
     for (let o of s) {
-      let a = String((_a = t[o.name]) != null ? _a : ""), c = (o.left ? a.padStart(o.length) : a.padEnd(o.length)).substring(0, o.length);
-      n = n.substring(0, o.start) + c + n.substring(o.start + o.length);
+      let a = String((_a = t[o.name]) != null ? _a : ""), l = (o.left ? a.padStart(o.length) : a.padEnd(o.length)).substring(0, o.length);
+      n = n.substring(0, o.start) + l + n.substring(o.start + o.length);
     }
     return n;
   }, sum: (r, e) => Array.isArray(r) ? r.reduce((t, s) => {
@@ -21195,12 +21215,12 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     if (!r || typeof r != "object") return {};
     let s = (n, o, a) => {
       if (!o) return n;
-      let u = o.split("."), c = n;
+      let u = o.split("."), l = n;
       for (let m of u) if (a) {
-        if (c == null) return;
-        c = c[m];
-      } else c = c[m];
-      return c;
+        if (l == null) return;
+        l = l[m];
+      } else l = l[m];
+      return l;
     }, i = {};
     for (let n of t) {
       let o = n.indexOf(":"), a, u;
@@ -21229,25 +21249,36 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     if (r == null) return null;
     let e = new Date(String(r)).getTime();
     return isNaN(e) ? null : String(Math.floor(e / 1e3));
+  }, _sortBy: (r, e, t) => {
+    if (!Array.isArray(r) || r.length === 0) return [];
+    let s = r.map((i) => ({ item: i, key: e(i) }));
+    return s.sort((i, n) => {
+      let o = i.key, a = n.key;
+      if (o == null && a == null) return 0;
+      if (o == null) return t ? 1 : -1;
+      if (a == null) return t ? -1 : 1;
+      let u = 0;
+      return o < a ? u = -1 : o > a && (u = 1), t ? -u : u;
+    }), s.map((i) => i.item);
   } };
-  async function Lt(r, e) {
+  async function Ut(r, e) {
     if (e == null ? void 0 : e.cache) {
       let m = await e.cache.retrieve(r);
-      if (m) return Te(m);
+      if (m) return Be(m);
     }
-    let t = de.tokenize(r);
+    let t = we.tokenize(r);
     if (t.errors.length > 0) throw new Error(`Lexing errors: ${t.errors[0].message}`);
-    A.input = t.tokens;
-    let s = A.query();
-    if (A.errors.length > 0) throw new Error(`Parsing errors: ${A.errors[0].message}`);
-    Se.isAnalyzing = !!(e == null ? void 0 : e.analyze);
-    let { code: i, analysis: n, sourceType: o, targetType: a } = Se.visit(s), u = import_js_beautify.default.js(i, { indent_size: 2, space_in_empty_paren: true, end_with_newline: true });
+    b.input = t.tokens;
+    let s = b.query();
+    if (b.errors.length > 0) throw new Error(`Parsing errors: ${b.errors[0].message}`);
+    Re.isAnalyzing = !!(e == null ? void 0 : e.analyze);
+    let { code: i, analysis: n, sourceType: o, targetType: a } = Re.visit(s), u = import_js_beautify.default.js(i, { indent_size: 2, space_in_empty_paren: true, end_with_newline: true });
     (e == null ? void 0 : e.cache) && await e.cache.save(r, u);
-    let c = Te(u);
-    return n && (n.sourceFormat = o.name, n.targetFormat = a.name, c.analysis = n), c;
+    let l = Be(u);
+    return n && (n.sourceFormat = o.name, n.targetFormat = a.name, l.analysis = n), l;
   }
-  function Te(r) {
-    let t = new Function(r)(), s = { parse: (n, o, a) => be(n).parse(o, a), serialize: (n, o, a) => be(n).serialize(o, a), functions: ve }, i = ((n) => t(n, s));
+  function Be(r) {
+    let t = new Function(r)(), s = { parse: (n, o, a) => $e(n).parse(o, a), serialize: (n, o, a) => $e(n).serialize(o, a), functions: Ie }, i = ((n) => t(n, s));
     return i.code = r, i;
   }
 
@@ -21719,7 +21750,7 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
       document.getElementById("filename").textContent = fileName;
       setSourceFile(sourceFileName);
       try {
-        const engine = await Lt(query, { analyze: true });
+        const engine = await Ut(query, { analyze: true });
         const output = engine(sourceData != null ? sourceData : "{}");
         const result = typeof output === "string" ? output : JSON.stringify(output, null, 2);
         setStatus("ok", "OK");
@@ -21831,8 +21862,8 @@ Make sure that all grammar rule definitions are done before 'performSelfAnalysis
     }
     let children = "";
     if (hasProps && n.properties) {
-      for (const [k2, v2] of Object.entries(n.properties)) {
-        children += renderNode(v2, k2);
+      for (const [k2, v] of Object.entries(n.properties)) {
+        children += renderNode(v, k2);
       }
     }
     if (hasItems) children += renderNode(n.items, "items[]");
