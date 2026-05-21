@@ -53,4 +53,42 @@ transform
 
     expect(invert(query).trim()).toBe(expected.trim());
   });
+
+  it('should handle constants, clone, delete, define, modify, conditionals, and concat heuristics', () => {
+    const query = `from json to xml
+transform
+  clone(a, b)
+  delete c
+  modify x = y
+  define myVar = 123
+  set status = "active"
+  set fullName = firstName + " " + lastName
+  if (flag) (
+    set active = isAct
+  ) else (
+    set statusStr = oldStatus
+  )`;
+
+    const expected = `from xml to json
+transform
+  clone(a, b)
+  // TODO: 'c' was deleted in target. Re-supply or handle manually.
+  // set c = ...
+  // TODO: Check manual inversion for target modification
+  // modify x = y
+  // define myVar = 123 (Local variable - review manually)
+  // set status = "active" (Constant - skipped in inverse)
+  // TODO (Heuristic Inversion): 'fullName' is a concatenation.
+  // Please refine this extraction logic:
+  //   set firstName = split(fullName, " ")[0]
+  //   set lastName = split(fullName, " ")[1]
+  if (flag) (
+    set isAct = active
+  ) else (
+    set oldStatus = statusStr
+  )`;
+
+    const inverted = invert(query);
+    expect(inverted.trim()).toBe(expected.trim());
+  });
 });
