@@ -220,3 +220,4 @@ export function greet(name: string): string {
 }
 
 export { languageReference, getSystemPrompt } from './language-reference.js';
+export { invert } from './core/inverter.js';
