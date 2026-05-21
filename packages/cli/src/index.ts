@@ -6,6 +6,7 @@ import * as path from "node:path";
 import { existsSync } from "node:fs";
 import { batchAction } from "./batch.js";
 import { watchAction } from "./watch.js";
+import { invertAction } from "./invert.js";
 import { createLogger, LogFormat } from "./logger.js";
 import { resolveQuery, collectSubquery, compileSubqueries } from "./file-utils.js";
 
@@ -75,6 +76,22 @@ program
   .option("-s, --subquery <mapping>", "Add a subquery (format: name or name=file.morphql)", collectSubquery, {})
   .option("--log-format <format>", "Log output format: text or json", "text")
   .action(watchAction);
+
+// --- 2.5. Invert Subcommand ---
+program
+  .command("invert")
+  .description("Invert a MorphQL query")
+  .option("-q, --query <string>", "MorphQL query string to invert")
+  .option(
+    "-Q, --query-file <path>",
+    "Path to a file containing the MorphQL query to invert",
+  )
+  .option(
+    "-o, --out <path>",
+    "Path to the destination file where the inverted query will be written (if omitted, printed to stdout)",
+  )
+  .option("--log-format <format>", "Log output format: text or json", "text")
+  .action(invertAction);
 
 // --- 3. Docs Subcommand ---
 program
