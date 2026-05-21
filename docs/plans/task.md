@@ -1,5 +1,8 @@
-- [x] Task 1: Package Initialization
-- [x] Task 2: Core Interfaces and Storage Adapters
-- [x] Task 3: SQL Parser
-- [x] Task 4: Transpiler
-- [x] Task 5: Store Engine and E2E Integration
+# MorphQL Query Inversion Tasks
+
+| Task | Description | Status |
+|---|---|---|
+| 1 | Core AST Inverter Implementation (`MorphInverter`) | [ ] Pending |
+| 2 | Implement Recursive Section Mapping | [ ] Pending |
+| 3 | Implement Heuristics, Constants, Clone, Delete and If Rules | [ ] Pending |
+| 4 | CLI Integration | [ ] Pending |
