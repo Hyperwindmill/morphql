@@ -1,6 +1,7 @@
 import { compile } from '@morphql/core';
 import { parseSQL, ParsedSQL } from './parser.js';
 import { transpile } from './transpiler.js';
+import { decodeStringEscapes } from './escape.js';
 import { StorageAdapter } from './types.js';
 
 export interface MutationResult {
@@ -95,9 +96,9 @@ function resolveAutoIncrements(obj: any, existing: any[]): void {
 
 /** Parse a SQL value literal into a JS value */
 function parseValue(raw: string): any {
-  // Remove surrounding quotes
+  // Remove surrounding quotes and decode JS-style backslash escapes
   if ((raw.startsWith("'") && raw.endsWith("'")) || (raw.startsWith('"') && raw.endsWith('"'))) {
-    return raw.slice(1, -1);
+    return decodeStringEscapes(raw.slice(1, -1));
   }
   if (raw.toLowerCase() === 'null') return null;
   if (raw.toLowerCase() === 'true') return true;

@@ -128,6 +128,110 @@ describe('BUG A — string values with newlines/quotes in UPDATE', () => {
   });
 });
 
+describe('BUG C — JS-string escape decoding in UPDATE and INSERT', () => {
+  it("UPDATE SET name = 'it\\'s' stores it's (backslash-apostrophe decoded)", async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'old' }] }));
+    // SQL string literal with a backslash-escaped apostrophe: 'it\'s'
+    await store.query("UPDATE users SET name = 'it\\'s' WHERE id = 1");
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe("it's");
+    }
+  });
+
+  it("UPDATE SET name = 'a\\\\b' stores a\\b (double-backslash decoded to one backslash)", async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'old' }] }));
+    // SQL literal 'a\\b': two chars \\ then b — should decode to one backslash
+    await store.query("UPDATE users SET name = 'a\\\\b' WHERE id = 1");
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe('a\\b');
+    }
+  });
+
+  it("UPDATE with 'a\\\\nb' stores a\\nb (backslash-backslash consumed before n — not a newline)", async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'old' }] }));
+    // SQL literal 'a\\nb': \\ is consumed first -> \, then n is literal — result: a\nb (3 chars a \ n b)
+    await store.query("UPDATE users SET name = 'a\\\\nb' WHERE id = 1");
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe('a\\nb');
+      expect(data[0].name).toHaveLength(4); // a, backslash, n, b
+      expect(data[0].name).not.toBe('a\nb'); // must NOT be a newline
+    }
+  });
+
+  it("UPDATE SET name = 'line1\\nline2' stores a real newline character", async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'old' }] }));
+    // SQL literal 'line1\nline2': \n should decode to real newline
+    await store.query("UPDATE users SET name = 'line1\\nline2' WHERE id = 1");
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe('line1\nline2');
+    }
+  });
+
+  it("INSERT VALUES ('it\\'s') stores it's (backslash-apostrophe decoded)", async () => {
+    const store = new Store(new MemoryAdapter({ items: [] }));
+    await store.query("INSERT INTO items (id, label) VALUES (1, 'it\\'s')");
+    const data = await store.query('SELECT * FROM items');
+    if (Array.isArray(data)) {
+      expect(data[0].label).toBe("it's");
+    }
+  });
+});
+
+describe('BUG C (double quotes) — " handled like \'', () => {
+  it('UPDATE double-quoted value with escaped double quotes stores them unescaped', async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'old' }] }));
+    // SQL: UPDATE ... SET name = "say \"hi\"" — should store: say "hi"
+    await store.query('UPDATE users SET name = "say \\"hi\\"" WHERE id = 1');
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe('say "hi"');
+    }
+  });
+
+  it('UPDATE double-quoted value containing an apostrophe is left intact', async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'old' }] }));
+    // SQL: UPDATE ... SET name = "it's" — apostrophe inside double quotes is a literal
+    await store.query('UPDATE users SET name = "it\'s" WHERE id = 1');
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe("it's");
+    }
+  });
+
+  it('UPDATE double-quoted value with a real newline stores the newline', async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'old' }] }));
+    await store.query('UPDATE users SET name = "line1\nline2" WHERE id = 1');
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe('line1\nline2');
+    }
+  });
+
+  it('INSERT double-quoted value with escaped double quote stores it unescaped', async () => {
+    const store = new Store(new MemoryAdapter({ items: [] as any[] }));
+    // SQL: INSERT ... VALUES (1, "a\"b") — should store: a"b
+    await store.query('INSERT INTO items (id, label) VALUES (1, "a\\"b")');
+    const data = await store.query('SELECT * FROM items');
+    if (Array.isArray(data)) {
+      expect(data[0].label).toBe('a"b');
+    }
+  });
+
+  it('UPDATE single-quoted value containing a double quote is left intact', async () => {
+    const store = new Store(new MemoryAdapter({ users: [{ id: 1, name: 'old' }] }));
+    // SQL: UPDATE ... SET name = 'say "hello"' — double quote inside single quotes is a literal
+    await store.query('UPDATE users SET name = \'say "hello"\' WHERE id = 1');
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe('say "hello"');
+    }
+  });
+});
+
 describe('BUG B — compound WHERE conditions', () => {
   it('SELECT with AND compound WHERE returns correct rows', async () => {
     const store = new Store(new MemoryAdapter({

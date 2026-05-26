@@ -1,4 +1,5 @@
 import { ParsedSQL, ParsedSelect, ParsedUpdate, ParsedDelete } from './parser.js';
+import { decodeStringEscapes } from './escape.js';
 
 export function transpile(ast: ParsedSQL): string {
   switch (ast.type) {
@@ -71,8 +72,10 @@ transform
  */
 function escapeSQLStringForMorphQL(expr: string): string {
   const trimmed = expr.trim();
-  const isSingle = trimmed.startsWith("'") && trimmed.endsWith("'") && trimmed.length >= 2;
-  const isDouble = trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2;
+  // Require the SAME quote char on both ends — guards against malformed
+  // mixed-quote input slipping through unescaped.
+  const isSingle = trimmed.length >= 2 && trimmed[0] === "'" && trimmed[trimmed.length - 1] === "'";
+  const isDouble = trimmed.length >= 2 && trimmed[0] === '"' && trimmed[trimmed.length - 1] === '"';
 
   if (!isSingle && !isDouble) {
     // Not a string literal — pass through unchanged
@@ -80,13 +83,15 @@ function escapeSQLStringForMorphQL(expr: string): string {
   }
 
   const quoteChar = isSingle ? "'" : '"';
-  // Unwrap the quotes
+  // Unwrap the quotes and decode SQL-level JS-style escape sequences
   const inner = trimmed.slice(1, -1);
+  const decoded = decodeStringEscapes(inner);
 
-  // Escape in order: backslash first, then quote char, then whitespace control chars
-  const escaped = inner
+  // Re-escape in order: backslash first, then quote char, then whitespace control chars
+  // This makes the value safe for MorphQL's StringLiteral regex.
+  const escaped = decoded
     .replace(/\\/g, '\\\\')
-    .replace(new RegExp(quoteChar, 'g'), '\\' + quoteChar)
+    .replace(new RegExp(quoteChar.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '\\' + quoteChar)
     .replace(/\n/g, '\\n')
     .replace(/\r/g, '\\r')
     .replace(/\t/g, '\\t');
