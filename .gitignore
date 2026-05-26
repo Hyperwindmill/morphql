@@ -19,3 +19,4 @@ build/
 .pytest_cache/
 htmlcov/
 .mypy_cache/
+.atl
