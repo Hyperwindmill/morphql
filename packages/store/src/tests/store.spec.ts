@@ -103,3 +103,129 @@ describe('MorphStore', () => {
     }
   });
 });
+
+describe('BUG A — string values with newlines/quotes in UPDATE', () => {
+  it('UPDATE with a multi-line string value stores the real newline', async () => {
+    const store = new Store(new MemoryAdapter({ notes: [{ id: 1, body: 'old' }] }));
+    const multiline = "line1\nline2";
+    // The SQL string literal embeds a real newline inside the quoted value
+    await store.query(`UPDATE notes SET body = 'line1\nline2' WHERE id = 1`);
+    const data = await store.query('SELECT * FROM notes');
+    expect(Array.isArray(data)).toBe(true);
+    if (Array.isArray(data)) {
+      expect(data[0].body).toBe(multiline);
+    }
+  });
+
+  it("UPDATE with an embedded single-quote (apostrophe) stores the exact string", async () => {
+    const store = new Store(new MemoryAdapter({ notes: [{ id: 1, body: 'old' }] }));
+    // Use double-quoted SQL string to carry the apostrophe
+    await store.query(`UPDATE notes SET body = "it's done" WHERE id = 1`);
+    const data = await store.query('SELECT * FROM notes');
+    if (Array.isArray(data)) {
+      expect(data[0].body).toBe("it's done");
+    }
+  });
+});
+
+describe('BUG B — compound WHERE conditions', () => {
+  it('SELECT with AND compound WHERE returns correct rows', async () => {
+    const store = new Store(new MemoryAdapter({
+      users: [
+        { id: 1, name: 'Alice', role: 'admin' },
+        { id: 2, name: 'Bob', role: 'user' },
+        { id: 3, name: 'Alice', role: 'user' },
+      ]
+    }));
+    const data = await store.query("SELECT * FROM users WHERE name = 'Alice' AND role = 'admin'");
+    expect(Array.isArray(data)).toBe(true);
+    if (Array.isArray(data)) {
+      expect(data).toHaveLength(1);
+      expect(data[0].id).toBe(1);
+    }
+  });
+
+  it('SELECT with OR compound WHERE returns correct rows', async () => {
+    const store = new Store(new MemoryAdapter({
+      items: [{ id: 1 }, { id: 2 }, { id: 3 }]
+    }));
+    const data = await store.query('SELECT * FROM items WHERE id = 1 OR id = 2');
+    if (Array.isArray(data)) {
+      expect(data).toHaveLength(2);
+      expect(data.map((r: any) => r.id).sort()).toEqual([1, 2]);
+    }
+  });
+
+  it('SELECT with IS NULL condition returns correct rows', async () => {
+    const store = new Store(new MemoryAdapter({
+      tasks: [
+        { id: 1, status: 'active', lockedAt: null },
+        { id: 2, status: 'active', lockedAt: '2024-01-01' },
+      ]
+    }));
+    const data = await store.query("SELECT * FROM tasks WHERE status = 'active' AND lockedAt IS NULL");
+    if (Array.isArray(data)) {
+      expect(data).toHaveLength(1);
+      expect(data[0].id).toBe(1);
+    }
+  });
+
+  it('SELECT with IS NOT NULL condition returns correct rows', async () => {
+    const store = new Store(new MemoryAdapter({
+      tasks: [
+        { id: 1, deletedAt: null },
+        { id: 2, deletedAt: '2024-01-01' },
+      ]
+    }));
+    const data = await store.query('SELECT * FROM tasks WHERE deletedAt IS NOT NULL');
+    if (Array.isArray(data)) {
+      expect(data).toHaveLength(1);
+      expect(data[0].id).toBe(2);
+    }
+  });
+
+  it('UPDATE with AND compound WHERE only touches matching rows', async () => {
+    const store = new Store(new MemoryAdapter({
+      users: [
+        { id: 1, name: 'Alice', role: 'admin' },
+        { id: 2, name: 'Bob', role: 'user' },
+      ]
+    }));
+    await store.query("UPDATE users SET name = 'Updated' WHERE id = 1 AND role = 'admin'");
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data[0].name).toBe('Updated');
+      expect(data[1].name).toBe('Bob');
+    }
+  });
+
+  it('DELETE with AND compound WHERE removes only matching rows', async () => {
+    const store = new Store(new MemoryAdapter({
+      users: [
+        { id: 1, name: 'Alice', role: 'admin' },
+        { id: 2, name: 'Bob', role: 'user' },
+        { id: 3, name: 'Alice', role: 'user' },
+      ]
+    }));
+    await store.query("DELETE FROM users WHERE name = 'Alice' AND role = 'admin'");
+    const data = await store.query('SELECT * FROM users');
+    if (Array.isArray(data)) {
+      expect(data).toHaveLength(2);
+      expect(data.map((r: any) => r.id).sort()).toEqual([2, 3]);
+    }
+  });
+
+  it('string value containing AND keyword is NOT corrupted', async () => {
+    const store = new Store(new MemoryAdapter({
+      songs: [
+        { id: 1, name: 'rock and roll', active: true },
+        { id: 2, name: 'jazz', active: true },
+      ]
+    }));
+    const data = await store.query("SELECT * FROM songs WHERE name = 'rock and roll' AND active = true");
+    if (Array.isArray(data)) {
+      expect(data).toHaveLength(1);
+      expect(data[0].name).toBe('rock and roll');
+    }
+  });
+});
