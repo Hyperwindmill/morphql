@@ -38,7 +38,7 @@ ${actions.join('\n')}
 }
 
 function transpileUpdate(ast: ParsedUpdate): string {
-  const setActions = ast.set.map(s => `      set ${s.field} = ${s.expr}`).join('\n');
+  const setActions = ast.set.map(s => `      set ${s.field} = ${escapeSQLStringForMorphQL(s.expr)}`).join('\n');
   const whereGuard = ast.where ? `    if (${sqlToMorphQL(ast.where)}) (\n${setActions}\n    )` : setActions;
 
   return `from object to object
@@ -60,12 +60,126 @@ transform
 `;
 }
 
-/** 
+/**
+ * Re-emit a SQL string literal as a valid MorphQL string literal.
+ * Decodes the SQL value, then escapes special characters so that
+ * MorphQL's StringLiteral regex /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/
+ * can lex it without errors (in particular, raw newlines are rejected).
+ *
+ * Only touches single- or double-quoted string literals.
+ * Non-string expressions (numbers, identifiers, arithmetic) are returned unchanged.
+ */
+function escapeSQLStringForMorphQL(expr: string): string {
+  const trimmed = expr.trim();
+  const isSingle = trimmed.startsWith("'") && trimmed.endsWith("'") && trimmed.length >= 2;
+  const isDouble = trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2;
+
+  if (!isSingle && !isDouble) {
+    // Not a string literal — pass through unchanged
+    return expr;
+  }
+
+  const quoteChar = isSingle ? "'" : '"';
+  // Unwrap the quotes
+  const inner = trimmed.slice(1, -1);
+
+  // Escape in order: backslash first, then quote char, then whitespace control chars
+  const escaped = inner
+    .replace(/\\/g, '\\\\')
+    .replace(new RegExp(quoteChar, 'g'), '\\' + quoteChar)
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+
+  return quoteChar + escaped + quoteChar;
+}
+
+/**
  * Simple helper to convert SQL syntax to MorphQL syntax.
- * Focuses on operators: = becomes ==.
+ * - = becomes ==
+ * - AND -> &&, OR -> ||  (outside string literals)
+ * - IS NOT NULL -> != null, IS NULL -> == null  (outside string literals)
  */
 function sqlToMorphQL(expr: string): string {
-  // Replace = with ==, but be careful not to touch ==, !=, <=, >=
-  // We use a regex that looks for = NOT preceded by !, <, >, = and NOT followed by =
-  return expr.replace(/(?<![!<>=])=(?!=)/g, '==');
+  // Build a list of [start, end] ranges that are inside string literals,
+  // so we only replace operators that live OUTSIDE strings.
+  const stringRanges: [number, number][] = [];
+  let inStr = false;
+  let strChar = '';
+  for (let i = 0; i < expr.length; i++) {
+    const ch = expr[i];
+    if (inStr) {
+      if (ch === strChar && expr[i - 1] !== '\\') {
+        stringRanges[stringRanges.length - 1][1] = i;
+        inStr = false;
+      }
+    } else if (ch === '"' || ch === "'") {
+      inStr = true;
+      strChar = ch;
+      stringRanges.push([i, expr.length - 1]); // placeholder end
+    }
+  }
+
+  function insideString(idx: number): boolean {
+    return stringRanges.some(([s, e]) => idx >= s && idx <= e);
+  }
+
+  // We apply replacements token-by-token rather than naively via .replace(regex).
+  // Strategy: rebuild the string, consuming known multi-word tokens greedily.
+  let result = '';
+  let i = 0;
+  while (i < expr.length) {
+    if (insideString(i)) {
+      result += expr[i++];
+      continue;
+    }
+
+    // IS NOT NULL  (7+ chars)
+    if (/^IS\s+NOT\s+NULL\b/i.test(expr.slice(i))) {
+      const m = expr.slice(i).match(/^IS\s+NOT\s+NULL\b/i)!;
+      result += '!= null';
+      i += m[0].length;
+      continue;
+    }
+
+    // IS NULL
+    if (/^IS\s+NULL\b/i.test(expr.slice(i))) {
+      const m = expr.slice(i).match(/^IS\s+NULL\b/i)!;
+      result += '== null';
+      i += m[0].length;
+      continue;
+    }
+
+    // AND  (word boundary)
+    if (/^AND\b/i.test(expr.slice(i)) && (i === 0 || /\s/.test(expr[i - 1]))) {
+      const m = expr.slice(i).match(/^AND\b/i)!;
+      result += '&&';
+      i += m[0].length;
+      continue;
+    }
+
+    // OR  (word boundary)
+    if (/^OR\b/i.test(expr.slice(i)) && (i === 0 || /\s/.test(expr[i - 1]))) {
+      const m = expr.slice(i).match(/^OR\b/i)!;
+      result += '||';
+      i += m[0].length;
+      continue;
+    }
+
+    // = -> == (not preceded/followed by = ! < >)
+    if (
+      expr[i] === '=' &&
+      !insideString(i) &&
+      (i === 0 || !/[!<>=]/.test(expr[i - 1])) &&
+      expr[i + 1] !== '='
+    ) {
+      result += '==';
+      i++;
+      continue;
+    }
+
+    result += expr[i++];
+  }
+
+  return result;
 }
