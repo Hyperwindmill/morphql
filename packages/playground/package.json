@@ -42,8 +42,8 @@
     "preview": "vite preview"
   },
   "peerDependencies": {
-    "@morphql/core": "*",
-    "@morphql/language-definitions": "*",
+    "@morphql/core": "^0.1.46",
+    "@morphql/language-definitions": "^0.1.46",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

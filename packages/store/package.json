@@ -49,7 +49,7 @@
   },
   "homepage": "https://github.com/Hyperwindmill/morphql/tree/main/packages/store#readme",
   "dependencies": {
-    "@morphql/core": "*"
+    "@morphql/core": "^0.1.46"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
