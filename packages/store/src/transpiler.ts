@@ -18,11 +18,7 @@ function transpileSelect(ast: ParsedSelect): string {
   }
 
   for (const field of ast.select) {
-    if (field.alias === field.expr) {
-      actions.push(`    set ${field.alias}`);
-    } else {
-      actions.push(`    set ${field.alias} = ${field.expr}`);
-    }
+    actions.push(`    set ${field.alias} = ${field.expr}`);
   }
 
   let clauses = 'from source';

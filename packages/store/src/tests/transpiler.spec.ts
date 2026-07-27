@@ -13,4 +13,13 @@ describe('Transpiler', () => {
     expect(morphql).toContain('set fullName = firstName + " " + lastName');
     expect(morphql).toContain('from source where age > 18 orderby score desc limit 10');
   });
+
+  it('should transpile bare column selection to valid set actions', () => {
+    const ast = parseSQL('SELECT id, lockedAt FROM tasks WHERE id = 26');
+    const morphql = transpile(ast);
+
+    expect(morphql).toContain('set id = id');
+    expect(morphql).toContain('set lockedAt = lockedAt');
+    expect(morphql).not.toMatch(/set\s+\w+\s*$/m);
+  });
 });
