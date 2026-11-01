@@ -1,6 +1,6 @@
 {
   "name": "@morphql/store",
-  "version": "0.1.46",
+  "version": "0.1.47",
   "description": "In-memory and persistent data store for morphql with SQL-like query support.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -49,7 +49,7 @@
   },
   "homepage": "https://github.com/Hyperwindmill/morphql/tree/main/packages/store#readme",
   "dependencies": {
-    "@morphql/core": "^0.1.46"
+    "@morphql/core": "^0.1.47"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
