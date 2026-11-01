@@ -29,5 +29,14 @@
   "license": "MIT",
   "devDependencies": {
     "prettier": "^3.8.1"
+  },
+  "overrides": {
+    "dompurify": "^3.4.17",
+    "form-data": "^4.0.6",
+    "multer": "^2.5.0",
+    "lodash-es": "^4.18.1",
+    "@nestjs/swagger": {
+      "js-yaml": "^5.5.0"
+    }
   }
 }
