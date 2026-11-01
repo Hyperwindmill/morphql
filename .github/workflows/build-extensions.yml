@@ -119,6 +119,28 @@ jobs:
           name: jetbrains-extension
           path: ./artifacts
 
+      - name: Build Release Body
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          NOTES=$(awk -v h="## [$VERSION]" 'index($0, "## [") == 1 { f = index($0, h) == 1; next } f' CHANGELOG.md)
+          if [ -z "$(echo "$NOTES" | tr -d '[:space:]')" ]; then
+            echo "::warning::No CHANGELOG.md entry for $VERSION"
+            NOTES="<!-- Add your release notes here -->"
+          fi
+          cat > release-body.md <<EOF
+          ## 📝 Release Notes
+          $NOTES
+
+          ---
+
+          ## 📦 Extension Downloads
+
+          Download the extensions below for manual installation:
+
+          - **VSCode**: Install the \`.vsix\` file via "Extensions: Install from VSIX..." command
+          - **JetBrains**: Install the \`.zip\` file via Settings → Plugins → ⚙️ → Install Plugin from Disk
+          EOF
+
       - name: Create Draft Release
         uses: softprops/action-gh-release@v1
         with:
@@ -127,16 +149,4 @@ jobs:
           files: |
             ./artifacts/*.vsix
             ./artifacts/*.zip
-          body: |
-            ## 📦 Extension Downloads
-
-            Download the extensions below for manual installation:
-
-            - **VSCode**: Install the `.vsix` file via "Extensions: Install from VSIX..." command
-            - **JetBrains**: Install the `.zip` file via Settings → Plugins → ⚙️ → Install Plugin from Disk
-
-            ---
-
-            ## 📝 Release Notes
-
-            <!-- Add your release notes here -->
+          body_path: release-body.md
